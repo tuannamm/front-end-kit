@@ -1,11 +1,11 @@
 import { useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, Layers, ScanText, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  AppShell, Avatar, Badge, Checkbox, CheckboxGroup, RadioGroup, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  AppShell, Avatar, Badge, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Display, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, OcrShowcase, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
-  Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type NormalizedOcr, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
+  Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type DateRange, type NormalizedOcr, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
 } from '@dtx/ui';
 import { aiThroughput, batches, hours, invoiceFields, invoiceRows, manualThroughput } from '../data';
 import { docTypeGroups, shiftOptions, statusOptions } from '../options';
@@ -127,6 +127,37 @@ function CheckboxGroupControlled() {
     <div className="grid gap-2">
       <CheckboxGroup label="Loại tài liệu cần QC" selectAll="Tất cả loại" options={types} value={value} onValueChange={setValue} />
       <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(value)}</code></p>
+    </div>
+  );
+}
+function DatePickerControlled() {
+  const [value, setValue] = useState<string | null>('2026-10-05');
+  return (
+    <div className="grid w-64 gap-2">
+      <Field label="Ngày nhận hồ sơ"><DatePicker value={value} onValueChange={setValue} /></Field>
+      <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(value)}</code></p>
+    </div>
+  );
+}
+function DatePickerFormats() {
+  const [format, setFormat] = useState('yyyy-MM-dd');
+  const [value, setValue] = useState<string | null>('2026-10-05');
+  return (
+    <div className="grid justify-items-start gap-4">
+      <Segmented aria-label="Định dạng ngày" value={format} onValueChange={setFormat} options={['dd/MM/yyyy', 'yyyy-MM-dd', 'MM/dd/yyyy', 'd.M.yyyy'].map(f => ({ value: f, label: f }))} />
+      <div className="grid w-64 gap-2">
+        <Field label="Ngày phát hành"><DatePicker format={format} value={value} onValueChange={setValue} /></Field>
+        <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(value)}</code></p>
+      </div>
+    </div>
+  );
+}
+function DateRangeControlled() {
+  const [range, setRange] = useState<DateRange>({ from: '2026-10-01', to: '2026-10-15' });
+  return (
+    <div className="grid w-72 gap-2">
+      <DateRangePicker label="Kỳ báo cáo" value={range} onValueChange={setRange} />
+      <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(range)}</code></p>
     </div>
   );
 }
@@ -261,7 +292,27 @@ export const entries: Entry[] = [
       { title: '5 · Controlled', render: () => <MultiSelectControlled /> },
       { title: '6 · Small, no visible label', render: () => <div className="w-64"><MultiSelect size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} defaultValue={['qc', 'risk']} /></div> },
       { title: '7 · Disabled', render: () => <MultiSelectDemo label="Ca làm việc" items={shiftOptions} defaultValue={['night']} disabled /> }] },
-  planned('datepicker', 'Date picker', 'Core', 'Vietnamese locale, dd/MM/yyyy.'),
+  { id: 'daterange', name: 'DateRangePicker', category: 'Core', status: 'ready', summary: 'One bar showing “from – to”. In the calendar the first click sets the start, the second the end, in either order; the band previews the range under the pointer or keyboard focus. No limits unless you pass `min` / `max`. Value { from, to } in ISO; a half-picked range is never emitted (Escape keeps the old one).',
+    importLine: imp('DateRangePicker, type DateRange'),
+    props: [['value / defaultValue / onValueChange', '{ from: string | null; to: string | null }', 'ISO'], ['min / max', 'string', 'Optional ISO bounds, inclusive. Default: none'], ['format', 'string', "As DatePicker, default 'dd/MM/yyyy'"], ['label / aria-label', 'ReactNode / string', 'Visible label, or a name when there is none'], ['description, error', 'ReactNode', ''], ['size, placeholder, disabled', '', ''], ['name', 'string', 'Submits nameFrom / nameTo']],
+    demos: [
+      { title: '1 · Controlled, no limits', code: '<DateRangePicker label="Kỳ báo cáo" value={range} onValueChange={setRange} />', render: () => <DateRangeControlled /> },
+      { title: '2 · Empty', render: () => <div className="w-72"><DateRangePicker label="Ngày nhận hồ sơ" /></div> },
+      { title: '3 · Limited by props', note: 'min = 90 days ago, max = today.', code: '<DateRangePicker min={addDays(todayIso(), -90)} max={todayIso()} />', render: () => <div className="w-72"><DateRangePicker label="Ngày xử lý" description="Trong 90 ngày gần nhất." min={addDays(todayIso(), -90)} max={todayIso()} /></div> },
+      { title: '4 · Small filter, ISO format, no visible label', render: () => <div className="w-64"><DateRangePicker size="sm" format="yyyy-MM-dd" aria-label="Lọc theo ngày nhận" defaultValue={{ from: '2026-09-01', to: '2026-09-30' }} /></div> },
+      { title: '5 · Error · disabled', render: () => <div className="grid w-72 gap-4"><DateRangePicker label="Thời hạn hợp đồng" error="Thời hạn tối đa 12 tháng." defaultValue={{ from: '2026-01-01', to: '2027-06-30' }} /><DateRangePicker label="Kỳ đã khoá sổ" disabled defaultValue={{ from: '2026-09-01', to: '2026-09-30' }} /></div> },
+      { title: '6 · Calendar in range mode (the open state)', note: 'Ends filled, days between on a tinted band.', render: () => <div className="w-[296px] rounded-md border border-border bg-surface p-2"><Calendar range={{ from: addDays(todayIso(), -4), to: addDays(todayIso(), 5) }} /></div> }] },
+  { id: 'datepicker', name: 'DatePicker · Calendar', category: 'Core', status: 'ready', summary: 'Type dd/MM/yyyy (also 5-10-2026 or 05102026), or any `format`, or pick from a Monday-first calendar. Value is an ISO string (“2026-10-05”): no timezone shifts. Invalid or out-of-range typing reverts on blur. Calendar keys: arrows, Home/End, PageUp/PageDown (+Shift = year); Alt+↓ opens it from the input.',
+    importLine: imp('DatePicker, Calendar, parseDate, formatDate'),
+    props: [['value / defaultValue / onValueChange', 'string | null', "ISO 'yyyy-MM-dd'"], ['min / max', 'string', 'ISO, inclusive'], ['format', 'string', "dd / d, MM / M, yyyy, any separator. Default 'dd/MM/yyyy'"], ['size', "'sm' | 'md'", ''], ['placeholder', 'string', 'Default: format in lower case'], ['name', 'string', 'Submits the ISO value'], ['disabled', 'boolean', '']],
+    demos: [
+      { title: '1 · Controlled', note: 'Type “5/10/2026” or “05102026”.', code: '<DatePicker value={value} onValueChange={setValue} />', render: () => <DatePickerControlled /> },
+      { title: '2 · Custom format', note: 'Same ISO value, different display. Typing follows the format order.', code: '<DatePicker format="yyyy-MM-dd" value={value} onValueChange={setValue} />', render: () => <DatePickerFormats /> },
+      { title: '3 · Empty', render: () => <div className="w-64"><Field label="Ngày sinh"><DatePicker max={todayIso()} /></Field></div> },
+      { title: '4 · Range limit', note: 'Only today to +30 days.', render: () => <div className="w-64"><Field label="Hạn SLA" description="Trong vòng 30 ngày."><DatePicker min={todayIso()} max={addDays(todayIso(), 30)} defaultValue={addDays(todayIso(), 3)} /></Field></div> },
+      { title: '5 · Error', render: () => <div className="w-64"><Field label="Ngày ký hợp đồng" error="Ngày ký phải trước ngày hiệu lực."><DatePicker defaultValue="2026-11-20" /></Field></div> },
+      { title: '6 · Small, no visible label · disabled', render: () => <div className="grid w-48 gap-3"><DatePicker size="sm" aria-label="Lọc từ ngày" defaultValue="2026-10-01" /><DatePicker size="sm" aria-label="Ngày khoá sổ" defaultValue="2026-09-30" disabled /></div> },
+      { title: '7 · Calendar (the open state)', note: 'Selected, today (ring), outside-month and disabled days.', render: () => <div className="w-[296px] rounded-md border border-border bg-surface p-2"><Calendar value={addDays(todayIso(), 2)} min={addDays(todayIso(), -3)} /></div> }] },
   planned('upload', 'File upload / dropzone', 'Core', 'Drag-drop PDFs and images, per-file progress.'),
   planned('drawer', 'Drawer', 'Core', 'Side panel for record detail.'),
 

@@ -126,6 +126,7 @@
   .dtx-input:hover { border-color: color-mix(in srgb, var(--dtx-primary) 45%, var(--dtx-border-strong)); }
   .dtx-input:focus-visible, .dtx-select-trigger:focus-visible { outline: none; border-color: var(--dtx-primary); box-shadow: 0 0 0 3px rgb(37 130 215 / .3), 0 0 18px rgb(37 130 215 / .25); }
   .dtx-input[data-invalid] { border-color: var(--dtx-tone-err); }
+  .dtx-input:disabled { opacity: .5; cursor: not-allowed; }
 
   /* ---------- select ---------- */
   .dtx-select-trigger {
@@ -218,6 +219,49 @@
   .dtx-check[data-indeterminate] .dtx-check__tick, .dtx-check:not([data-indeterminate]) .dtx-check__dash { display: none; }
   .dtx-radio__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dtx-primary-strong); animation: dtx-pop var(--dtx-dur-base) var(--dtx-ease-emphasis); }
 
+  /* ---------- date picker ---------- */
+  .dtx-date { position: relative; display: block; min-width: 0; }
+  .dtx-date .dtx-input { padding-right: 44px; font-variant-numeric: tabular-nums; }
+  .dtx-date--sm .dtx-input { height: 32px; padding-right: 36px; font-size: var(--dtx-text-xs); }
+  @media (any-pointer: coarse) { .dtx-date .dtx-input { font-size: 16px; } } /* iOS zooms into inputs under 16px */
+  .dtx-date__btn {
+    position: absolute; top: 4px; right: 4px; bottom: 4px; width: 32px; display: grid; place-items: center; padding: 0;
+    border: 0; border-radius: var(--dtx-radius-sm); background: none; color: var(--dtx-fg-muted); cursor: pointer;
+  }
+  .dtx-date--sm .dtx-date__btn { width: 24px; }
+  .dtx-date__btn:hover:not(:disabled) { background: var(--dtx-hover); color: var(--dtx-fg); }
+  .dtx-date__btn:disabled { opacity: .5; cursor: not-allowed; }
+  .dtx-date__btn svg { width: 16px; height: 16px; }
+  .dtx-date__popup { width: 296px; min-width: 0; max-height: none; padding: 8px; }
+  .dtx-range__icon { width: 16px; height: 16px; flex: none; color: var(--dtx-fg-muted); }
+  .dtx-select-trigger[aria-invalid="true"] { border-color: var(--dtx-tone-err); }
+  .dtx-cal__hint { align-self: center; padding-right: 8px; font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
+  .dtx-cal { display: grid; gap: 4px; }
+  .dtx-cal__head { display: flex; align-items: center; gap: 4px; }
+  .dtx-cal__title { flex: 1; text-align: center; font-size: var(--dtx-text-sm); font-weight: 500; }
+  .dtx-cal__nav { width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 0; border-radius: var(--dtx-radius-sm); background: none; color: var(--dtx-fg); cursor: pointer; }
+  .dtx-cal__nav:hover:not(:disabled) { background: var(--dtx-hover); }
+  .dtx-cal__nav:disabled { opacity: .35; cursor: not-allowed; }
+  .dtx-cal__nav svg { width: 16px; height: 16px; }
+  .dtx-cal table { width: 100%; border-collapse: separate; border-spacing: 0 2px; table-layout: fixed; }
+  .dtx-cal th { height: 28px; font-size: 11px; font-weight: 500; color: var(--dtx-fg-muted); }
+  .dtx-cal td { padding: 0 1px; text-align: center; }
+  /* range: a tinted band from start to end; only the ends are filled. Lighter while previewing the end. */
+  .dtx-cal td[data-range] { background: rgb(37 130 215 / .13); }
+  .dtx-cal table[data-preview] td[data-range] { background: rgb(37 130 215 / .07); }
+  .dtx-cal td[data-range="start"] { border-start-start-radius: var(--dtx-radius-sm); border-end-start-radius: var(--dtx-radius-sm); }
+  .dtx-cal td[data-range="end"] { border-start-end-radius: var(--dtx-radius-sm); border-end-end-radius: var(--dtx-radius-sm); }
+  .dtx-cal__day {
+    width: 100%; height: 34px; padding: 0; border: 0; border-radius: var(--dtx-radius-sm); background: none; cursor: pointer;
+    font: 400 var(--dtx-text-sm) var(--dtx-font); font-variant-numeric: tabular-nums; color: var(--dtx-fg);
+  }
+  .dtx-cal__day:hover:not(:disabled) { background: var(--dtx-hover); }
+  .dtx-cal__day[data-outside] { color: var(--dtx-fg-muted); }
+  .dtx-cal__day[aria-current="date"] { font-weight: 700; box-shadow: inset 0 0 0 1px var(--dtx-primary); }
+  .dtx-cal td[aria-selected="true"]:not([data-range="mid"]) > .dtx-cal__day { background: var(--dtx-primary-strong); color: var(--dtx-on-primary); font-weight: 500; }
+  .dtx-cal__day:disabled { opacity: .45; text-decoration: line-through; cursor: not-allowed; } /* strike, not only fade: outside-month days are faded too */
+  .dtx-cal__foot { display: flex; justify-content: space-between; margin: 4px -8px -8px; padding: 4px; border-top: 1px solid var(--dtx-border); }
+
   /* ---------- switch ---------- */
   .dtx-switch-label { display: inline-flex; align-items: center; gap: 10px; font-size: var(--dtx-text-sm); font-weight: 500; cursor: pointer; }
   .dtx-switch { position: relative; width: 36px; height: 20px; flex: none; padding: 0; border: 0; border-radius: 999px; background: var(--dtx-border-strong); cursor: pointer; transition: background var(--dtx-dur-fast); }
@@ -232,8 +276,8 @@
   .dtx-tabs__indicator { position: absolute; bottom: -1px; left: 0; height: 2px; width: var(--active-tab-width); translate: var(--active-tab-left); background: var(--dtx-primary); transition: translate var(--dtx-dur-slow) var(--dtx-ease-emphasis), width var(--dtx-dur-slow) var(--dtx-ease-emphasis); }
   .dtx-tabs__panel { padding-top: 16px; outline: none; }
   .dtx-tabs__panel:not([hidden]) { animation: dtx-fade-up var(--dtx-dur-slow) var(--dtx-ease-enter); }
-  .dtx-seg { display: inline-flex; padding: 3px; gap: 2px; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface); }
-  .dtx-seg__item { min-height: 28px; padding: 0 10px; border: 0; border-radius: var(--dtx-radius-sm); background: none; font: 500 var(--dtx-text-xs) var(--dtx-font); color: var(--dtx-fg-muted); cursor: pointer; transition: background var(--dtx-dur-fast), color var(--dtx-dur-fast); }
+  .dtx-seg { display: inline-flex; flex-wrap: wrap; max-width: 100%; padding: 3px; gap: 2px; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface); }
+  .dtx-seg__item { flex: none; white-space: nowrap; min-height: 28px; padding: 0 10px; border: 0; border-radius: var(--dtx-radius-sm); background: none; font: 500 var(--dtx-text-xs) var(--dtx-font); color: var(--dtx-fg-muted); cursor: pointer; transition: background var(--dtx-dur-fast), color var(--dtx-dur-fast); }
   .dtx-seg__item:hover { color: var(--dtx-fg); }
   .dtx-seg__item[data-pressed] { background: rgb(37 130 215 / .13); color: var(--dtx-tone-brand); }
   .dtx-seg--solid .dtx-seg__item[data-pressed] { background: var(--dtx-primary-strong); color: var(--dtx-on-primary); }
