@@ -1,0 +1,21 @@
+# @dtx/ui
+
+| Folder | What lives there |
+|---|---|
+| `core/` | Generic controls: Button, Badge, Field/Input, Select, Switch, Tabs, Segmented, Tooltip, Dialog, Toast, Avatar |
+| `layout/` | Page structure: Card, AppShell, Sidebar, Topbar, CommandButton |
+| `data/` | Data display: KpiCard, DataTable, Sparkline, TargetBar, CategoryBar, Meter, StackedBarChart |
+| `motion/` | Generic motion: Reveal, Skeleton, Loadable, CountUp, useReducedMotion |
+| `brand/` | DIGI-TEXX identity: Logo, TechBackdrop, Display/Lede/Eyebrow, SectionHeader, HexIcon, theme |
+| `ai/shared/` | Reused by several AI tasks: BoxOverlay, Confidence*, CompareSlider and ScanBeam (both take `before`/`after`), ScanReveal, toBox, SampleInvoice |
+| `ai/preprocess/` | Geometry steps on one page: Preprocess (crop, deskew, unwarp), UnwarpView (real lattice stretch). Pixel steps are before/after pairs of pages (no component). PreprocessPipeline, PreprocessStack |
+| `ai/ocr/` | OcrDocument + normalizeOcr (engine JSON → boxes), OcrShowcase pipeline player |
+| `ai/extraction/` | DocumentScan (field extraction visual) |
+| `ai/try-on/`, `ai/enhance/`, `ai/remove-bg/` | Planned. Same shape: one folder per task, components + their animations + css |
+
+Rule of thumb: generic UI → `core/ layout/ data/ motion/ brand/`. Belongs to one AI task → `ai/<task>/`. Used by two or more tasks → `ai/shared/`.
+Each task folder owns its `.css`; `styles.css` imports them all into `@layer dtx`.
+
+Before/after rule: a pixel step (binarize, denoise, grayscale, enhance) is a pair of pages (the service's two images),
+never a component or a step name. Pick the presentation: `<CompareSlider before after>` (by hand) or
+`<ScanBeam before after>` (by scan).

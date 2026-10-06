@@ -1,0 +1,1068 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DIGI-TEXX Frontend Kit Proof</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400;1,700&display=swap">
+<style>
+/* Layout: one page, three surfaces — Website (dark brand band), App (ops dashboard), Foundations (tokens + components).
+   Rules from the guideline PDF: Roboto only (Arial fallback), #2582D7 leads, secondaries only next to blue.
+   Sampled = pixel-sampled from PDF artwork. Kit = our decision, not a brand rule. */
+:root {
+  /* brand (PDF) */
+  --dtx-blue: #2582D7;
+  --dtx-lime: #A5CB1F; --dtx-amber: #F6B71E; --dtx-violet: #9127D6;
+  --dtx-ink: #231F20; --dtx-gray: #6E6F72;
+  /* sampled from PDF p.11 swatches */
+  --dtx-navy: #26385D; --dtx-ocean: #137BB6; --dtx-sky: #30AAE0; --dtx-light: #7BD2F2; --dtx-ice: #A8E5F5;
+  /* sampled PDF layout colours */
+  --dtx-canvas-dark: #1E1D23; --dtx-panel: #F0F0F0;
+  --dtx-bar: linear-gradient(90deg, #00ACEB, #004EBE);
+
+  /* semantic — light (kit) */
+  --bg: #F0F0F0;
+  --surface: #FFFFFF;
+  --surface-2: #F6F7F9;
+  --border: rgb(38 56 93 / .13);
+  --border-strong: rgb(38 56 93 / .24);
+  --fg: #1B1A1F;
+  --fg-muted: #55575C;
+  --link: #137BB6;
+  --primary: #2582D7;
+  --primary-strong: #1A6FBF;   /* fill behind small white text: 5.16:1 */
+  --on-primary: #FFFFFF;
+  --focus: #2582D7;
+  --grid-line: rgb(38 56 93 / .06);
+  --ok-bg: rgb(165 203 31 / .18); --ok-fg: #3F5208;
+  --warn-bg: rgb(246 183 30 / .2); --warn-fg: #6B4A00;
+  --err-bg: rgb(217 58 58 / .12); --err-fg: #A12424;
+  --info-bg: rgb(37 130 215 / .12); --info-fg: #135E9F;
+  --shadow-pop: 0 12px 32px rgb(38 56 93 / .16);
+  --hover: rgb(38 56 93 / .06);
+  --nav-active: #135E9F;
+  --b-brand: #135E9F; --b-ok: #3F5208; --b-warn: #6B4A00; --b-err: #A12424; --b-neutral: #47494E; --b-violet: #6A1DA0;
+
+  /* type (PDF: Roboto) */
+  --font: "Roboto", Arial, "Helvetica Neue", sans-serif;
+  --t-xs: .75rem; --t-sm: .875rem; --t-base: 1rem; --t-lg: 1.25rem; --t-xl: 1.5rem;
+  --t-h2: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --t-display: clamp(2.25rem, 1.4rem + 3.4vw, 4.25rem);
+
+  /* shape + motion (kit) */
+  --r-sm: 4px; --r-md: 6px; --r-lg: 10px;
+  /* motion — durations (Fluent/Carbon range), easings (Material 3) */
+  --dur-instant: 70ms; --dur-fast: 120ms; --dur-base: 200ms; --dur-slow: 320ms; --dur-page: 480ms;
+  --ease-standard: cubic-bezier(.2,0,0,1);
+  --ease-enter: cubic-bezier(0,0,0,1);
+  --ease-exit: cubic-bezier(.3,0,1,1);
+  --ease-emphasis: cubic-bezier(.05,.7,.1,1);
+  --ease-out: var(--ease-enter);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #1E1D23; --surface: #26252C; --surface-2: #2E2D36;
+  --border: rgb(255 255 255 / .09); --border-strong: rgb(255 255 255 / .17);
+  --fg: #F4F5F7; --fg-muted: #B8BAC0; --link: #30AAE0;
+  --focus: #30AAE0; --grid-line: rgb(255 255 255 / .04);
+  --ok-bg: rgb(165 203 31 / .16); --ok-fg: #C4E35A;
+  --warn-bg: rgb(246 183 30 / .16); --warn-fg: #F8CB5C;
+  --err-bg: rgb(240 90 90 / .16); --err-fg: #FF9A9A;
+  --info-bg: rgb(48 170 224 / .16); --info-fg: #7BD2F2;
+  --shadow-pop: 0 12px 40px rgb(0 0 0 / .45);
+  --hover: rgb(255 255 255 / .06); --nav-active: #7BD2F2;
+  --b-brand: #7BD2F2; --b-ok: #C4E35A; --b-warn: #F8CB5C; --b-err: #FF9A9A; --b-neutral: #C9CBD1; --b-violet: #D9B3F5;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #1E1D23; --surface: #26252C; --surface-2: #2E2D36;
+  --border: rgb(255 255 255 / .09); --border-strong: rgb(255 255 255 / .17);
+  --fg: #F4F5F7; --fg-muted: #B8BAC0; --link: #30AAE0;
+  --focus: #30AAE0; --grid-line: rgb(255 255 255 / .04);
+  --ok-bg: rgb(165 203 31 / .16); --ok-fg: #C4E35A;
+  --warn-bg: rgb(246 183 30 / .16); --warn-fg: #F8CB5C;
+  --err-bg: rgb(240 90 90 / .16); --err-fg: #FF9A9A;
+  --info-bg: rgb(48 170 224 / .16); --info-fg: #7BD2F2;
+  --shadow-pop: 0 12px 40px rgb(0 0 0 / .45);
+  --hover: rgb(255 255 255 / .06); --nav-active: #7BD2F2;
+  --b-brand: #7BD2F2; --b-ok: #C4E35A; --b-warn: #F8CB5C; --b-err: #FF9A9A; --b-neutral: #C9CBD1; --b-violet: #D9B3F5;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: 72px; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 var(--t-base)/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { margin: 0; line-height: 1.2; text-wrap: balance; }
+p { margin: 0; }
+a { color: var(--link); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ---------- kit chrome ---------- */
+.kitbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+.kitbar-in { max-width: 1240px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.kit-name { font-weight: 700; font-size: var(--t-sm); letter-spacing: .02em; display: flex; align-items: center; gap: 10px; }
+.kit-name span { color: var(--fg-muted); font-weight: 400; }
+.tabs { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); }
+.tab { font: 500 var(--t-sm) var(--font); color: var(--fg-muted); background: none; border: 0; padding: 6px 12px; border-radius: var(--r-sm); cursor: pointer; min-height: 32px; transition: background var(--dur-fast), color var(--dur-fast); }
+.tab:hover { color: var(--fg); }
+.tab[aria-selected="true"] { background: var(--primary-strong); color: var(--on-primary); }
+.spacer { flex: 1; }
+
+/* ---------- buttons ---------- */
+.btn { font: 500 var(--t-sm)/1 var(--font); display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 18px; border-radius: var(--r-md); border: 1px solid transparent; cursor: pointer; text-decoration: none; transition: background var(--dur-fast), box-shadow var(--dur-fast), transform var(--dur-fast) var(--ease-out); }
+.btn-primary { background: var(--primary-strong); color: var(--on-primary); box-shadow: inset 0 1px 0 rgb(255 255 255 / .18); }
+.btn-primary:hover { background: #155C9F; box-shadow: inset 0 1px 0 rgb(255 255 255 / .18), 0 0 24px rgb(37 130 215 / .45); }
+.btn-lg { min-height: 48px; padding: 0 24px; font-size: 1.1875rem; font-weight: 700; } /* 19px bold = large text → #2582D7 allowed */
+.btn-lg.btn-primary { background: var(--primary); }
+.btn-lg.btn-primary:hover { background: var(--primary-strong); }
+.btn-secondary { background: transparent; color: var(--fg); border-color: var(--border-strong); }
+.btn-secondary:hover { background: var(--surface-2); }
+.btn-ghost { background: transparent; color: var(--link); }
+.btn-ghost:hover { background: var(--info-bg); }
+.btn:active { transform: translateY(1px); }
+.btn-icon { width: 36px; min-height: 36px; padding: 0; justify-content: center; }
+
+/* ---------- badges (Radix soft/surface model, alpha tones work in both themes) ---------- */
+.badge { --c: 37 130 215; --t: var(--b-brand); display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 8px; font: 500 12px/1 var(--font); border-radius: var(--r-sm); white-space: nowrap; background: rgb(var(--c) / .13); color: var(--t); font-variant-numeric: tabular-nums; }
+.t-brand { --c: 37 130 215; --t: var(--b-brand); }
+.t-ok { --c: 165 203 31; --t: var(--b-ok); }
+.t-warn { --c: 246 183 30; --t: var(--b-warn); }
+.t-err { --c: 217 58 58; --t: var(--b-err); }
+.t-neutral { --c: 110 111 114; --t: var(--b-neutral); }
+.t-violet { --c: 145 39 214; --t: var(--b-violet); }
+.b-surface { box-shadow: inset 0 0 0 1px rgb(var(--c) / .38); }
+.b-outline { background: transparent; box-shadow: inset 0 0 0 1px rgb(var(--c) / .6); }
+.b-solid { background: rgb(var(--c)); color: #fff; }
+.t-brand.b-solid { background: #1A6FBF; }
+.t-err.b-solid { background: #C42B2B; }
+.t-ok.b-solid, .t-warn.b-solid { color: #231F20; }
+.b-sm { height: 18px; padding: 0 6px; font-size: 11px; gap: 4px; }
+.b-lg { height: 26px; padding: 0 10px; font-size: 13px; }
+.b-pill { border-radius: 999px; }
+.badge .dot { width: 6px; height: 6px; border-radius: 1px; background: rgb(var(--c)); flex: none; position: relative; }
+.b-solid .dot { background: currentColor; }
+.b-live .dot::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: inherit; }
+@media (prefers-reduced-motion: no-preference) { .b-live .dot::after { animation: ping 1.4s var(--ease-exit) infinite; } }
+@keyframes ping { to { transform: scale(2.8); opacity: 0; } }
+.b-counter { min-width: 20px; height: 18px; padding: 0 5px; justify-content: center; font-weight: 600; font-size: 11px; }
+.badge svg { width: 12px; height: 12px; flex: none; }
+.badge .x { display: grid; place-items: center; width: 16px; height: 16px; margin-right: -4px; border: 0; padding: 0; border-radius: 3px; background: none; color: inherit; cursor: pointer; }
+.badge .x:hover { background: rgb(var(--c) / .2); }
+.b-ring circle + circle { transition: stroke-dashoffset var(--dur-page) var(--ease-standard); }
+
+/* ================= WEBSITE ================= */
+.hero { position: relative; overflow: hidden; background: #1E1D23; color: #F4F5F7; isolation: isolate; }
+.hero::before { /* fading grid */
+  content: ""; position: absolute; inset: 0; z-index: -2;
+  background-image: linear-gradient(rgb(255 255 255 / .05) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / .05) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 80% at 70% 30%, #000 30%, transparent 75%);
+}
+.hero::after { /* blue glow */
+  content: ""; position: absolute; z-index: -1; width: 720px; height: 720px; right: -160px; top: -240px;
+  background: radial-gradient(circle, rgb(37 130 215 / .38), transparent 65%);
+}
+.circuit { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; opacity: .5; pointer-events: none; }
+.circuit path { fill: none; stroke: #2582D7; stroke-width: 1.2; }
+.circuit rect { fill: #30AAE0; }
+.site-nav { max-width: 1240px; margin: 0 auto; padding: 20px 16px; display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+.site-nav img { width: 150px; height: auto; display: block; }
+.site-nav nav { display: flex; gap: 24px; font-size: var(--t-sm); flex-wrap: wrap; }
+.site-nav nav a { color: #B8BAC0; text-decoration: none; padding-block: 6px; border-bottom: 2px solid transparent; }
+.site-nav nav a:hover, .site-nav nav a[aria-current] { color: #fff; border-color: #2582D7; }
+.lang { margin-left: auto; font-size: var(--t-xs); color: #B8BAC0; border: 1px solid rgb(255 255 255 / .16); border-radius: var(--r-sm); padding: 4px 8px; }
+.hero-in { max-width: 1240px; margin: 0 auto; padding: 56px 16px 72px; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: var(--t-xs); font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: #7BD2F2; }
+.eyebrow::before { content: ""; width: 32px; height: 4px; background: var(--dtx-bar); }
+.hero h1 { margin-top: 20px; font-size: var(--t-display); font-weight: 700; font-style: italic; text-transform: uppercase; letter-spacing: .005em; line-height: 1.15; }
+.hero h1 em { font-style: italic; background: linear-gradient(90deg, #30AAE0, #7BD2F2); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero .lede { margin-top: 20px; max-width: 34rem; font-size: var(--t-lg); font-weight: 300; color: #C9CBD1; line-height: 1.55; }
+.hero-cta { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
+.hero .btn-secondary { color: #fff; border-color: rgb(255 255 255 / .24); }
+.hero .btn-secondary:hover { background: rgb(255 255 255 / .06); }
+
+/* extraction demo */
+.demo { position: relative; border: 1px solid rgb(255 255 255 / .12); border-radius: var(--r-lg); background: rgb(38 37 44 / .72); backdrop-filter: blur(10px); box-shadow: 0 30px 80px rgb(0 0 0 / .5), inset 0 1px 0 rgb(255 255 255 / .05); overflow: hidden; }
+.demo-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid rgb(255 255 255 / .08); font-size: var(--t-xs); color: #B8BAC0; }
+.demo-head b { color: #fff; font-weight: 500; }
+.demo-head .chip { margin-left: auto; background: rgb(48 170 224 / .16); color: #7BD2F2; }
+.demo-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.doc { margin: 16px; padding: 16px; background: #F7F8FA; color: #231F20; border-radius: var(--r-sm); font-size: 11px; line-height: 1.45; position: relative; }
+.doc h4 { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .04em; }
+.doc .row { display: flex; justify-content: space-between; gap: 8px; padding: 3px 4px; border-radius: 2px; }
+.doc .muted { color: #6E6F72; }
+.doc hr { border: 0; border-top: 1px dashed #C9CBD1; margin: 8px 0; }
+.scan { position: absolute; left: 0; right: 0; height: 36px; top: 0; background: linear-gradient(180deg, transparent, rgb(37 130 215 / .22), transparent); border-bottom: 1px solid rgb(37 130 215 / .7); }
+.fields { padding: 16px 16px 16px 0; display: grid; gap: 8px; align-content: start; }
+.field { border: 1px solid rgb(255 255 255 / .08); border-radius: var(--r-sm); padding: 8px 10px; background: rgb(30 29 35 / .6); }
+.field small { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: #8E9097; }
+.field small i { font-style: normal; color: #C4E35A; letter-spacing: 0; }
+.field div { font-size: var(--t-sm); color: #fff; font-weight: 500; margin-top: 2px; }
+.hl { box-shadow: inset 0 0 0 1px rgb(37 130 215 / .8); background: rgb(37 130 215 / .12); }
+@media (prefers-reduced-motion: no-preference) {
+  .scan { animation: scan 3.6s var(--ease-out) infinite; }
+  .field { animation: rise .5s var(--ease-out) both; }
+  .field:nth-child(2) { animation-delay: .12s } .field:nth-child(3) { animation-delay: .24s } .field:nth-child(4) { animation-delay: .36s } .field:nth-child(5) { animation-delay: .48s }
+}
+@media (prefers-reduced-motion: reduce) { .scan { display: none; } }
+@keyframes scan { 0% { top: -36px } 70%, 100% { top: 100% } }
+@keyframes rise { from { opacity: .3; transform: translateY(6px) } to { opacity: 1; transform: none } }
+
+/* solutions bento */
+.section { max-width: 1240px; margin: 0 auto; padding: 72px 16px; }
+.section-head { display: grid; gap: 12px; max-width: 40rem; margin-bottom: 32px; }
+.bar { width: 48px; height: 6px; background: var(--dtx-bar); }
+.section-head h2 { font-size: var(--t-h2); font-weight: 700; letter-spacing: -.01em; }
+.section-head p { color: var(--fg-muted); }
+.bento { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+.tile { grid-column: span 2; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 24px; display: grid; gap: 12px; align-content: start; transition: border-color var(--dur-base), transform var(--dur-base) var(--ease-out); }
+.tile:hover { border-color: var(--primary); transform: translateY(-2px); }
+.tile.wide { grid-column: span 3; }
+.tile h3 { font-size: var(--t-lg); font-weight: 700; }
+.tile h3 small { display: block; font-size: var(--t-xs); font-weight: 500; letter-spacing: .1em; color: var(--link); text-transform: uppercase; margin-bottom: 6px; }
+.tile p { color: var(--fg-muted); font-size: var(--t-sm); }
+.hex { width: 44px; height: 50px; display: grid; place-items: center; background: var(--primary); color: #fff; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+.hex svg { width: 20px; height: 20px; }
+.tile.feature { grid-column: span 6; grid-template-columns: minmax(0, 1fr) auto; align-items: center; background: var(--dtx-navy); border-color: transparent; color: #fff; position: relative; overflow: hidden; }
+.tile.feature::after { content: ""; position: absolute; inset: 0; background-image: radial-gradient(rgb(255 255 255 / .1) 1px, transparent 1px); background-size: 14px 14px; mask-image: linear-gradient(90deg, transparent 40%, #000); pointer-events: none; }
+.tile.feature p { color: #C9D3E6; max-width: 46rem; }
+.tile.feature h3 small { color: #7BD2F2; }
+
+.site-foot { background: #1E1D23; color: #B8BAC0; font-size: var(--t-sm); }
+.site-foot-in { max-width: 1240px; margin: 0 auto; padding: 32px 16px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.site-foot img { width: 140px; display: block; }
+
+/* ================= APP ================= */
+.app { max-width: 1240px; margin: 24px auto; padding-inline: 16px; }
+.shell { display: grid; grid-template-columns: 232px minmax(0, 1fr); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); min-height: 720px; }
+.side { background: var(--surface-2); border-right: 1px solid var(--border); padding: 8px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ws { display: flex; align-items: center; gap: 10px; width: 100%; height: 54px; padding: 0 8px; margin-bottom: 4px; border: 0; border-radius: var(--r-md); background: none; color: var(--fg); font: inherit; text-align: left; cursor: pointer; transition: background var(--dur-fast); }
+.ws:hover { background: var(--hover); }
+.ws img { width: 38px; height: 38px; flex: none; }
+.ws b { display: block; font-size: 13px; font-weight: 700; }
+.ws small { display: block; font-size: 12px; color: var(--fg-muted); }
+.ws .chev { margin-left: auto; color: var(--fg-muted); flex: none; }
+.grp { margin-top: 6px; }
+.grp summary { list-style: none; display: flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: var(--r-sm); font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-muted); cursor: pointer; user-select: none; }
+.grp summary::-webkit-details-marker { display: none; }
+.grp summary:hover { color: var(--fg); }
+.grp summary svg { width: 12px; height: 12px; transition: transform var(--dur-fast) var(--ease-standard); }
+.grp[open] summary svg { transform: rotate(90deg); }
+.grp .items { display: grid; gap: 2px; }
+@media (prefers-reduced-motion: no-preference) { .grp[open] .items { animation: drop var(--dur-base) var(--ease-enter); } }
+@keyframes drop { from { opacity: 0; transform: translateY(-4px); } }
+.nav-item { position: relative; display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 10px; border-radius: var(--r-sm); color: var(--fg-muted); text-decoration: none; font-size: 13px; transition: background var(--dur-fast), color var(--dur-fast); }
+.nav-item > svg { width: 16px; height: 16px; flex: none; opacity: .75; }
+.nav-item:hover { background: var(--hover); color: var(--fg); }
+.nav-item::before { content: ""; position: absolute; left: 0; top: 7px; bottom: 7px; width: 2px; border-radius: 1px; background: var(--primary); transform: scaleY(0); transition: transform var(--dur-slow) var(--ease-emphasis); }
+.nav-item[aria-current] { background: rgb(37 130 215 / .12); color: var(--nav-active); font-weight: 500; }
+.nav-item[aria-current]::before { transform: scaleY(1); }
+.nav-item[aria-current] > svg { opacity: 1; }
+.nav-item .meta { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.nav-item .n { font-size: 11px; color: var(--fg-muted); font-variant-numeric: tabular-nums; }
+.nav-item kbd { display: none; font: 500 10px var(--font); color: var(--fg-muted); border: 1px solid var(--border-strong); border-radius: 3px; padding: 1px 4px; }
+.nav-item:hover kbd, .nav-item:focus-visible kbd { display: inline-block; }
+.nav-item:hover .n, .nav-item:focus-visible .n { display: none; }
+.side-foot { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 10px 8px 4px; border-top: 1px solid var(--border); }
+.side-foot b { display: block; font-size: 13px; font-weight: 500; }
+.side-foot small { display: block; font-size: 11px; color: var(--fg-muted); }
+.side-foot .avatar { width: 28px; height: 28px; flex: none; }
+.side-foot .more { margin-left: auto; width: 28px; height: 28px; display: grid; place-items: center; border: 0; border-radius: var(--r-sm); background: none; color: var(--fg-muted); cursor: pointer; }
+.side-foot .more:hover { background: var(--hover); color: var(--fg); }
+/* collapsed icon rail (Ctrl+B) */
+.shell { transition: grid-template-columns var(--dur-slow) var(--ease-standard); }
+.shell.rail { grid-template-columns: 60px minmax(0, 1fr); }
+.rail .l, .rail .grp summary { display: none; }
+.rail .ws, .rail .nav-item, .rail .side-foot { justify-content: center; padding-inline: 0; }
+.rail .side-foot { border-top: 0; }
+.rail .nav-item[data-alert]::after { content: ""; position: absolute; top: 6px; right: 12px; width: 6px; height: 6px; border-radius: 1px; background: var(--dtx-amber); }
+.rail-btn[aria-pressed="true"] svg { transform: scaleX(-1); }
+.main { min-width: 0; display: flex; flex-direction: column; }
+.topbar { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.crumbs { font-size: var(--t-sm); color: var(--fg-muted); }
+.crumbs b { color: var(--fg); font-weight: 500; }
+.cmdk { margin-left: auto; display: flex; align-items: center; gap: 10px; min-width: min(320px, 100%); padding: 0 10px; height: 36px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-2); color: var(--fg-muted); font: 400 var(--t-sm) var(--font); cursor: pointer; }
+.cmdk kbd { margin-left: auto; font: 500 11px var(--font); border: 1px solid var(--border-strong); border-radius: 3px; padding: 1px 5px; }
+.avatar { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--r-md); background: var(--dtx-navy); color: #fff; font-size: var(--t-xs); font-weight: 700; }
+.content { padding: 24px 20px 32px; display: grid; gap: 24px; }
+.page-head { display: flex; align-items: end; gap: 16px; flex-wrap: wrap; }
+.page-head h1 { font-size: var(--t-xl); font-weight: 700; letter-spacing: -.01em; }
+.page-head p { color: var(--fg-muted); font-size: var(--t-sm); margin-top: 4px; }
+.page-head .actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+.sample { font-size: var(--t-xs); color: var(--fg-muted); border: 1px dashed var(--border-strong); border-radius: var(--r-sm); padding: 2px 8px; }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.kpi { border: 1px solid var(--border); border-radius: var(--r-lg); padding: 16px; display: grid; grid-template-rows: auto auto 28px auto; gap: 8px; background: var(--surface); min-width: 0; }
+.kpi-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 22px; }
+.kpi .label { font-size: var(--t-xs); color: var(--fg-muted); font-weight: 500; letter-spacing: .02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kpi .value { font-size: 1.75rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+.kpi .value small { font-size: var(--t-sm); font-weight: 400; color: var(--fg-muted); margin-left: 2px; letter-spacing: 0; }
+.kpi .viz { align-self: center; min-width: 0; }
+.kpi .spark { display: block; width: 100%; height: 28px; overflow: visible; }
+.kpi .cap { display: flex; align-items: center; gap: 6px; font-size: var(--t-xs); color: var(--fg-muted); min-width: 0; }
+.kpi .cap b { color: var(--fg); font-weight: 500; }
+.kpi .cap svg { width: 14px; height: 14px; flex: none; }
+.target { position: relative; height: 6px; border-radius: 2px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--border); }
+.target i { position: absolute; inset: 0 auto 0 0; border-radius: 2px; background: var(--primary); }
+.target u { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--fg); border-radius: 1px; }
+.catbar { display: flex; gap: 2px; height: 6px; }
+.catbar i { border-radius: 2px; }
+.catbar-legend { display: flex; gap: 10px; margin-top: 6px; font-size: 11px; color: var(--fg-muted); }
+.catbar-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.catbar-legend span::before { content: ""; width: 6px; height: 6px; border-radius: 1px; background: var(--k); }
+.ic-warn { color: var(--b-warn); } .ic-ok { color: var(--b-ok); } .ic-brand { color: var(--b-brand); }
+.up { color: var(--ok-fg); font-weight: 500; } .down { color: var(--err-fg); font-weight: 500; }
+.panels { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; }
+.panel { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); min-width: 0; }
+.panel-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.panel-head h2 { font-size: var(--t-base); font-weight: 700; }
+.panel-head .seg { margin-left: auto; }
+.seg { display: flex; border: 1px solid var(--border); border-radius: var(--r-md); overflow: hidden; }
+.seg button { font: 500 var(--t-xs) var(--font); border: 0; background: none; color: var(--fg-muted); padding: 0 10px; min-height: 28px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--info-bg); color: var(--info-fg); }
+.chart { padding: 12px 16px 16px; }
+.chart svg { width: 100%; height: 220px; display: block; }
+.chart text { fill: var(--fg-muted); font: 400 11px var(--font); }
+.legend { display: flex; gap: 16px; font-size: var(--t-xs); color: var(--fg-muted); padding: 0 16px 14px; flex-wrap: wrap; }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px; }
+.legend .l1::before { background: var(--primary); } .legend .l2::before { background: var(--dtx-light); }
+.queue { display: grid; gap: 0; }
+.qrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: var(--t-sm); }
+.qrow:last-child { border-bottom: 0; }
+.qrow b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qrow small { color: var(--fg-muted); font-size: var(--t-xs); }
+.meter { grid-column: 1 / -1; height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+.meter i { display: block; height: 100%; background: var(--primary); }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+th { text-align: left; font-size: var(--t-xs); font-weight: 500; color: var(--fg-muted); letter-spacing: .02em; padding: 10px 16px; border-bottom: 1px solid var(--border); white-space: nowrap; background: var(--surface-2); }
+td { padding: 0 16px; height: 44px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+tbody tr { transition: background var(--dur-fast); }
+tbody tr:hover { background: var(--surface-2); }
+tbody tr:last-child td { border-bottom: 0; }
+td.r, th.r { text-align: right; }
+.mono-id { font-variant-numeric: tabular-nums; letter-spacing: .02em; color: var(--link); font-weight: 500; }
+
+/* ================= FOUNDATIONS ================= */
+.found { max-width: 1240px; margin: 0 auto; padding: 40px 16px 72px; display: grid; gap: 48px; }
+.found h2 { font-size: var(--t-xl); font-weight: 700; }
+.found .sub { color: var(--fg-muted); font-size: var(--t-sm); margin-top: 4px; max-width: 46rem; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 20px; }
+.sw { border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); }
+.sw i { display: block; height: 64px; }
+.sw div { padding: 10px 12px; display: grid; gap: 2px; font-size: var(--t-xs); }
+.sw b { font-size: var(--t-sm); font-weight: 500; }
+.src { justify-self: start; margin-top: 4px; font-size: 10px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; padding: 1px 6px; border-radius: 3px; }
+.src-rule { background: var(--info-bg); color: var(--info-fg); }
+.src-sampled { background: var(--warn-bg); color: var(--warn-fg); }
+.src-kit { background: var(--surface-2); color: var(--fg-muted); border: 1px solid var(--border); }
+.typescale { margin-top: 20px; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); }
+.ts { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 16px; align-items: baseline; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.ts:last-child { border-bottom: 0; }
+.ts code { font: 400 var(--t-xs) var(--font); color: var(--fg-muted); }
+.ts p { overflow-wrap: anywhere; }
+.comps { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.comp { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); padding: 20px; display: grid; gap: 14px; align-content: start; }
+.comp h3 { font-size: var(--t-xs); font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-muted); }
+.row-wrap { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.field-ui { display: grid; gap: 6px; }
+.field-ui label { font-size: var(--t-sm); font-weight: 500; }
+.field-ui input { font: 400 var(--t-sm) var(--font); color: var(--fg); background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: var(--r-md); height: 40px; padding: 0 12px; transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+.field-ui input:focus-visible, .sel-trigger:focus-visible { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgb(37 130 215 / .3), 0 0 18px rgb(37 130 215 / .25); }
+.field-ui .hint { font-size: var(--t-xs); color: var(--fg-muted); }
+.contrast { width: 100%; font-size: var(--t-sm); }
+.contrast td { height: 36px; padding: 0 8px; }
+.contrast .pair { display: inline-flex; align-items: center; justify-content: center; min-width: 64px; height: 26px; border-radius: 3px; font-weight: 500; font-size: var(--t-xs); }
+
+
+
+/* ---------- select (APG select-only combobox) ---------- */
+.sel { position: relative; }
+.sel-trigger { width: 100%; height: 40px; display: flex; align-items: center; gap: 10px; padding: 0 10px 0 12px; font: 400 var(--t-sm) var(--font); color: var(--fg); text-align: left; background: var(--surface-2); border: 1px solid var(--border-strong); border-radius: var(--r-md); cursor: pointer; transition: border-color var(--dur-fast), box-shadow var(--dur-fast), background var(--dur-fast); }
+.sel-trigger:hover { border-color: color-mix(in srgb, var(--primary) 45%, var(--border-strong)); }
+.sel-trigger[aria-expanded="true"] { border-color: var(--primary); box-shadow: 0 0 0 3px rgb(37 130 215 / .2); }
+.sel-trigger .val { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.sel-trigger .chev { width: 16px; height: 16px; color: var(--fg-muted); flex: none; transition: transform var(--dur-base) var(--ease-standard); }
+.sel-trigger[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.doc-ic { width: 22px; height: 22px; flex: none; display: grid; place-items: center; border-radius: var(--r-sm); background: rgb(var(--c) / .14); color: var(--t); }
+.doc-ic svg { width: 13px; height: 13px; }
+.sel-pop { position: absolute; z-index: 20; left: 0; right: 0; top: calc(100% + 6px); padding: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow-pop); max-height: 300px; overflow-y: auto; transform-origin: top center; }
+.sel-pop[hidden] { display: block !important; visibility: hidden; opacity: 0; transform: translateY(-4px) scale(.97); pointer-events: none; transition: opacity var(--dur-fast) var(--ease-exit), transform var(--dur-fast) var(--ease-exit), visibility 0s var(--dur-fast); }
+.sel-pop:not([hidden]) { opacity: 1; transform: none; transition: opacity var(--dur-base) var(--ease-enter), transform var(--dur-base) var(--ease-enter); }
+.sel-search { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 8px; margin-bottom: 4px; border-bottom: 1px solid var(--border); color: var(--fg-muted); }
+.sel-search input { flex: 1; min-width: 0; border: 0; background: none; font: 400 var(--t-sm) var(--font); color: var(--fg); outline: none; height: 100%; }
+.sel-group { padding: 8px 8px 4px; font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-muted); }
+.sel-opt { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 6px 8px; border-radius: var(--r-sm); cursor: pointer; font-size: var(--t-sm); user-select: none; }
+.sel-opt .txt { flex: 1; min-width: 0; display: grid; }
+.sel-opt .txt small { font-size: 11px; color: var(--fg-muted); }
+.sel-opt .ck { width: 16px; height: 16px; color: var(--primary); opacity: 0; transform: scale(.6); transition: opacity var(--dur-fast), transform var(--dur-base) var(--ease-emphasis); }
+.sel-opt[aria-selected="true"] { font-weight: 500; }
+.sel-opt[aria-selected="true"] .ck { opacity: 1; transform: none; }
+.sel-opt.active { background: var(--hover); }
+.sel-opt[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+.sel-empty { padding: 16px 8px; text-align: center; font-size: var(--t-xs); color: var(--fg-muted); }
+.sel-sep { height: 1px; background: var(--border); margin: 4px -4px; }
+
+/* ---------- panel entrance ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  [role="tabpanel"]:not([hidden]) { animation: panel-in var(--dur-page) var(--ease-enter); }
+  .found:not([hidden]) > section { animation: panel-in var(--dur-page) var(--ease-enter) both; }
+  .found > section:nth-child(2) { animation-delay: 60ms; } .found > section:nth-child(3) { animation-delay: 120ms; }
+  .found > section:nth-child(4) { animation-delay: 180ms; } .found > section:nth-child(5) { animation-delay: 240ms; }
+  .sw { transition: transform var(--dur-base) var(--ease-standard), box-shadow var(--dur-base); }
+  .sw:hover { transform: translateY(-3px); box-shadow: var(--shadow-pop); }
+}
+@keyframes panel-in { from { opacity: 0; transform: translateY(10px); } }
+
+/* ---------- badge gallery ---------- */
+.bgrid { margin-top: 20px; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow-x: auto; }
+.bgrid table { min-width: 640px; }
+.bgrid th { background: var(--surface-2); }
+.bgrid td { height: 48px; }
+.bgrid td:first-child { color: var(--fg-muted); font-size: var(--t-xs); width: 120px; }
+.specials { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.spec { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); padding: 16px; display: grid; gap: 10px; align-content: start; }
+.spec h3 { font-size: var(--t-xs); font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--fg-muted); }
+.spec p { font-size: var(--t-xs); color: var(--fg-muted); }
+
+/* ---------- motion lab ---------- */
+.mhead { display: flex; align-items: end; gap: 16px; flex-wrap: wrap; }
+.mhead > div { flex: 1; min-width: 0; }
+.switch { display: inline-flex; align-items: center; gap: 10px; font: 500 var(--t-sm) var(--font); color: var(--fg); background: none; border: 0; cursor: pointer; padding: 0; min-height: 32px; }
+.switch .track { width: 36px; height: 20px; border-radius: 999px; background: var(--border-strong); position: relative; transition: background var(--dur-fast); }
+.switch .track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / .3); transition: transform var(--dur-base) var(--ease-emphasis); }
+.switch[aria-checked="true"] .track { background: var(--primary-strong); }
+.switch[aria-checked="true"] .track::after { transform: translateX(16px); }
+.mgrid { margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.mcard { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); padding: 16px; display: grid; gap: 12px; align-content: start; min-width: 0; }
+.mcard.span2 { grid-column: span 2; }
+.mcard h3 { font-size: var(--t-sm); font-weight: 700; display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.mcard h3 code { font: 400 11px var(--font); color: var(--fg-muted); }
+.mcard p { font-size: var(--t-xs); color: var(--fg-muted); }
+.curve { width: 100%; height: 110px; display: block; overflow: visible; }
+.curve .axis { stroke: var(--border-strong); stroke-width: 1; fill: none; }
+.curve .path { stroke: var(--primary); stroke-width: 2.5; fill: none; }
+.curve .hd { stroke: var(--fg-muted); stroke-width: 1; stroke-dasharray: 2 3; fill: none; }
+.curve .pt { fill: var(--surface); stroke: var(--fg-muted); stroke-width: 1.5; }
+.lane { height: 18px; border-radius: 999px; background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--border); padding: 2px; }
+.runner { width: 100%; transition: transform var(--dur-page) var(--e); }
+.runner i { display: block; width: 14px; height: 14px; border-radius: 3px; background: var(--primary); box-shadow: 0 0 12px rgb(37 130 215 / .6); }
+.on .runner { transform: translateX(calc(100% - 14px)); }
+.dur-row { display: grid; grid-template-columns: 92px minmax(0, 1fr) 48px; align-items: center; gap: 10px; font-size: var(--t-xs); color: var(--fg-muted); }
+.dur-bar { height: 8px; border-radius: 2px; background: var(--surface-2); overflow: hidden; }
+.dur-bar i { display: block; height: 100%; background: var(--dtx-bar); transform-origin: left; transform: scaleX(.03); transition: transform var(--d) var(--ease-standard); }
+.on .dur-bar i { transform: scaleX(1); }
+.stage { position: relative; height: 150px; border-radius: var(--r-md); background: var(--surface-2); box-shadow: inset 0 0 0 1px var(--border); overflow: hidden; display: grid; place-items: center; }
+.toast-stack { position: absolute; right: 10px; bottom: 10px; display: grid; gap: 6px; width: min(230px, calc(100% - 20px)); }
+.toast { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-pop); font-size: var(--t-xs); }
+.toast b { font-weight: 500; }
+.toast.in { animation: toast-in var(--dur-slow) var(--ease-emphasis) both; }
+.toast.out { animation: toast-out var(--dur-base) var(--ease-exit) both; }
+@keyframes toast-in { from { opacity: 0; transform: translateX(24px) scale(.98); } }
+@keyframes toast-out { to { opacity: 0; transform: translateX(24px); } }
+.mini-dlg { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(15 15 20 / .45); opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease-standard); }
+.mini-dlg > div { width: 78%; padding: 14px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-pop); font-size: var(--t-xs); display: grid; gap: 8px; transform: scale(.94) translateY(6px); opacity: 0; transition: transform var(--dur-slow) var(--ease-emphasis), opacity var(--dur-base) var(--ease-standard); }
+.mini-dlg b { font-size: var(--t-sm); }
+.mini-dlg.open { opacity: 1; pointer-events: auto; }
+.mini-dlg.open > div { transform: none; opacity: 1; }
+.skel { width: 80%; display: grid; gap: 8px; }
+.skel i { display: block; height: 10px; border-radius: 3px; background: var(--border); position: relative; overflow: hidden; }
+.skel i:nth-child(1) { width: 40%; height: 14px; } .skel i:nth-child(3) { width: 70%; }
+.skel i::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgb(255 255 255 / .55), transparent); transform: translateX(-100%); animation: shimmer 1.3s var(--ease-standard) infinite; }
+:root[data-theme="dark"] .skel i::after { background: linear-gradient(90deg, transparent, rgb(255 255 255 / .1), transparent); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .skel i::after { background: linear-gradient(90deg, transparent, rgb(255 255 255 / .1), transparent); } }
+@keyframes shimmer { to { transform: translateX(100%); } }
+.loaded { width: 80%; display: grid; gap: 4px; animation: panel-in var(--dur-slow) var(--ease-enter); }
+.loaded b { font-size: var(--t-sm); }
+.loaded span { font-size: var(--t-xs); color: var(--fg-muted); }
+.micro { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.lift { padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); font-size: var(--t-xs); transition: transform var(--dur-base) var(--ease-standard), box-shadow var(--dur-base), border-color var(--dur-base); cursor: default; }
+.lift:hover { transform: translateY(-3px); box-shadow: var(--shadow-pop); border-color: var(--primary); }
+.press:active { transform: scale(.96); transition-duration: var(--dur-instant); }
+.count-demo { font-size: 2.25rem; font-weight: 700; letter-spacing: -.02em; }
+.mtable td { height: 36px; font-size: var(--t-xs); }
+.mtable code { font: 500 var(--t-xs) var(--font); color: var(--link); }
+[data-motion="reduce"] *, [data-motion="reduce"] *::before, [data-motion="reduce"] *::after { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition-duration: 1ms !important; }
+@media (max-width: 600px) { .mcard.span2 { grid-column: auto; } }
+
+/* ---------- responsive ---------- */
+@media (max-width: 960px) {
+  .hero-in { grid-template-columns: 1fr; padding-top: 32px; }
+  .tile, .tile.wide { grid-column: span 3; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .panels { grid-template-columns: 1fr; }
+  .shell { grid-template-columns: 1fr; }
+  .side { border-right: 0; border-bottom: 1px solid var(--border); }
+  .side-foot { display: none; }
+  .rail-btn { display: none; }
+}
+@media (max-width: 600px) {
+  .tile, .tile.wide, .tile.feature { grid-column: span 6; }
+  .tile.feature { grid-template-columns: 1fr; }
+  .demo-body { grid-template-columns: 1fr; }
+  .fields { padding: 0 16px 16px; }
+  .kpis { grid-template-columns: 1fr; }
+  .ts { grid-template-columns: 1fr; gap: 4px; }
+  .site-nav nav { display: none; }
+  .cmdk { min-width: 0; flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; animation-iteration-count: 1 !important; } }
+</style>
+</head>
+<body>
+
+<header class="kitbar">
+  <div class="kitbar-in">
+    <div class="kit-name">DIGI-TEXX Frontend Kit <span>visual proof · v0.1</span></div>
+    <div class="tabs" role="tablist" aria-label="Screens">
+      <button class="tab" role="tab" id="tab-website" aria-controls="website" aria-selected="true">Website</button>
+      <button class="tab" role="tab" id="tab-app" aria-controls="app" aria-selected="false">App</button>
+      <button class="tab" role="tab" id="tab-foundations" aria-controls="foundations" aria-selected="false">Foundations</button>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-secondary btn-icon" id="theme" type="button" aria-label="Theme: system" title="Theme: system">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ================= WEBSITE ================= -->
+<main id="website" role="tabpanel" aria-labelledby="tab-website">
+  <section class="hero">
+    <svg class="circuit" viewBox="0 0 1200 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path d="M1200 90H980l-40 40H760"/><rect x="756" y="126" width="8" height="8"/>
+      <path d="M1200 170H1040l-30 30H900l-20 20H700"/><rect x="696" y="216" width="8" height="8"/>
+      <path d="M1200 520H1010l-50-50H820"/><rect x="816" y="466" width="8" height="8"/>
+      <path d="M1200 590H900l-30-30H640"/><rect x="636" y="556" width="8" height="8"/>
+      <path d="M0 600H160l40-40h120"/><rect x="316" y="556" width="8" height="8"/>
+    </svg>
+    <div class="site-nav">
+      <img src="/docs/digi-texx-branding/assets/logos/logo-horizontal-white.svg" alt="DIGI-TEXX">
+      <nav aria-label="Site">
+        <a href="#website" aria-current="page">Giải pháp</a><a href="#website">Dịch vụ BPO</a><a href="#website">Khách hàng</a><a href="#website">Tin tức</a><a href="#website">Tuyển dụng</a>
+      </nav>
+      <span class="lang">VI · EN</span>
+    </div>
+    <div class="hero-in">
+      <div>
+        <span class="eyebrow">AI · Số hoá · BPO</span>
+        <h1>Số hoá dữ liệu.<br><em>Tăng tốc</em> vận hành.</h1>
+        <p class="lede">DIGI-TEXX kết hợp AI trích xuất dữ liệu với đội ngũ vận hành chuyên nghiệp, biến chứng từ giấy thành dữ liệu sạch, sẵn sàng cho hệ thống của bạn.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg" href="#website">Xem demo DIGI-XTRACT</a>
+          <a class="btn btn-secondary btn-lg" href="#website">Liên hệ tư vấn</a>
+        </div>
+      </div>
+
+      <div class="demo" role="img" aria-label="Demo: an invoice being scanned and five fields extracted with confidence scores">
+        <div class="demo-head"><b>DIGI-XTRACT</b> hoa-don-0347.pdf <span class="chip">Đang trích xuất</span></div>
+        <div class="demo-body">
+          <div class="doc" aria-hidden="true">
+            <div class="scan"></div>
+            <h4>HOÁ ĐƠN GIÁ TRỊ GIA TĂNG</h4>
+            <div class="row hl"><span class="muted">Số hoá đơn</span><span>0000347</span></div>
+            <div class="row hl"><span class="muted">Ngày</span><span>02/10/2026</span></div>
+            <div class="row hl"><span class="muted">Đơn vị bán</span><span>Công ty TNHH Minh Phát</span></div>
+            <div class="row"><span class="muted">Địa chỉ</span><span>Q.7, TP. Hồ Chí Minh</span></div>
+            <hr>
+            <div class="row"><span>Giấy in A4 (thùng)</span><span>12</span></div>
+            <div class="row"><span>Mực in laser</span><span>4</span></div>
+            <hr>
+            <div class="row hl"><span class="muted">Thuế GTGT 8%</span><span>1.152.000</span></div>
+            <div class="row hl"><b>Tổng cộng</b><b>15.552.000 ₫</b></div>
+          </div>
+          <div class="fields num">
+            <div class="field"><small>invoice_no <i>99.8%</i></small><div>0000347</div></div>
+            <div class="field"><small>issue_date <i>99.6%</i></small><div>2026-10-02</div></div>
+            <div class="field"><small>seller <i>98.9%</i></small><div>Công ty TNHH Minh Phát</div></div>
+            <div class="field"><small>vat_amount <i>99.4%</i></small><div>1,152,000</div></div>
+            <div class="field"><small>total <i>99.7%</i></small><div>15,552,000 VND</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="sol-h">
+    <div class="section-head">
+      <div class="bar"></div>
+      <h2 id="sol-h">Giải pháp của DIGI-TEXX</h2>
+      <p>Bốn nền tảng phần mềm và dịch vụ vận hành, dùng riêng hoặc kết hợp theo quy trình của doanh nghiệp.</p>
+    </div>
+    <div class="bento">
+      <article class="tile wide">
+        <div class="hex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h3M20 7V4h-3M4 17v3h3M20 17v3h-3M8 12h8M8 9h8M8 15h5"/></svg></div>
+        <h3><small>AI Data Extraction</small>DIGI-XTRACT</h3>
+        <p>Trích xuất dữ liệu từ hoá đơn, hồ sơ, biểu mẫu bằng AI, kèm điểm tin cậy cho từng trường.</p>
+      </article>
+      <article class="tile wide">
+        <div class="hex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M6 8V5h12v3M6 16v3h12v-3"/></svg></div>
+        <h3><small>Digitization</small>DIGI-SCAN</h3>
+        <p>Quét và số hoá tài liệu khối lượng lớn, chuẩn hoá ảnh và phân loại tự động.</p>
+      </article>
+      <article class="tile">
+        <div class="hex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h6l2 2h8v12H4z"/></svg></div>
+        <h3><small>Document Management</small>DIGI-DMS</h3>
+        <p>Lưu trữ, tìm kiếm và phân quyền tài liệu điện tử.</p>
+      </article>
+      <article class="tile">
+        <div class="hex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg></div>
+        <h3><small>Business Suite</small>ONE DIGI-SOFT</h3>
+        <p>Bộ phần mềm quản trị doanh nghiệp hợp nhất.</p>
+      </article>
+      <article class="tile">
+        <div class="hex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M15 14c3 0 6 1.5 6 4"/></svg></div>
+        <h3><small>Operations</small>Dịch vụ BPO</h3>
+        <p>Nhập liệu, kiểm tra và xử lý nghiệp vụ theo SLA.</p>
+      </article>
+      <article class="tile feature">
+        <div>
+          <h3><small>Case study · sample</small>Từ 3 ngày xuống dưới 4 giờ cho một bộ hồ sơ bảo hiểm</h3>
+          <p>Nội dung minh hoạ cho bố cục. Số liệu thật sẽ do Marketing cung cấp.</p>
+        </div>
+        <a class="btn btn-secondary" href="#website" style="color:#fff;border-color:rgb(255 255 255 / .3)">Đọc case study</a>
+      </article>
+    </div>
+  </section>
+
+  <footer class="site-foot">
+    <div class="site-foot-in">
+      <img src="/docs/digi-texx-branding/assets/logos/logo-horizontal-white.svg" alt="DIGI-TEXX">
+      <span>www.digi-texx.com</span>
+      <span class="spacer"></span>
+      <span>© 2026 DIGI-TEXX Vietnam</span>
+    </div>
+  </footer>
+</main>
+
+<!-- ================= APP ================= -->
+<main id="app" class="app" role="tabpanel" aria-labelledby="tab-app" hidden>
+  <div class="shell">
+    <aside class="side" aria-label="App navigation">
+      <button class="ws" type="button" title="DIGI-XTRACT · Operations console">
+        <img src="/docs/digi-texx-branding/assets/logos/logo-square.svg" alt="DIGI-TEXX">
+        <span class="l"><b>DIGI-XTRACT</b><small>Operations console</small></span>
+        <svg class="chev l" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 9l4-4 4 4M8 15l4 4 4-4"/></svg>
+      </button>
+      <details class="grp" open>
+        <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>Vận hành</summary>
+        <div class="items">
+          <a class="nav-item" href="#app" aria-current="page" title="Tổng quan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg><span class="l">Tổng quan</span><span class="meta l"><kbd>G O</kbd></span></a>
+          <a class="nav-item" href="#app" title="Lô tài liệu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="l">Lô tài liệu</span><span class="meta l"><span class="n">128</span><kbd>G L</kbd></span></a>
+          <a class="nav-item" href="#app" title="Kiểm tra (QC) · 14 cần xử lý" data-alert><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg><span class="l">Kiểm tra (QC)</span><span class="meta l"><span class="badge b-counter t-warn">14</span></span></a>
+          <a class="nav-item" href="#app" title="Mẫu trích xuất"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4M8 12h8"/></svg><span class="l">Mẫu trích xuất</span><span class="meta l"><span class="badge b-sm t-brand b-outline">Mới</span></span></a>
+          <a class="nav-item" href="#app" title="Báo cáo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span class="l">Báo cáo</span></a>
+        </div>
+      </details>
+      <details class="grp" open>
+        <summary><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>Quản trị</summary>
+        <div class="items">
+          <a class="nav-item" href="#app" title="Khách hàng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5M16 5a3 3 0 010 6M21 19c0-2.4-1.6-4.3-4-4.8"/></svg><span class="l">Khách hàng</span><span class="meta l"><span class="n">32</span></span></a>
+          <a class="nav-item" href="#app" title="Cài đặt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg><span class="l">Cài đặt</span></a>
+        </div>
+      </details>
+      <div class="side-foot">
+        <div class="avatar" title="Nguyễn Thị Thuận">NT</div>
+        <span class="l"><b>Nguyễn Thị Thuận</b><small>QC Lead · Ca sáng</small></span>
+        <button class="more l" type="button" aria-label="Tài khoản"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <div class="topbar">
+        <button class="btn btn-secondary btn-icon rail-btn" type="button" id="rail" aria-pressed="false" aria-label="Thu gọn thanh bên (Ctrl+B)" title="Thu gọn thanh bên (Ctrl+B)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" style="transition:transform var(--dur-base) var(--ease-standard)"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16M15 10l-2 2 2 2"/></svg></button>
+        <div class="crumbs">Vận hành / <b>Tổng quan</b></div>
+        <button class="cmdk" type="button" id="cmdk"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Tìm lô, khách hàng, lệnh…<kbd>Ctrl K</kbd></button>
+        <div class="avatar" aria-label="Nguyễn Thị Thuận">NT</div>
+      </div>
+
+      <div class="content">
+        <div class="page-head">
+          <div>
+            <h1>Tổng quan vận hành</h1>
+            <p>Thứ Hai, 05/10/2026 · Ca sáng <span class="sample">Dữ liệu mẫu</span></p>
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary" type="button">Xuất báo cáo</button>
+            <button class="btn btn-primary" type="button">+ Tạo lô mới</button>
+          </div>
+        </div>
+
+        <div class="kpis num">
+          <div class="kpi">
+            <div class="kpi-top"><span class="label">Tài liệu xử lý hôm nay</span><span class="badge b-sm t-ok b-surface">▲ 12.4%</span></div>
+            <span class="value" data-count="48210">48,210</span>
+            <div class="viz"><svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,28 0.0,22 11.1,19 22.2,20 33.3,15 44.4,16 55.6,11 66.7,12 77.8,6 88.9,7 100.0,3 100,28" fill="rgb(37 130 215 / .12)" stroke="none"/><polyline points="0.0,22 11.1,19 22.2,20 33.3,15 44.4,16 55.6,11 66.7,12 77.8,6 88.9,7 100.0,3" fill="none" stroke="var(--primary)" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg></div>
+            <div class="cap"><span class="ic-ok"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 11l4-4 3 3 5-5M10 5h4v4"/></svg></span><span><b>+5,320</b> so với hôm qua</span></div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-top"><span class="label">Tự động hoàn toàn (STP)</span><span class="badge b-sm t-ok b-surface">▲ 2.1 pt</span></div>
+            <span class="value"><span data-count="87.3" data-dec="1">87.3</span><small>%</small></span>
+            <div class="viz"><svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,28 0.0,18 11.1,17 22.2,19 33.3,16 44.4,14 55.6,15 66.7,12 77.8,10 88.9,11 100.0,8 100,28" fill="rgb(37 130 215 / .12)" stroke="none"/><polyline points="0.0,18 11.1,17 22.2,19 33.3,16 44.4,14 55.6,15 66.7,12 77.8,10 88.9,11 100.0,8" fill="none" stroke="var(--primary)" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg></div>
+            <div class="cap"><span class="ic-ok"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 11l4-4 3 3 5-5M10 5h4v4"/></svg></span><span><b>Tăng 4 tuần</b> liên tiếp</span></div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-top"><span class="label">Độ chính xác sau QC</span><span class="badge b-sm t-brand b-surface">Đạt mục tiêu</span></div>
+            <span class="value"><span data-count="99.62" data-dec="2">99.62</span><small>%</small></span>
+            <div class="viz"><div class="target" role="img" aria-label="99.62% so với mục tiêu 99.5%, thang 98–100%"><i style="width:81%"></i><u style="left:75%"></u></div></div>
+            <div class="cap"><span class="ic-brand"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M5.5 8.2l1.8 1.8 3.2-3.6"/></svg></span><span>Mục tiêu <b>99.5%</b> · vượt 0.12 pt</span></div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-top"><span class="label">Lô có nguy cơ trễ SLA</span><span class="badge b-sm t-warn b-surface b-live"><i class="dot"></i>Cần xử lý</span></div>
+            <span class="value">3<small>/ 128 lô</small></span>
+            <div class="viz">
+              <div class="catbar" role="img" aria-label="125 đúng hạn, 2 sắp trễ, 1 đã trễ"><i style="flex:125;background:var(--primary)"></i><i style="flex:2;min-width:10px;background:var(--dtx-amber)"></i><i style="flex:1;min-width:6px;background:#C42B2B"></i></div>
+            </div>
+            <div class="cap"><span class="ic-warn"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 2l6.5 11.5h-13z"/><path d="M8 6.5v3M8 11.5v.01"/></svg></span><span><b>1 đã trễ</b> · 2 sắp trễ trong 1 giờ</span></div>
+          </div>
+        </div>
+
+        <div class="panels">
+          <section class="panel" aria-labelledby="thr-h">
+            <div class="panel-head">
+              <h2 id="thr-h">Sản lượng theo giờ</h2>
+              <div class="seg" role="group" aria-label="Range"><button type="button" aria-pressed="true">Hôm nay</button><button type="button" aria-pressed="false">7 ngày</button></div>
+            </div>
+            <div class="chart"><svg id="chart" viewBox="0 0 640 220" role="img" aria-label="Documents per hour, 7:00 to 16:00, AI vs manual"></svg></div>
+            <div class="legend"><span class="l1">AI tự động</span><span class="l2">Xử lý thủ công</span></div>
+          </section>
+
+          <section class="panel" aria-labelledby="q-h">
+            <div class="panel-head"><h2 id="q-h">Hàng đợi QC</h2><span class="badge t-brand b-surface" style="margin-left:auto">14 lô</span></div>
+            <div class="queue num">
+              <div class="qrow"><b>Hồ sơ bồi thường · BH-2210</b><small>72%</small><small>Bảo hiểm (mẫu) · 1.240 trang</small><small>còn 1g 20p</small><div class="meter"><i style="width:72%"></i></div></div>
+              <div class="qrow"><b>Hoá đơn VAT · HD-5517</b><small>45%</small><small>Bán lẻ (mẫu) · 3.860 trang</small><small>còn 3g 05p</small><div class="meter"><i style="width:45%"></i></div></div>
+              <div class="qrow"><b>Hợp đồng tín dụng · TD-0931</b><small>18%</small><small>Ngân hàng (mẫu) · 610 trang</small><small>còn 5g 40p</small><div class="meter"><i style="width:18%"></i></div></div>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel" aria-labelledby="b-h">
+          <div class="panel-head">
+            <h2 id="b-h">Lô tài liệu gần đây</h2>
+            <div class="seg" role="group" aria-label="Filter"><button type="button" aria-pressed="true">Tất cả</button><button type="button" aria-pressed="false">Đang xử lý</button><button type="button" aria-pressed="false">Trễ SLA</button></div>
+          </div>
+          <div class="table-wrap">
+            <table class="num">
+              <thead><tr><th>Mã lô</th><th>Loại tài liệu</th><th>Khách hàng</th><th class="r">Trang</th><th class="r">Độ chính xác</th><th>Trạng thái</th><th class="r">Hạn SLA</th></tr></thead>
+              <tbody>
+                <tr><td class="mono-id">BH-2210</td><td>Hồ sơ bồi thường</td><td>Bảo hiểm Sao Việt (mẫu)</td><td class="r">1,240</td><td class="r">99.71%</td><td><span class="badge t-brand b-live"><i class="dot"></i>Đang QC</span></td><td class="r">14:30</td></tr>
+                <tr><td class="mono-id">HD-5517</td><td>Hoá đơn VAT</td><td>Chuỗi bán lẻ Phương Nam (mẫu)</td><td class="r">3,860</td><td class="r">99.48%</td><td><span class="badge t-warn b-surface"><i class="dot"></i>Nguy cơ trễ</span></td><td class="r">16:15</td></tr>
+                <tr><td class="mono-id">TD-0931</td><td>Hợp đồng tín dụng</td><td>Ngân hàng Đông Á Mới (mẫu)</td><td class="r">610</td><td class="r">99.90%</td><td><span class="badge t-brand b-live"><i class="dot"></i>Đang QC</span></td><td class="r">18:00</td></tr>
+                <tr><td class="mono-id">NS-0418</td><td>Hồ sơ nhân sự</td><td>Tập đoàn Thành Đạt (mẫu)</td><td class="r">2,105</td><td class="r">99.83%</td><td><span class="badge t-ok"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.5 8.5l3 3 6-7"/></svg>Hoàn tất</span></td><td class="r">11:00</td></tr>
+                <tr><td class="mono-id">VC-7702</td><td>Vận đơn</td><td>Logistics Cửu Long (mẫu)</td><td class="r">980</td><td class="r">97.12%</td><td><span class="badge t-err"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5M8 11v.01"/></svg>Lỗi mẫu</span></td><td class="r">10:30</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ================= FOUNDATIONS ================= -->
+<main id="foundations" class="found" role="tabpanel" aria-labelledby="tab-foundations" hidden>
+  <section>
+    <h2>Màu sắc · Color</h2>
+    <p class="sub">Each colour is tagged by source. <b>Rule</b> = stated in the 2024 Branding Guidelines PDF. <b>Sampled</b> = shown in the PDF but not labelled correctly, pixel-sampled. <b>Kit</b> = our decision for UI, not a brand rule.</p>
+    <div class="swatches num" id="swatches"></div>
+  </section>
+
+  <section>
+    <h2>Chữ · Typography</h2>
+    <p class="sub">Roboto only (PDF section 07), Arial as fallback. Headlines use Roboto Bold Italic. Numbers use tabular figures.</p>
+    <div class="typescale">
+      <div class="ts"><code>Display · 700i · 36–68px</code><p style="font-size:var(--t-display);font-weight:700;font-style:italic;text-transform:uppercase;line-height:1.15">Trích xuất dữ liệu</p></div>
+      <div class="ts"><code>H2 · 700 · 24–32px</code><p style="font-size:var(--t-h2);font-weight:700;letter-spacing:-.01em">Ứng dụng nhập liệu tự động</p></div>
+      <div class="ts"><code>H3 · 700 · 20px</code><p style="font-size:var(--t-lg);font-weight:700">Nguyễn Thị Thuận đã duyệt lô BH-2210</p></div>
+      <div class="ts"><code>Body · 400 · 16/1.5</code><p style="max-width:62ch">DIGI-TEXX kết hợp AI trích xuất dữ liệu với đội ngũ vận hành chuyên nghiệp, biến chứng từ giấy thành dữ liệu sạch, sẵn sàng cho hệ thống của bạn.</p></div>
+      <div class="ts"><code>Lede · 300 · 20px</code><p style="font-size:var(--t-lg);font-weight:300">Accurate data. Faster operations.</p></div>
+      <div class="ts"><code>Small · 400 · 14px</code><p style="font-size:var(--t-sm);color:var(--fg-muted)">Cập nhật lúc 09:42 · 48,210 tài liệu</p></div>
+      <div class="ts"><code>Label · 500 · 12px · caps</code><p style="font-size:var(--t-xs);font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-muted)">Độ chính xác sau QC</p></div>
+    </div>
+  </section>
+
+
+  <section>
+    <h2>Nhãn trạng thái · Badges</h2>
+    <p class="sub">Alpha-based tones (Radix soft/surface model): one rule set works in light and dark. 4px radius, 12px Roboto 500. Violet is AI-only and always sits next to blue (brand rule). Every text pair passes AA.</p>
+    <div class="bgrid"><table class="num">
+      <thead><tr><th>Variant</th><th>brand</th><th>ok</th><th>warn</th><th>err</th><th>neutral</th><th>violet</th></tr></thead>
+      <tbody><tr><td>Soft</td><td><span class="badge t-brand ">Thông tin</span></td><td><span class="badge t-ok ">Hoàn tất</span></td><td><span class="badge t-warn ">Cảnh báo</span></td><td><span class="badge t-err ">Lỗi</span></td><td><span class="badge t-neutral ">Nháp</span></td><td><span class="badge t-violet ">AI gợi ý</span></td></tr>
+<tr><td>Surface</td><td><span class="badge t-brand b-surface">Thông tin</span></td><td><span class="badge t-ok b-surface">Hoàn tất</span></td><td><span class="badge t-warn b-surface">Cảnh báo</span></td><td><span class="badge t-err b-surface">Lỗi</span></td><td><span class="badge t-neutral b-surface">Nháp</span></td><td><span class="badge t-violet b-surface">AI gợi ý</span></td></tr>
+<tr><td>Outline</td><td><span class="badge t-brand b-outline">Thông tin</span></td><td><span class="badge t-ok b-outline">Hoàn tất</span></td><td><span class="badge t-warn b-outline">Cảnh báo</span></td><td><span class="badge t-err b-outline">Lỗi</span></td><td><span class="badge t-neutral b-outline">Nháp</span></td><td><span class="badge t-violet b-outline">AI gợi ý</span></td></tr>
+<tr><td>Solid</td><td><span class="badge t-brand b-solid">Thông tin</span></td><td><span class="badge t-ok b-solid">Hoàn tất</span></td><td><span class="badge t-warn b-solid">Cảnh báo</span></td><td><span class="badge t-err b-solid">Lỗi</span></td><td><span class="badge t-neutral b-solid">Nháp</span></td><td><span class="badge t-violet b-solid">AI gợi ý</span></td></tr>
+<tr><td>With dot</td><td><span class="badge t-brand b-surface"><i class="dot"></i>Thông tin</span></td><td><span class="badge t-ok b-surface"><i class="dot"></i>Hoàn tất</span></td><td><span class="badge t-warn b-surface"><i class="dot"></i>Cảnh báo</span></td><td><span class="badge t-err b-surface"><i class="dot"></i>Lỗi</span></td><td><span class="badge t-neutral b-surface"><i class="dot"></i>Nháp</span></td><td><span class="badge t-violet b-surface"><i class="dot"></i>AI gợi ý</span></td></tr>
+</tbody>
+    </table></div>
+    <div class="specials">
+      <div class="spec"><h3>Live</h3><div class="row-wrap"><span class="badge t-brand b-live"><i class="dot"></i>Đang xử lý</span><span class="badge t-warn b-surface b-live"><i class="dot"></i>Cần xử lý</span></div><p>Pulsing dot only while a process is running. Stops when done.</p></div>
+      <div class="spec"><h3>Counter</h3><div class="row-wrap"><span class="badge b-counter t-warn">14</span><span class="badge b-counter t-neutral">128</span><span class="badge b-counter t-err b-solid">3</span><span class="badge b-counter t-brand b-solid">99+</span></div><p>Tabular numbers for nav and tabs.</p></div>
+      <div class="spec"><h3>Progress</h3><div class="row-wrap" id="rings"><span class="badge t-brand b-surface"><svg class="b-ring" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="2.4"/><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-dasharray="37.7" stroke-dashoffset="28" transform="rotate(-90 8 8)"/></svg>25% đã duyệt</span><span class="badge t-brand b-surface"><svg class="b-ring" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="2.4"/><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-dasharray="37.7" stroke-dashoffset="14" transform="rotate(-90 8 8)"/></svg>62%</span><span class="badge t-ok b-surface"><svg class="b-ring" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width="2.4"/><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-dasharray="37.7" stroke-dashoffset="0" transform="rotate(-90 8 8)"/></svg>100%</span></div><p>Ring for batch / review progress.</p></div>
+      <div class="spec"><h3>Icon</h3><div class="row-wrap"><span class="badge t-ok"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.5 8.5l3 3 6-7"/></svg>Đạt SLA</span><span class="badge t-err"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="6"/><path d="M8 5v3.5M8 11v.01"/></svg>Lỗi mẫu</span><span class="badge t-violet b-surface"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.6 4.4L14 7l-4.4 1.6L8 13l-1.6-4.4L2 7l4.4-1.6z"/></svg>AI</span></div><p>Leading 12px icon, same colour as text.</p></div>
+      <div class="spec"><h3>Removable filter</h3><div class="row-wrap" id="filters"><span class="badge t-neutral b-surface">Hoá đơn VAT<button class="x" type="button" aria-label="Xoá bộ lọc"><svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></span><span class="badge t-neutral b-surface">Ca sáng<button class="x" type="button" aria-label="Xoá bộ lọc"><svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></span><span class="badge t-brand b-surface">Trễ SLA<button class="x" type="button" aria-label="Xoá bộ lọc"><svg viewBox="0 0 16 16" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></span></div><p>Click × to remove (exit animation).</p></div>
+      <div class="spec"><h3>Sizes & shape</h3><div class="row-wrap"><span class="badge b-sm t-brand">Small</span><span class="badge t-brand">Default</span><span class="badge b-lg t-brand">Large</span><span class="badge b-pill t-ok">▲ 12.4%</span></div><p>Pill shape only for trend deltas.</p></div>
+    </div>
+  </section>
+
+  <section id="motion">
+    <div class="mhead">
+      <div><h2>Chuyển động · Motion</h2>
+      <p class="sub">Motion as information: it shows where things come from and what changed. Transform and opacity only. Durations follow the Fluent/Carbon range, easings follow Material 3. Everything respects reduced-motion.</p></div>
+      <button class="switch" type="button" role="switch" aria-checked="false" id="reduce"><span class="track"></span>Giảm chuyển động</button>
+    </div>
+    <div class="mgrid">
+      <div class="mcard loop"><h3>Standard<code>--ease-standard</code></h3><svg class="curve" viewBox="-6 -6 212 112" aria-hidden="true"><path class="axis" d="M0 0V100H200"/><path class="hd" d="M0 100L40 100M200 0L0 0"/><path class="path" d="M0 100C40 100 0 0 200 0"/><circle class="pt" cx="40" cy="100" r="3"/><circle class="pt" cx="0" cy="0" r="3"/></svg><div class="lane"><div class="runner" style="--e:var(--ease-standard)"><i></i></div></div><p>cubic-bezier(0.2,0,0,1) · Most UI changes</p></div><div class="mcard loop"><h3>Enter<code>--ease-enter</code></h3><svg class="curve" viewBox="-6 -6 212 112" aria-hidden="true"><path class="axis" d="M0 0V100H200"/><path class="hd" d="M0 100L0 100M200 0L0 0"/><path class="path" d="M0 100C0 100 0 0 200 0"/><circle class="pt" cx="0" cy="100" r="3"/><circle class="pt" cx="0" cy="0" r="3"/></svg><div class="lane"><div class="runner" style="--e:var(--ease-enter)"><i></i></div></div><p>cubic-bezier(0,0,0,1) · Things appearing</p></div><div class="mcard loop"><h3>Exit<code>--ease-exit</code></h3><svg class="curve" viewBox="-6 -6 212 112" aria-hidden="true"><path class="axis" d="M0 0V100H200"/><path class="hd" d="M0 100L60 100M200 0L200 0"/><path class="path" d="M0 100C60 100 200 0 200 0"/><circle class="pt" cx="60" cy="100" r="3"/><circle class="pt" cx="200" cy="0" r="3"/></svg><div class="lane"><div class="runner" style="--e:var(--ease-exit)"><i></i></div></div><p>cubic-bezier(0.3,0,1,1) · Things leaving</p></div><div class="mcard loop"><h3>Emphasis<code>--ease-emphasis</code></h3><svg class="curve" viewBox="-6 -6 212 112" aria-hidden="true"><path class="axis" d="M0 0V100H200"/><path class="hd" d="M0 100L10 30M200 0L20 0"/><path class="path" d="M0 100C10 30 20 0 200 0"/><circle class="pt" cx="10" cy="30" r="3"/><circle class="pt" cx="20" cy="0" r="3"/></svg><div class="lane"><div class="runner" style="--e:var(--ease-emphasis)"><i></i></div></div><p>cubic-bezier(0.05,0.7,0.1,1) · Hero moments, toggles</p></div>
+      <div class="mcard span2 loop"><h3>Durations<code>larger = longer</code></h3><div class="dur-row"><span>--dur-instant</span><div class="dur-bar"><i style="--d:70ms"></i></div><span class="num">70ms</span></div><div class="dur-row"><span>--dur-fast</span><div class="dur-bar"><i style="--d:120ms"></i></div><span class="num">120ms</span></div><div class="dur-row"><span>--dur-base</span><div class="dur-bar"><i style="--d:200ms"></i></div><span class="num">200ms</span></div><div class="dur-row"><span>--dur-slow</span><div class="dur-bar"><i style="--d:320ms"></i></div><span class="num">320ms</span></div><div class="dur-row"><span>--dur-page</span><div class="dur-bar"><i style="--d:480ms"></i></div><span class="num">480ms</span></div><p>Exit runs at about 70% of the enter duration.</p></div>
+      <div class="mcard"><h3>Toast<code>slow · emphasis / base · exit</code></h3><div class="stage"><button class="btn btn-secondary" type="button" id="toast-btn">Lưu lô</button><div class="toast-stack" id="toasts" aria-live="polite"></div></div></div>
+      <div class="mcard"><h3>Dialog<code>scale .94 → 1 · fade</code></h3><div class="stage"><button class="btn btn-secondary" type="button" id="dlg-btn">Xoá lô</button><div class="mini-dlg" id="dlg"><div role="dialog" aria-label="Xoá lô"><b>Xoá lô HD-5517?</b><span style="color:var(--fg-muted)">3.860 trang sẽ bị xoá vĩnh viễn.</span><div class="row-wrap"><button class="btn btn-primary" type="button" data-close style="min-height:32px">Xoá</button><button class="btn btn-ghost" type="button" data-close style="min-height:32px">Huỷ</button></div></div></div></div></div>
+      <div class="mcard"><h3>Skeleton → content<code>shimmer · enter</code></h3><div class="stage" id="skel-stage"></div><button class="btn btn-ghost" type="button" id="skel-btn" style="justify-self:start">Tải lại</button></div>
+      <div class="mcard"><h3>Micro-interactions<code>instant · fast · base</code></h3><div class="micro"><button class="btn btn-primary press" type="button">Nhấn giữ</button><div class="lift">Hover card</div><button class="switch" type="button" role="switch" aria-checked="true" id="sw-demo"><span class="track"></span>Tự động QC</button></div><p>Press scales to .96, hover lifts 3px, switch thumb uses emphasis easing.</p></div>
+      <div class="mcard"><h3>Number count-up<code>page · standard</code></h3><div class="count-demo num" id="count-demo">0</div><button class="btn btn-ghost" type="button" id="count-btn" style="justify-self:start">Chạy lại</button><p>For KPI values on first load only, never on every refresh.</p></div>
+    </div>
+  </section>
+  <section>
+    <h2>Thành phần · Components</h2>
+    <p class="sub">Squared 4–6px radius, 1px borders instead of heavy shadows, blue glow only on focus and primary hover.</p>
+    <div class="comps">
+      <div class="comp">
+        <h3>Buttons</h3>
+        <div class="row-wrap"><button class="btn btn-primary" type="button">Lưu thay đổi</button><button class="btn btn-secondary" type="button">Huỷ</button><button class="btn btn-ghost" type="button">Xem chi tiết</button></div>
+        <div class="row-wrap"><button class="btn btn-primary btn-lg" type="button">Discover our Demo</button></div>
+        <p class="sub" style="margin:0">Small labels sit on #1A6FBF (5.2:1). #2582D7 fill only with 19px bold labels (4.0:1 = large text only).</p>
+      </div>
+      <div class="comp">
+        <h3>Inputs</h3>
+        <div class="field-ui"><label for="f-name">Tên lô tài liệu</label><input id="f-name" value="Hồ sơ bồi thường tháng 10"><span class="hint">Tab vào ô để xem focus ring.</span></div>
+        <div class="field-ui">
+          <span class="lbl" id="f-type-l" style="font-size:var(--t-sm);font-weight:500">Loại tài liệu</span>
+          <div class="sel" id="sel-type">
+            <button class="sel-trigger" type="button" role="combobox" id="f-type" aria-labelledby="f-type-l" aria-haspopup="listbox" aria-expanded="false" aria-controls="f-type-list"><span class="val"><span class="doc-ic t-brand"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3 3v10H4z"/><path d="M9 1.5v3h3"/></svg></span><span>Hoá đơn VAT</span></span><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg></button>
+            <div class="sel-pop" hidden>
+              <div class="sel-search"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M14 14l-3.5-3.5"/></svg><input type="text" id="f-type-q" placeholder="Tìm loại tài liệu…" aria-label="Tìm loại tài liệu" autocomplete="off"></div>
+              <div role="listbox" id="f-type-list" aria-labelledby="f-type-l"><div role="group" aria-labelledby="sg0"><div class="sel-group" id="sg0">Tài chính</div><div class="sel-opt" role="option" id="opt-vat" data-value="vat" aria-selected="true"><span class="doc-ic t-brand"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3 3v10H4z"/><path d="M9 1.5v3h3"/></svg></span><span class="txt"><span>Hoá đơn VAT</span><small>Trích xuất 18 trường</small></span><svg class="ck" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg></div><div class="sel-opt" role="option" id="opt-bank" data-value="bank" aria-selected="false"><span class="doc-ic t-brand"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3 3v10H4z"/><path d="M9 1.5v3h3"/></svg></span><span class="txt"><span>Sao kê ngân hàng</span><small>Bảng giao dịch nhiều trang</small></span><svg class="ck" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg></div></div><div class="sel-sep" role="presentation"></div><div role="group" aria-labelledby="sg1"><div class="sel-group" id="sg1">Bảo hiểm</div><div class="sel-opt" role="option" id="opt-claim" data-value="claim" aria-selected="false"><span class="doc-ic t-violet"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M8 1.5l5.5 2v4c0 3.5-2.5 6-5.5 7-3-1-5.5-3.5-5.5-7v-4z"/></svg></span><span class="txt"><span>Hồ sơ bồi thường</span><small>Hồ sơ nhiều tài liệu, có ảnh</small></span><svg class="ck" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg></div><div class="sel-opt" role="option" id="opt-policy" data-value="policy" aria-selected="false" aria-disabled="true"><span class="doc-ic t-neutral"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 1.5h5l3 3v10H4z"/><path d="M9 1.5v3h3"/></svg></span><span class="txt"><span>Hợp đồng bảo hiểm</span><small>Sắp ra mắt</small></span><svg class="ck" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg></div></div><div class="sel-sep" role="presentation"></div><div role="group" aria-labelledby="sg2"><div class="sel-group" id="sg2">Nhân sự</div><div class="sel-opt" role="option" id="opt-hr" data-value="hr" aria-selected="false"><span class="doc-ic t-ok"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="5.5" r="2.5"/><path d="M3 14c0-2.8 2.2-4.5 5-4.5s5 1.7 5 4.5"/></svg></span><span class="txt"><span>Hồ sơ nhân sự</span><small>CCCD, bằng cấp, hợp đồng</small></span><svg class="ck" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"/></svg></div></div></div>
+              <div class="sel-empty" hidden>Không tìm thấy loại tài liệu</div>
+            </div>
+          </div>
+          <span class="hint">Mũi tên ↑↓ để chọn, Enter để xác nhận, gõ để tìm.</span>
+        </div>
+      </div>
+      <div class="comp">
+        <h3>Contrast (WCAG 2.2)</h3>
+        <table class="contrast num">
+          <tr><td><span class="pair" style="background:#2582D7;color:#fff">Aa</span></td><td>White on #2582D7</td><td class="r">4.00 · large only</td></tr>
+          <tr><td><span class="pair" style="background:#1A6FBF;color:#fff">Aa</span></td><td>White on #1A6FBF</td><td class="r">5.16 · AA</td></tr>
+          <tr><td><span class="pair" style="background:#1E1D23;color:#2582D7">Aa</span></td><td>#2582D7 on dark</td><td class="r">4.18 · large only</td></tr>
+          <tr><td><span class="pair" style="background:#1E1D23;color:#30AAE0">Aa</span></td><td>#30AAE0 on dark</td><td class="r">6.34 · AA</td></tr>
+          <tr><td><span class="pair" style="background:#fff;color:#137BB6;box-shadow:inset 0 0 0 1px var(--border)">Aa</span></td><td>#137BB6 on white</td><td class="r">4.63 · AA</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+// tabs
+const tabs = [...document.querySelectorAll('.tab')];
+function show(id) {
+  tabs.forEach(t => { const on = t.getAttribute('aria-controls') === id; t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1; document.getElementById(t.getAttribute('aria-controls')).hidden = !on; });
+}
+tabs.forEach((t, i) => {
+  t.addEventListener('click', () => { show(t.getAttribute('aria-controls')); history.replaceState(null, '', '#' + t.getAttribute('aria-controls')); });
+  t.addEventListener('keydown', e => {
+    const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (d) { const n = tabs[(i + d + tabs.length) % tabs.length]; n.focus(); n.click(); }
+  });
+});
+const start = location.hash.slice(1);
+show(['website', 'app', 'foundations'].includes(start) ? start : 'website');
+
+// theme: system → light → dark
+const modes = ['system', 'light', 'dark'];
+let mode = 'system';
+try { mode = localStorage.getItem('dtx-theme') || 'system'; } catch (e) {}
+function applyTheme() {
+  if (mode === 'system') document.documentElement.removeAttribute('data-theme'); else document.documentElement.dataset.theme = mode;
+  const b = document.getElementById('theme'); b.title = b.ariaLabel = 'Theme: ' + mode;
+}
+applyTheme();
+document.getElementById('theme').addEventListener('click', () => {
+  mode = modes[(modes.indexOf(mode) + 1) % 3]; applyTheme();
+  try { localStorage.setItem('dtx-theme', mode); } catch (e) {}
+});
+
+// segmented controls (visual only)
+document.querySelectorAll('.seg').forEach(g => g.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+}));
+
+// Ctrl/Cmd+K focuses the command button (placeholder for a real palette)
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); show('app'); document.getElementById('cmdk').focus(); } });
+
+// swatches
+const sw = [
+  ['DIGI-TEXX Blue', '#2582D7', 'rule', 'Leads every design'],
+  ['Lime', '#A5CB1F', 'rule', 'Accent, always with blue'],
+  ['Amber', '#F6B71E', 'rule', 'Accent, always with blue'],
+  ['Violet', '#9127D6', 'rule', 'Accent, always with blue'],
+  ['Ink', '#231F20', 'rule', 'Logo wordmark'],
+  ['Gray', '#6E6F72', 'rule', 'Logo tagline'],
+  ['Navy', '#26385D', 'sampled', 'PDF p.11 swatch 2'],
+  ['Ocean', '#137BB6', 'sampled', 'PDF p.11 swatch 3'],
+  ['Sky', '#30AAE0', 'sampled', 'PDF p.11 swatch 4'],
+  ['Light', '#7BD2F2', 'sampled', 'PDF p.11 swatch 5'],
+  ['Ice', '#A8E5F5', 'sampled', 'PDF p.11 swatch 6'],
+  ['Canvas dark', '#1E1D23', 'sampled', 'PDF page header'],
+  ['Panel', '#F0F0F0', 'sampled', 'PDF page body'],
+  ['Blue strong', '#1A6FBF', 'kit', 'Button fill, small text AA'],
+];
+document.getElementById('swatches').innerHTML = sw.map(([n, h, s, d]) =>
+  `<div class="sw"><i style="background:${h}"></i><div><b>${n}</b><span>${h}</span><span style="color:var(--fg-muted)">${d}</span><span class="src src-${s}">${s}</span></div></div>`).join('') +
+  `<div class="sw"><i style="background:linear-gradient(90deg,#00ACEB,#004EBE)"></i><div><b>Bar gradient</b><span>#00ACEB → #004EBE</span><span style="color:var(--fg-muted)">Decoration only</span><span class="src src-sampled">sampled</span></div></div>`;
+
+// throughput chart: one scale for bars, ticks and labels
+(function () {
+  const hours = ['7h', '8h', '9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h'];
+  const ai = [2100, 3900, 5200, 5800, 6100, 3400, 5600, 6300, 5900, 4700];
+  const man = [420, 610, 760, 820, 790, 450, 700, 840, 810, 620];
+  const W = 640, H = 220, L = 44, R = 8, T = 10, B = 26, max = 8000;
+  const y = v => T + (H - T - B) * (1 - v / max);
+  const bw = (W - L - R) / hours.length;
+  let s = '';
+  for (let v = 0; v <= max; v += 2000) s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--border)"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${v ? v / 1000 + 'k' : 0}</text>`;
+  hours.forEach((h, i) => {
+    const x = L + i * bw + bw * .2, w = bw * .6, tot = ai[i] + man[i];
+    s += `<rect x="${x}" y="${y(ai[i])}" width="${w}" height="${y(0) - y(ai[i])}" fill="var(--primary)" rx="2"><title>${h}: ${ai[i]} AI</title></rect>`;
+    s += `<rect x="${x}" y="${y(tot)}" width="${w}" height="${y(ai[i]) - y(tot) - 1}" fill="var(--dtx-light)" rx="2"><title>${h}: ${man[i]} manual</title></rect>`;
+    s += `<text x="${x + w / 2}" y="${H - 8}" text-anchor="middle">${h}</text>`;
+  });
+  document.getElementById('chart').innerHTML = s;
+})();
+// ---- sidebar rail (Ctrl+B)
+const shell = document.querySelector('.shell'), railBtn = document.getElementById('rail');
+function toggleRail() { const on = shell.classList.toggle('rail'); railBtn.setAttribute('aria-pressed', on); }
+railBtn.addEventListener('click', toggleRail);
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleRail(); } });
+document.querySelectorAll('.nav-item').forEach(a => a.addEventListener('click', () => {
+  document.querySelectorAll('.nav-item[aria-current]').forEach(x => x.removeAttribute('aria-current'));
+  a.setAttribute('aria-current', 'page');
+}));
+
+// ---- motion lab
+const motion = document.getElementById('motion');
+const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches || motion.dataset.motion === 'reduce';
+document.querySelectorAll('.switch').forEach(sw => sw.addEventListener('click', () => sw.setAttribute('aria-checked', sw.getAttribute('aria-checked') !== 'true')));
+document.getElementById('reduce').addEventListener('click', e => { if (e.currentTarget.getAttribute('aria-checked') === 'true') motion.dataset.motion = 'reduce'; else delete motion.dataset.motion; });
+setInterval(() => { if (!document.getElementById('foundations').hidden) document.querySelectorAll('#motion .loop').forEach(c => c.classList.toggle('on')); }, 1400);
+
+const toasts = document.getElementById('toasts');
+document.getElementById('toast-btn').addEventListener('click', () => {
+  const t = document.createElement('div');
+  t.className = 'toast in';
+  t.innerHTML = '<span class="badge b-sm t-ok"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.5 8.5l3 3 6-7"/></svg></span><span><b>Đã lưu lô BH-2210</b><br>1.240 trang · 09:42</span>';
+  toasts.append(t);
+  if (toasts.children.length > 3) toasts.firstElementChild.remove();
+  setTimeout(() => { t.className = 'toast out'; t.addEventListener('animationend', () => t.remove(), { once: true }); }, 2600);
+});
+
+const dlg = document.getElementById('dlg');
+document.getElementById('dlg-btn').addEventListener('click', () => dlg.classList.add('open'));
+dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('[data-close]')) dlg.classList.remove('open'); });
+
+const stage = document.getElementById('skel-stage');
+function loadSkel() {
+  stage.innerHTML = '<div class="skel" aria-label="Đang tải"><i></i><i></i><i></i></div>';
+  setTimeout(() => { stage.innerHTML = '<div class="loaded"><b>Hồ sơ bồi thường · BH-2210</b><span>1.240 trang · Độ chính xác 99.71%</span><span class="badge t-brand b-live" style="justify-self:start;margin-top:4px"><i class="dot"></i>Đang QC</span></div>'; }, 1800);
+}
+document.getElementById('skel-btn').addEventListener('click', loadSkel); loadSkel();
+
+function countUp(el, to, dec = 0, ms = 900) {
+  if (reduced()) { el.textContent = to.toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }); return; }
+  const t0 = performance.now(), ease = x => 1 - Math.pow(1 - x, 4);
+  (function f(t) { const k = Math.min(1, (t - t0) / ms); el.textContent = (to * ease(k)).toLocaleString('en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec }); if (k < 1) requestAnimationFrame(f); })(t0);
+}
+const cd = document.getElementById('count-demo');
+document.getElementById('count-btn').addEventListener('click', () => countUp(cd, 48210));
+countUp(cd, 48210);
+let kpiDone = false;
+function kpiCount() { if (kpiDone) return; kpiDone = true; document.querySelectorAll('[data-count]').forEach(el => countUp(el, +el.dataset.count, +(el.dataset.dec || 0))); }
+if (!document.getElementById('app').hidden) kpiCount();
+tabs.forEach(t => t.addEventListener('click', () => { if (t.getAttribute('aria-controls') === 'app') kpiCount(); }));
+
+document.getElementById('filters').addEventListener('click', e => {
+  const x = e.target.closest('.x'); if (!x) return;
+  const b = x.closest('.badge');
+  b.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.85)' }], { duration: reduced() ? 1 : 160, easing: 'cubic-bezier(.3,0,1,1)' }).onfinish = () => b.remove();
+});
+
+// ---- select-only combobox with filter (WAI-ARIA APG)
+(function () {
+  const root = document.getElementById('sel-type'), btn = root.querySelector('.sel-trigger'), pop = root.querySelector('.sel-pop'),
+        q = root.querySelector('#f-type-q'), list = root.querySelector('[role=listbox]'), empty = root.querySelector('.sel-empty');
+  const all = [...list.querySelectorAll('[role=option]')];
+  let active = null;
+  const visible = () => all.filter(o => !o.hidden && o.getAttribute('aria-disabled') !== 'true');
+  function setActive(o) {
+    all.forEach(x => x.classList.toggle('active', x === o)); active = o;
+    if (o) { btn.setAttribute('aria-activedescendant', o.id); q.setAttribute('aria-activedescendant', o.id); o.scrollIntoView({ block: 'nearest' }); }
+  }
+  function open() {
+    pop.hidden = false; btn.setAttribute('aria-expanded', 'true');
+    q.value = ''; filter(); setActive(all.find(o => o.getAttribute('aria-selected') === 'true')); q.focus();
+  }
+  function close(focus = true) { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); if (focus) btn.focus(); }
+  function choose(o) {
+    if (!o || o.getAttribute('aria-disabled') === 'true') return;
+    all.forEach(x => x.setAttribute('aria-selected', x === o));
+    btn.querySelector('.val').innerHTML = o.querySelector('.doc-ic').outerHTML + '<span>' + o.querySelector('.txt span').textContent + '</span>';
+    close();
+  }
+  function filter() {
+    const t = q.value.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
+    all.forEach(o => { const s = o.textContent.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd'); o.hidden = t && !s.includes(t); });
+    list.querySelectorAll('[role=group]').forEach(g => g.hidden = ![...g.querySelectorAll('[role=option]')].some(o => !o.hidden));
+    list.querySelectorAll('.sel-sep').forEach(sp => { const n = sp.nextElementSibling; sp.hidden = !n || n.hidden; });
+    empty.hidden = visible().length > 0;
+    if (active && active.hidden) setActive(visible()[0] || null);
+  }
+  btn.addEventListener('click', () => pop.hidden ? open() : close());
+  btn.addEventListener('keydown', e => { if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) { e.preventDefault(); open(); } });
+  q.addEventListener('input', () => { filter(); if (!active) setActive(visible()[0] || null); });
+  q.addEventListener('keydown', e => {
+    const v = visible(), i = v.indexOf(active);
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActive(v[Math.min(i + 1, v.length - 1)] || v[0]); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(v[Math.max(i - 1, 0)]); }
+    else if (e.key === 'Home') { e.preventDefault(); setActive(v[0]); }
+    else if (e.key === 'End') { e.preventDefault(); setActive(v[v.length - 1]); }
+    else if (e.key === 'Enter') { e.preventDefault(); choose(active); }
+    else if (e.key === 'Escape') { e.preventDefault(); close(); }
+    else if (e.key === 'Tab') close(false);
+  });
+  list.addEventListener('mousemove', e => { const o = e.target.closest('[role=option]'); if (o && o !== active && o.getAttribute('aria-disabled') !== 'true') setActive(o); });
+  list.addEventListener('click', e => choose(e.target.closest('[role=option]')));
+  document.addEventListener('pointerdown', e => { if (!pop.hidden && !root.contains(e.target)) close(false); });
+})();
+</script>
+
+<script>
+// dev live-reload: poll this file, reload on change, keep scroll position
+(() => {
+  try { const y = sessionStorage.getItem('dtx-scroll'); if (y) { sessionStorage.removeItem('dtx-scroll'); addEventListener('load', () => scrollTo(0, +y)); } } catch (e) {}
+  let last = null;
+  setInterval(async () => {
+    try {
+      const r = await fetch(location.pathname, { method: 'HEAD', cache: 'no-store' });
+      const m = r.headers.get('last-modified');
+      if (last && m !== last) { try { sessionStorage.setItem('dtx-scroll', scrollY); } catch (e) {} location.reload(); }
+      last = m;
+    } catch (e) {}
+  }, 1000);
+})();
+</script>
+</body>
+</html>

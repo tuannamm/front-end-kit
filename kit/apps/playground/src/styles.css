@@ -1,0 +1,11 @@
+/* Layer order: kit components sit above Tailwind base but below utilities, so utilities can override them. */
+@layer theme, base, dtx, components, utilities;
+@import "tailwindcss";
+@import "@dtx/tokens/fonts.css";
+@import "@dtx/ui/styles.css";
+@import "@dtx/tokens/tailwind.css";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* playground-only helpers */
+.pg-code { margin: 0; padding: 12px 14px; overflow-x: auto; border-radius: var(--dtx-radius-md); background: #16151B; color: #E4E6EB; font: 400 12.5px/1.6 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+.pg-stage { background-image: radial-gradient(var(--dtx-border) 1px, transparent 1px); background-size: 16px 16px; }

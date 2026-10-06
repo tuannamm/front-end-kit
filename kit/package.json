@@ -1,0 +1,22 @@
+{
+  "name": "dtx-frontend-kit",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @dtx/playground",
+    "build": "npm run build -w @dtx/playground",
+    "typecheck": "tsc -p packages/ui && tsc -p apps/playground",
+    "test": "npm test -w @dtx/tokens && npm test -w @dtx/ui",
+    "check": "npm test && npm run typecheck && npm run build",
+    "test:a11y": "node apps/playground/a11y.check.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "playwright": "^1.63.0",
+    "typescript": "^7.0.2"
+  }
+}

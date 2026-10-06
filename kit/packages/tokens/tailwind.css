@@ -1,0 +1,31 @@
+/* Tailwind v4 bridge: exposes DIGI-TEXX tokens as utilities (bg-surface, text-fg-muted,
+   rounded-md, duration-base, ease-enter, font-sans…). Import after "tailwindcss". */
+@theme inline {
+  --color-bg: var(--dtx-bg);
+  --color-surface: var(--dtx-surface);
+  --color-surface-2: var(--dtx-surface-2);
+  --color-border: var(--dtx-border);
+  --color-border-strong: var(--dtx-border-strong);
+  --color-hover: var(--dtx-hover);
+  --color-fg: var(--dtx-fg);
+  --color-fg-muted: var(--dtx-fg-muted);
+  --color-link: var(--dtx-link);
+  --color-primary: var(--dtx-primary);
+  --color-primary-strong: var(--dtx-primary-strong);
+  --color-navy: var(--dtx-navy);
+  --color-brand: var(--dtx-blue);
+  --color-sky: var(--dtx-sky);
+  --color-light: var(--dtx-light);
+  --color-amber: var(--dtx-amber);
+  --color-lime: var(--dtx-lime);
+  --color-violet: var(--dtx-violet);
+  --font-sans: var(--dtx-font);
+  --radius-sm: var(--dtx-radius-sm);
+  --radius-md: var(--dtx-radius-md);
+  --radius-lg: var(--dtx-radius-lg);
+  --shadow-pop: var(--dtx-shadow-pop);
+  --ease-standard: var(--dtx-ease-standard);
+  --ease-enter: var(--dtx-ease-enter);
+  --ease-exit: var(--dtx-ease-exit);
+  --ease-emphasis: var(--dtx-ease-emphasis);
+}

@@ -1,0 +1,60 @@
+/* DIGI-TEXX brand tokens — from DIGI-TEXX Branding Guidelines 2024 */
+:root {
+  /* Main color group (blue leads every design) */
+  --dtx-blue: #2582D7;        /* DIGI-TEXX Blue — primary */
+  --dtx-blue-hover: #1A6FBF;  /* derived: AA for small white text */
+  --dtx-navy: #26385D;
+  --dtx-ocean: #137BB6;       /* AA link color on white */
+  --dtx-sky: #30AAE0;         /* blue text/accents on dark */
+  --dtx-light: #7BD2F2;
+  --dtx-ice: #A8E5F5;
+
+  /* Secondary group — accents, always paired with blue */
+  --dtx-lime: #A5CB1F;
+  --dtx-amber: #F6B71E;
+  --dtx-violet: #9127D6;
+
+  /* Logo colors */
+  --dtx-ink: #231F20;         /* wordmark black */
+  --dtx-gray: #6E6F72;        /* tagline gray */
+  --dtx-logo-blue: #1A489E;   /* square tile gradient center */
+  --dtx-logo-black: #0D1120;  /* square tile gradient edge */
+
+  /* Surfaces */
+  --dtx-canvas-dark: #1E1D23;
+  --dtx-surface-dark: #26252C;
+  --dtx-border-dark: #34333B;
+  --dtx-canvas-light: #F0F0F0;
+  --dtx-white: #FFFFFF;
+  --dtx-border-light: #E2E4E8;
+  --dtx-text-muted-dark: #B8BAC0;
+
+  /* Gradients */
+  --dtx-gradient-bar: linear-gradient(90deg, #00ACEB 0%, #004EBE 100%);   /* decoration only, no text */
+  --dtx-gradient-panel: linear-gradient(135deg, #00ACEB 0%, #0047BB 100%);  /* large display text only */
+  --dtx-gradient-cta: linear-gradient(90deg, #1A6FBF 0%, #004EBE 100%);   /* buttons/pills with white text (AA) */
+  --dtx-gradient-text: linear-gradient(90deg, #00ACEB 0%, #1A6FD8 100%);
+  --dtx-gradient-logo: radial-gradient(circle, #1A489E 0%, #0D1120 100%);
+  --dtx-glow: radial-gradient(circle, rgba(37,130,215,.45) 0%, rgba(37,130,215,0) 70%);
+
+  /* Type */
+  --dtx-font-body: "Roboto", Arial, "Helvetica Neue", sans-serif;
+  --dtx-font-office: Arial, "Arial Narrow", sans-serif;
+  --dtx-font-display: "SVN-HemiHead", "Chakra Petch", "Roboto", sans-serif; /* italic, uppercase */
+
+  /* Shape */
+  --dtx-radius: 6px;
+  --dtx-radius-card: 8px;
+  --dtx-shadow: 0 2px 8px rgba(13,17,32,.08);
+}
+
+.dtx-display { font-family: var(--dtx-font-display); font-style: italic; font-weight: 700; text-transform: uppercase; letter-spacing: .01em; }
+.dtx-gradient-text { background: var(--dtx-gradient-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.dtx-bar { background: var(--dtx-gradient-bar); }
+/* White on #2582D7 is 4.0:1, so the default button uses large text (19px bold). */
+.dtx-btn { font-family: var(--dtx-font-body); font-size: 19px; font-weight: 700; background: var(--dtx-blue); color: #fff; border: 0; border-radius: var(--dtx-radius); padding: .65em 1.3em; cursor: pointer; }
+.dtx-btn:hover { background: var(--dtx-blue-hover); }
+.dtx-btn--sm { font-size: 15px; font-weight: 500; background: var(--dtx-blue-hover); }  /* 5.2:1 */
+.dtx-btn--sm:hover { background: #155C9F; }
+.dtx-btn--pill { border-radius: 999px; background: var(--dtx-gradient-cta); }
+.dtx-btn--outline { background: transparent; color: var(--dtx-blue); box-shadow: inset 0 0 0 1.5px var(--dtx-blue); }

@@ -1,0 +1,124 @@
+/* AI shared: confidence, bounding boxes, compare slider. */
+/* ---- confidence ---- */
+.dtx-conf { position: relative; height: 6px; border-radius: 2px; background: var(--dtx-surface-2); box-shadow: inset 0 0 0 1px var(--dtx-border); }
+.dtx-conf > i { position: absolute; inset: 0 auto 0 0; border-radius: 2px; background: var(--dtx-primary); transform-origin: left; animation: dtx-grow-x var(--dtx-dur-page) var(--dtx-ease-standard); }
+.dtx-conf[data-level="medium"] > i { background: var(--dtx-amber); }
+.dtx-conf[data-level="low"] > i { background: var(--dtx-red); }
+.dtx-conf > u { position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--dtx-fg-muted); }
+
+/* ---- confidence dots (logo motif) ---- */
+.dtx-conf-dots { display: inline-flex; gap: 2px; vertical-align: middle; }
+.dtx-conf-dots > i { width: 6px; height: 6px; border-radius: 1px; box-shadow: inset 0 0 0 1px var(--dtx-border-strong); }
+.dtx-conf-dots > i[data-on] { box-shadow: none; background: var(--dtx-primary); }
+.dtx-conf-dots[data-level="medium"] > i[data-on] { background: var(--dtx-amber); }
+.dtx-conf-dots[data-level="low"] > i[data-on] { background: var(--dtx-red); }
+
+/* ---- bounding boxes ---- */
+.dtx-ocr { position: relative; isolation: isolate; }
+.dtx-ocr__page { position: relative; overflow: hidden; line-height: 0; }
+.dtx-ocr__layer { position: absolute; inset: 0; }
+.dtx-ocr__box {
+  position: absolute; padding: 0; cursor: pointer; border-radius: 2px;
+  border: 1.5px solid rgb(var(--c)); background: rgb(var(--c) / .1);
+  transition: background var(--dtx-dur-fast), opacity var(--dtx-dur-base), border-color var(--dtx-dur-fast), box-shadow var(--dtx-dur-slow) var(--dtx-ease-standard);
+}
+.dtx-ocr__box--animate { animation: dtx-box-in var(--dtx-dur-slow) var(--dtx-ease-emphasis) both; }
+.dtx-ocr__box:focus-visible { outline: none; }
+.dtx-ocr__box[data-selected] { background: rgb(var(--c) / .22); }
+.dtx-ocr[data-active] .dtx-ocr__box:not([data-active]):not([data-selected]) { opacity: .3; }
+.dtx-ocr__tag { position: absolute; left: -1.5px; bottom: 100%; padding: 2px 5px; border-radius: 2px 2px 0 0; background: rgb(var(--c)); color: var(--dtx-on-primary); font: 500 10px/1.2 var(--dtx-font); white-space: nowrap; }
+@keyframes dtx-box-in { from { opacity: 0; transform: scale(1.08); } }
+/* ---- scan reveal: anything inside an active ScanBeam (boxes, the wiped-in page, <ScanReveal>) ----
+   progressive: clipped open along the scan direction, exactly under the beam edge. whole: pops in when touched.
+   The last frame drops the clip so hover brackets and the spotlight are never cut off. */
+/* longhands only: the start time comes from the inline animation-delay (a shorthand here would reset it) */
+.dtx-reveal-v, .dtx-reveal-h, .dtx-reveal-whole { animation-timing-function: linear; animation-fill-mode: both; animation-iteration-count: 1; }
+.dtx-reveal-v { animation-name: dtx-reveal-v; animation-duration: var(--rev-ms); }
+.dtx-reveal-h { animation-name: dtx-reveal-h; animation-duration: var(--rev-ms); }
+.dtx-reveal-whole { animation-name: dtx-reveal-whole; animation-duration: var(--dtx-dur-page); }
+@keyframes dtx-reveal-v { 0% { clip-path: inset(0 -3px 100% -3px); } 99.9% { clip-path: inset(-3px); } 100% { clip-path: none; } }
+@keyframes dtx-reveal-h { 0% { clip-path: inset(-3px 100% -3px 0); } 99.9% { clip-path: inset(-3px); } 100% { clip-path: none; } }
+@keyframes dtx-reveal-whole { 0% { opacity: 0; } 1% { opacity: 1; background: rgb(var(--c, 37 130 215) / .4); box-shadow: 0 0 10px rgb(var(--c, 37 130 215) / .7); } 100% { opacity: 1; } }
+
+/* active box: corner brackets snap in, the page dims around it */
+.dtx-ocr__box[data-active] {
+  z-index: 1; background: transparent; border-color: rgb(var(--c) / .4);
+  box-shadow: 0 0 0 200vmax rgb(15 15 20 / .22); /* theme-fixed: spotlight dims the paper, not the UI */
+}
+.dtx-ocr__box[data-active]::after {
+  content: ""; position: absolute; inset: -6px; pointer-events: none; --b: rgb(var(--c));
+  background:
+    linear-gradient(var(--b), var(--b)) top left / 9px 2px no-repeat, linear-gradient(var(--b), var(--b)) top left / 2px 9px no-repeat,
+    linear-gradient(var(--b), var(--b)) top right / 9px 2px no-repeat, linear-gradient(var(--b), var(--b)) top right / 2px 9px no-repeat,
+    linear-gradient(var(--b), var(--b)) bottom left / 9px 2px no-repeat, linear-gradient(var(--b), var(--b)) bottom left / 2px 9px no-repeat,
+    linear-gradient(var(--b), var(--b)) bottom right / 9px 2px no-repeat, linear-gradient(var(--b), var(--b)) bottom right / 2px 9px no-repeat;
+  animation: dtx-reticle var(--dtx-dur-slow) var(--dtx-ease-emphasis) both;
+}
+@keyframes dtx-reticle { from { opacity: 0; transform: scale(1.35); } }
+
+/* lens: magnified original over AI text, same scale, same left edge.
+   It sits on paper (it IS a piece of the page), so its colours are paper colours, not theme colours. */
+.dtx-ocr__lens {
+  position: absolute; z-index: 3; display: grid; line-height: 1.2;
+  background: #FFFFFF; /* theme-fixed: a magnified piece of the white page */
+  border: 1px solid rgb(var(--c)); border-radius: 2px;
+  animation: dtx-lens var(--dtx-dur-base) var(--dtx-ease-emphasis) both;
+}
+.dtx-ocr__lens[data-below] { transform-origin: top left; } .dtx-ocr__lens:not([data-below]) { transform-origin: bottom left; }
+@keyframes dtx-lens { from { opacity: 0; transform: scaleY(.6); } }
+.dtx-ocr__lens-row { position: relative; display: grid; grid-template-columns: 30px minmax(0, 1fr); align-items: center; }
+.dtx-ocr__lens-row + .dtx-ocr__lens-row { border-top: 1px dashed rgb(var(--c) / .5); }
+.dtx-ocr__lens-crop { position: relative; overflow: hidden; }
+.dtx-ocr__lens-text {
+  display: flex; align-items: center; min-height: 1.6em; white-space: nowrap; overflow: hidden;
+  font-family: var(--dtx-font); font-weight: 400; letter-spacing: 0;
+  color: var(--dtx-blue-strong); /* theme-fixed: AI ink on white paper (5.16:1) */
+}
+.dtx-ocr__lens-tag {
+  justify-self: center; padding: 1px 4px; border-radius: 2px;
+  background: rgb(var(--c)); color: var(--dtx-on-primary); font: 500 9px/1.3 var(--dtx-font); letter-spacing: .08em; text-transform: uppercase;
+}
+.dtx-ocr__lens-score {
+  display: flex; align-items: center; gap: 8px; white-space: nowrap; padding: 5px 8px; border-top: 1px solid rgb(var(--c) / .25);
+  font: 400 11px/1.3 var(--dtx-font);
+  color: #55575C; /* theme-fixed: paper ink */
+}
+.dtx-ocr__lens-score .dtx-tone-ok { --t: #3F5208; } .dtx-ocr__lens-score .dtx-tone-warn { --t: #6B4A00; } .dtx-ocr__lens-score .dtx-tone-err { --t: #A12424; } /* theme-fixed: tones on white paper */
+.dtx-ocr__lens-kind { margin-left: auto; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+
+/* blink comparator: the box flips between original pixels and AI text */
+.dtx-ocr[data-hover="blink"] .dtx-ocr__box[data-active] { container-type: size; }
+.dtx-ocr__blink {
+  position: absolute; inset: 0; display: flex; align-items: center; padding-inline: 3px; overflow: hidden; white-space: nowrap;
+  background: #FFFFFF; /* theme-fixed: covers the white paper */
+  color: var(--dtx-blue-strong); /* theme-fixed: AI ink on white paper */
+  font: 400 62cqh/1 var(--dtx-font); opacity: 0; transition: opacity 90ms linear;
+}
+.dtx-ocr__blink[data-on] { opacity: 1; }
+.dtx-ocr__blink-tag { position: absolute; left: -1.5px; bottom: calc(100% + 1px); padding: 2px 6px; border-radius: 2px 2px 0 0; background: rgb(var(--c)); color: var(--dtx-on-primary); font: 500 10px/1.2 var(--dtx-font); white-space: nowrap; }
+
+/* ---- compare slider ---- */
+.dtx-compare { position: relative; overflow: hidden; border-radius: var(--dtx-radius-md); line-height: 0; user-select: none; }
+.dtx-compare__layer { position: relative; }
+.dtx-compare__after { position: absolute; inset: 0; clip-path: inset(0 0 0 var(--pos)); }
+.dtx-compare__handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: var(--dtx-primary); box-shadow: 0 0 12px rgb(37 130 215 / .6); pointer-events: none; }
+.dtx-compare__handle::after { content: ""; position: absolute; top: 50%; left: 50%; width: 28px; height: 28px; translate: -50% -50%; border-radius: var(--dtx-radius-md); background: var(--dtx-primary-strong); box-shadow: var(--dtx-shadow-pop); }
+.dtx-compare__range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+.dtx-compare__range:focus-visible ~ .dtx-compare__handle, .dtx-compare:has(.dtx-compare__range:focus-visible) .dtx-compare__handle { box-shadow: 0 0 0 3px var(--dtx-focus); }
+.dtx-compare__tag { position: absolute; top: 8px; padding: 3px 7px; border-radius: var(--dtx-radius-sm); background: rgb(30 29 35 / .75); color: var(--dtx-on-primary); font: 500 11px/1.3 var(--dtx-font); pointer-events: none; } /* theme-fixed: label over page image */
+
+
+/* ---- scan beam (the only scanning effect in the kit; compose it) ---- */
+.dtx-beam { position: relative; overflow: hidden; }
+.dtx-beam__track { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.dtx-beam__track::before { content: ""; position: absolute; inset: 0; animation: dtx-beam-v var(--beam-ms) var(--beam-ease, linear) var(--beam-n) both; }
+.dtx-beam[data-dir="vertical"] > .dtx-beam__track::before { background: linear-gradient(180deg, transparent calc(100% - var(--beam-band)), rgb(37 130 215 / .25) calc(100% - 1px), rgb(37 130 215 / .85) 100%); }
+.dtx-beam[data-dir="horizontal"] > .dtx-beam__track::before { background: linear-gradient(90deg, transparent calc(100% - var(--beam-band)), rgb(37 130 215 / .25) calc(100% - 1px), rgb(37 130 215 / .85) 100%); animation-name: dtx-beam-h; }
+/* the bright edge sits exactly at progress × size, so linear beams line up with every reveal */
+@keyframes dtx-beam-v { 0% { transform: translateY(-100%); } 97% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(0); opacity: 0; } }
+@keyframes dtx-beam-h { 0% { transform: translateX(-100%); } 97% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(0); opacity: 0; } }
+
+/* ---- scan beam wipe (ScanBeam before=…) ---- */
+.dtx-beam__after { position: absolute; inset: 0; }
+.dtx-beam[data-wipe="done"] > .dtx-beam__before { visibility: hidden; }
+.dtx-beam[data-wipe] > .dtx-beam__before { line-height: 0; }

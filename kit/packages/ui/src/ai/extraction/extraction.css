@@ -1,0 +1,26 @@
+/* AI extraction: DocumentScan. */
+/* ---- document scan (AI extraction) ---- */
+.dtx-scan { border: 1px solid var(--dtx-border-strong); border-radius: var(--dtx-radius-lg); background: color-mix(in srgb, var(--dtx-surface) 80%, transparent); backdrop-filter: blur(10px); overflow: hidden; box-shadow: var(--dtx-shadow-pop); }
+.dtx-scan__head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--dtx-border); font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
+.dtx-scan__head b { color: var(--dtx-fg); font-weight: 500; }
+.dtx-scan__head .dtx-badge { margin-left: auto; }
+.dtx-scan__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.dtx-scan__doc { margin: 16px; padding: 16px; overflow: hidden; border-radius: var(--dtx-radius-sm); background: #F7F8FA; color: #231F20; font-size: 11px; line-height: 1.45; } /* theme-fixed: scanned paper is white in both themes */
+.dtx-scan__doc h4 { margin: 0 0 8px; font-size: 13px; font-weight: 700; letter-spacing: .04em; }
+.dtx-scan__row { display: flex; justify-content: space-between; gap: 8px; padding: 3px 4px; border-radius: 2px; transition: background var(--dtx-dur-slow), box-shadow var(--dtx-dur-slow); }
+.dtx-scan__row span:first-child { color: #55575C; } /* theme-fixed: paper ink */
+.dtx-scan__row--strong span { color: #231F20 !important; font-weight: 700; } /* theme-fixed: paper ink */
+.dtx-scan__rule { border: 0; border-top: 1px dashed #C9CBD1; margin: 8px 0; } /* theme-fixed: paper rule */
+.dtx-scan__row[data-hit] { background: rgb(37 130 215 / .12); box-shadow: inset 0 0 0 1px rgb(37 130 215 / .8); }
+.dtx-scan[data-phase="scanning"] .dtx-scan__fields { display: grid; gap: 8px; align-content: start; padding: 16px 16px 16px 0; }
+.dtx-scan__field { padding: 8px 10px; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-sm); background: var(--dtx-surface-2); animation: dtx-fade-up var(--dtx-dur-slow) var(--dtx-ease-enter) both; }
+.dtx-scan__field small { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--dtx-fg-muted); }
+.dtx-scan__field small i { font-style: normal; letter-spacing: 0; color: var(--dtx-tone-ok); }
+.dtx-scan__field small i[data-low] { color: var(--dtx-tone-warn); }
+.dtx-scan__field div { margin-top: 2px; font-size: var(--dtx-text-sm); font-weight: 500; font-variant-numeric: tabular-nums; }
+.dtx-scan__placeholder { height: 46px; border-radius: var(--dtx-radius-sm); border: 1px dashed var(--dtx-border-strong); }
+@media (max-width: 600px) {
+  .dtx-scan__body { grid-template-columns: 1fr; }
+  .dtx-scan__fields { padding: 0 16px 16px; }
+}
+

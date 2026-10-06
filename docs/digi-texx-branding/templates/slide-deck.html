@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DIGI-TEXX Deck</title>
+<!-- DIGI-TEXX branded HTML deck. Asset paths are relative (../assets/...), so open it from
+     inside the skill's templates/ folder, or copy the skill's assets/ folder to the parent of
+     wherever you put this file (or rewrite the ../assets/ paths). Arrow keys / click to navigate. Each <section class="slide"> is 1920x1080. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400;1,700&family=Chakra+Petch:ital,wght@1,600;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/tokens.css">
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+  body { font-family: var(--dtx-font-body); }
+  .deck { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: center; }
+  .slide { position: absolute; inset: 0; background: var(--dtx-canvas-dark); color: #fff; overflow: hidden; display: none; }
+  .slide.active { display: block; }
+
+  /* fixed chrome */
+  .hdr { position: absolute; left: 96px; top: 78px; font-size: 48px; margin: 0; color: #fff; }
+  .bar { position: absolute; right: 0; top: 87px; width: 390px; height: 70px; background: var(--dtx-gradient-bar); }
+  .slide--light { background: var(--dtx-canvas-light); color: var(--dtx-ink); }
+  .band { position: absolute; left: 0; right: 0; top: 0; height: 185px; background: var(--dtx-canvas-dark); }
+  .corner-logo { position: absolute; left: 96px; bottom: 56px; height: 72px; }
+  .pgnum { position: absolute; right: 96px; bottom: 60px; font-size: 36px; }
+  .wave { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; opacity: .55; pointer-events: none; }
+  .glow { position: absolute; left: -160px; top: -200px; width: 700px; height: 600px; background: var(--dtx-glow); pointer-events: none; }
+
+  /* cover */
+  .cover-left { position: absolute; left: 0; top: 0; bottom: 0; width: 960px; padding: 96px; box-sizing: border-box; }
+  .cover-right { position: absolute; right: 0; top: 0; bottom: 0; width: 960px; background: linear-gradient(135deg, #0D1120, #1A489E 60%, #2582D7); background-size: cover; background-position: center; }
+  .cover-title { font-size: 160px; line-height: .95; margin: 260px 0 32px; }
+  .underline { display: flex; gap: 0; }
+  .underline span:first-child { width: 24px; height: 6px; background: var(--dtx-blue); }
+  .underline span:last-child { width: 72px; height: 6px; background: #fff; }
+  .site { position: absolute; left: 96px; bottom: 80px; font-size: 30px; font-style: italic; font-weight: 700; }
+
+  /* content */
+  h2.headline { font-size: 44px; font-weight: 700; margin: 0 0 24px; }
+  .sub { font-size: 30px; font-weight: 500; color: var(--dtx-sky); margin: 0 0 16px; }
+  .slide--light .sub { color: var(--dtx-blue); }
+  p, li { font-size: 24px; line-height: 1.5; }
+  .content { position: absolute; left: 96px; right: 96px; top: 250px; }
+
+  .cols3 { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .cols3 > div { padding: 0 48px; text-align: center; border-left: 2px dotted #8a8c92; }
+  .cols3 > div:first-child { border-left: 0; }
+  .cols3 h2 { font-size: 32px; margin: 0 0 12px; }
+  .cols3 .on h2, .cols3 .on p { color: var(--dtx-sky); }
+  .hexrow { display: flex; align-items: center; justify-content: center; margin-top: 72px; }
+  .hex { width: 96px; height: 84px; background: #eee; clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); }
+  .hex.on { width: 128px; height: 112px; background: var(--dtx-blue); }
+  .dots { width: 220px; border-top: 4px dotted #ccc; }
+
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 64px; }
+  .kpi .n { font-size: 120px; color: var(--dtx-blue); line-height: 1; }
+  .kpi .l { font-size: 24px; color: #4A4B4F; }
+
+  .quote { position: absolute; left: 240px; right: 240px; bottom: 260px; padding: 36px 64px; border-radius: 999px; background: var(--dtx-gradient-cta); text-align: center; font-weight: 700; font-style: italic; font-size: 30px; }
+
+  /* section divider */
+  .divider-bg { position: absolute; inset: 0; background: radial-gradient(circle at 70% 55%, rgba(37,130,215,.55), rgba(13,17,32,0) 45%), linear-gradient(180deg, #0D1120, #13213F); }
+  .divider-title { position: absolute; left: 96px; top: 380px; font-size: 120px; line-height: 1; margin: 0; }
+
+  /* closing */
+  .closing-bg { position: absolute; inset: 0; background: linear-gradient(180deg, #0B4FA8 0%, #1A6FBF 55%, #2582D7 100%); background-size: cover; }
+  .thanks { position: absolute; right: 96px; top: 120px; font-size: 200px; margin: 0; }
+  .closing-note { position: absolute; right: 96px; top: 360px; width: 820px; display: flex; gap: 24px; align-items: center; font-style: italic; font-size: 24px; }
+  .closing-note img { height: 120px; }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- 1. COVER -->
+  <section class="slide active">
+    <div class="cover-left">
+      <img src="../assets/logos/logo-square.png" alt="DIGI-TEXX" style="height:120px">
+      <h1 class="cover-title dtx-display dtx-gradient-text">Deck<br>Title</h1>
+      <div class="underline"><span></span><span></span></div>
+      <div class="site">www.digi-texx.com</div>
+    </div>
+    <!-- Replace gradient with a blue-toned tech/architecture photo: style="background-image:url(photo.jpg)" -->
+    <div class="cover-right"></div>
+  </section>
+
+  <!-- 2. CONTENT ON LIGHT PANEL -->
+  <section class="slide slide--light">
+    <div class="band"><h1 class="hdr dtx-display">01. Section name</h1><div class="bar"></div></div>
+    <div class="content">
+      <h2 class="headline">One clear message per slide</h2>
+      <p class="sub">Supporting subhead in DIGI-TEXX Blue</p>
+      <div class="kpis">
+        <div class="kpi"><div class="n dtx-display">20+</div><div class="l">years of digitization since 2003</div></div>
+        <div class="kpi"><div class="n dtx-display">[X]M</div><div class="l">pages processed per year</div></div>
+        <div class="kpi"><div class="n dtx-display">[99.5]%</div><div class="l">data accuracy</div></div>
+      </div>
+    </div>
+    <img class="corner-logo" src="../assets/logos/logo-square.png" alt="">
+    <div class="pgnum dtx-display">02</div>
+  </section>
+
+  <!-- 3. THREE OPTIONS ON DARK -->
+  <section class="slide">
+    <div class="glow"></div>
+    <h1 class="hdr dtx-display">02. Approach</h1><div class="bar"></div>
+    <div class="content" style="top:300px">
+      <div class="cols3">
+        <div><h2>Option A</h2><p>Short description of the first option.</p></div>
+        <div class="on"><h2>Recommended</h2><p>Why this is the right choice, in one line.</p></div>
+        <div><h2>Option C</h2><p>Short description of the third option.</p></div>
+      </div>
+      <div class="hexrow"><div class="hex"></div><div class="dots"></div><div class="hex on"></div><div class="dots"></div><div class="hex"></div></div>
+    </div>
+    <img class="wave" src="../assets/patterns/pattern-wave-mesh.png" alt="">
+    <img class="corner-logo" src="../assets/logos/logo-square.png" alt="">
+    <div class="pgnum dtx-display">03</div>
+  </section>
+
+  <!-- 4. SECTION DIVIDER -->
+  <section class="slide">
+    <div class="divider-bg"></div><div class="bar"></div>
+    <h1 class="divider-title dtx-display dtx-gradient-text">Section<br>Divider</h1>
+    <div class="pgnum dtx-display">04</div>
+  </section>
+
+  <!-- 5. KEY MESSAGE -->
+  <section class="slide">
+    <h1 class="hdr dtx-display">03. Key message</h1><div class="bar"></div>
+    <div class="content"><h2 class="headline">We are not business as usual.</h2><p>We accompany other businesses and develop sustainable growth.</p></div>
+    <div class="quote">Keep your messages smart, direct, and practical.</div>
+    <img class="wave" src="../assets/patterns/pattern-wave-mesh.png" alt="">
+    <img class="corner-logo" src="../assets/logos/logo-square.png" alt="">
+    <div class="pgnum dtx-display">05</div>
+  </section>
+
+  <!-- 6. CLOSING -->
+  <section class="slide">
+    <!-- Replace with a bright landscape photo (wind farm, sky): style="background-image:url(photo.jpg)" -->
+    <div class="closing-bg"></div>
+    <h1 class="thanks dtx-display">Thank you</h1>
+    <div class="closing-note"><img src="../assets/mascot-robot.png" alt=""><span>Let's get in touch — www.digi-texx.com</span></div>
+  </section>
+
+</div>
+<script>
+  const deck = document.getElementById('deck');
+  const slides = [...deck.querySelectorAll('.slide')];
+  let i = 0;
+  function fit() { const s = Math.min(innerWidth / 1920, innerHeight / 1080); deck.style.transform = `translate(-50%,-50%) scale(${s})`; }
+  function show(n) { i = Math.max(0, Math.min(slides.length - 1, n)); slides.forEach((s, k) => s.classList.toggle('active', k === i)); }
+  addEventListener('resize', fit); fit();
+  addEventListener('keydown', e => { if (['ArrowRight','PageDown',' '].includes(e.key)) show(i + 1); if (['ArrowLeft','PageUp'].includes(e.key)) show(i - 1); });
+  addEventListener('click', e => show(i + (e.clientX > innerWidth / 2 ? 1 : -1)));
+</script>
+</body>
+</html>

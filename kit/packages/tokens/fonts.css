@@ -1,0 +1,5 @@
+/* Roboto variable (100–900 + italics), self-hosted, split by unicode-range so
+   browsers only download the latin / vietnamese subsets a page actually uses.
+   Brand rule (Guidelines PDF §07): Roboto only, Arial fallback. */
+@import "@fontsource-variable/roboto/wght.css";
+@import "@fontsource-variable/roboto/wght-italic.css";

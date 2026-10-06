@@ -1,0 +1,75 @@
+/* AI preprocess: geometry steps (crop, unwarp, deskew), PageLook (pixel looks), pipeline stepper. */
+
+/* ---- PageLook: one fixed look per page; a pixel step is a before/after pair of looks ---- */
+.dtx-look { position: relative; line-height: 0; }
+.dtx-look--raw-color { filter: sepia(.45) saturate(1.3) contrast(.82) brightness(.94); }
+.dtx-look--raw-noisy { filter: blur(.6px) contrast(.92); }
+.dtx-look--grayscale { filter: grayscale(1); }
+.dtx-look--binarized { filter: grayscale(1) contrast(6) brightness(1.08); }
+.dtx-look--denoised { filter: none; }
+.dtx-look__noise { position: absolute; inset: 0; pointer-events: none; opacity: .6; mix-blend-mode: multiply; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1.6 -.55'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+/* ---- preprocessing ---- */
+.dtx-pp { position: relative; overflow: hidden; border-radius: var(--dtx-radius-sm); }
+.dtx-pp__page { position: relative; transform-origin: center; transition: transform var(--pp-ms) var(--dtx-ease-emphasis), filter var(--pp-ms) var(--dtx-ease-standard); }
+.dtx-pp__page > i, .dtx-pp__page > span { position: absolute; inset: 0; pointer-events: none; transition: opacity var(--pp-ms) var(--dtx-ease-standard); }
+
+/* deskew: tilted → straight, baseline guides fade in then out */
+.dtx-pp--deskew .dtx-pp__page { transform: rotate(-3.5deg) scale(.93); }
+.dtx-pp--deskew[data-applied] .dtx-pp__page { transform: none; }
+.dtx-pp__guides { opacity: .9; background: repeating-linear-gradient(180deg, transparent 0 39px, rgb(37 130 215 / .55) 39px 40px); }
+.dtx-pp--deskew[data-applied] .dtx-pp__guides { opacity: 0; transition-delay: calc(var(--pp-ms) * .6); }
+
+/* unwarp: perspective + page curl → flat. The 3D mesh map (UnwarpMesh) follows the surface, then aligns to a regular grid. */
+.dtx-pp--unwarp .dtx-pp__page { transform: perspective(1100px) rotateX(15deg) rotateY(-9deg) rotateZ(1.5deg) scale(.84); }
+.dtx-pp--unwarp[data-applied] .dtx-pp__page { transform: none; }
+.dtx-pp__curl { background: linear-gradient(100deg, rgb(0 0 0 / .18), transparent 18%, transparent 78%, rgb(0 0 0 / .22)); }
+.dtx-pp--unwarp[data-applied] .dtx-pp__curl { opacity: 0; }
+
+/* crop: page on a desk with margins → page fills the frame */
+.dtx-pp--crop { background: #3A3F4A; } /* theme-fixed: desk under a raw photo */
+.dtx-pp--crop .dtx-pp__page { transform: scale(.8) rotate(-1deg); }
+.dtx-pp--crop[data-applied] { background: transparent; transition: background var(--pp-ms); }
+.dtx-pp--crop[data-applied] .dtx-pp__page { transform: none; }
+
+/* unwarp lattice: square points (logo motif) pop in diagonally from the top-left inside a dashed border outline */
+.dtx-pp__mesh { position: absolute; inset: 0; pointer-events: none; transition: opacity var(--dtx-dur-slow) var(--dtx-ease-standard); }
+.dtx-pp__mesh svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.dtx-pp__mesh polygon { fill: none; stroke: var(--dtx-primary); stroke-width: 1.2; stroke-dasharray: 6 5; stroke-opacity: .6; vector-effect: non-scaling-stroke; animation: dtx-fade var(--dtx-dur-page) var(--dtx-ease-standard) both; }
+.dtx-pp__mesh > i { position: absolute; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 1px; background: var(--dtx-primary); box-shadow: 0 0 0 1px rgb(255 255 255 / .85); }
+.dtx-pp__mesh[data-pop] > i { animation: dtx-mesh-pop 420ms var(--dtx-ease-standard) both; animation-delay: calc(var(--d) * 700ms); }
+@keyframes dtx-mesh-pop { 0% { scale: 0; opacity: 0; } 60% { scale: 1.3; opacity: 1; } 100% { scale: 1; opacity: 1; } }
+/* aligned: hold so the alignment can be read, then fade (an animation, so it also works when mounted already aligned) */
+.dtx-pp__mesh[data-done] { animation: dtx-mesh-out var(--dtx-dur-slow) var(--dtx-ease-standard) 900ms both; }
+@keyframes dtx-mesh-out { to { opacity: 0; } }
+
+/* UnwarpView: raw page + lattice → the page stretched flat along the lattice (projected cells), points travel with it */
+.dtx-uw { position: relative; overflow: hidden; line-height: 0; background: var(--dtx-surface-2); }
+.dtx-uw__raw { display: block; width: 100%; height: 100%; transition: opacity var(--dtx-dur-slow) var(--dtx-ease-standard); }
+.dtx-uw:not([data-state="raw"]) .dtx-uw__raw { opacity: 0; }
+.dtx-uw__cells { position: absolute; inset: 0; }
+.dtx-uw__cells > i { position: absolute; left: 0; top: 0; transform-origin: 0 0; background-repeat: no-repeat; backface-visibility: hidden; }
+.dtx-uw__flat { position: absolute; max-width: none; }
+.dtx-uw__pts { position: absolute; inset: 0; pointer-events: none; }
+.dtx-uw__pts > i { position: absolute; left: 0; top: 0; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 1px; background: var(--dtx-primary); box-shadow: 0 0 0 1px rgb(255 255 255 / .85); }
+/* one at a time: corners, border, interior (delays set inline) */
+.dtx-uw__pts[data-pop] > i { animation: dtx-mesh-pop var(--dtx-dur-slow) var(--dtx-ease-emphasis) both; }
+.dtx-uw__pts[data-done] { animation: dtx-mesh-out var(--dtx-dur-slow) var(--dtx-ease-standard) 900ms both; }
+
+/* detected-corner handles (crop) */
+.dtx-pp__corners > i { position: absolute; width: 12px; height: 12px; border: 2px solid var(--dtx-primary); background: rgb(37 130 215 / .25); border-radius: 2px; }
+.dtx-pp__corners > i:nth-child(1) { left: -2px; top: -2px; } .dtx-pp__corners > i:nth-child(2) { right: -2px; top: -2px; }
+.dtx-pp__corners > i:nth-child(3) { left: -2px; bottom: -2px; } .dtx-pp__corners > i:nth-child(4) { right: -2px; bottom: -2px; }
+[data-applied] > .dtx-pp__page > .dtx-pp__corners { opacity: 0; transition-delay: calc(var(--pp-ms) * .7); }
+
+/* pipeline stepper */
+.dtx-pipeline { display: grid; gap: 12px; }
+.dtx-pipeline__steps { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.dtx-pipeline__steps li { display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px 0 4px; border-radius: var(--dtx-radius-sm); font-size: var(--dtx-text-xs); font-weight: 500; color: var(--dtx-fg-muted); background: var(--dtx-surface-2); box-shadow: inset 0 0 0 1px var(--dtx-border); transition: background var(--dtx-dur-base), color var(--dtx-dur-base); }
+.dtx-pipeline__num { display: grid; place-items: center; width: 18px; height: 18px; border-radius: 3px; background: var(--dtx-border); font-size: 11px; transition: background var(--dtx-dur-base); }
+.dtx-pipeline__steps li[data-state="current"] { color: var(--dtx-tone-brand); background: rgb(37 130 215 / .12); box-shadow: inset 0 0 0 1px rgb(37 130 215 / .4); }
+.dtx-pipeline__steps li[data-state="current"] .dtx-pipeline__num { background: var(--dtx-primary-strong); color: var(--dtx-on-primary); }
+.dtx-pipeline__steps li[data-state="done"] { color: var(--dtx-fg); }
+.dtx-pipeline__steps li[data-state="done"] .dtx-pipeline__num { background: var(--dtx-tone-ok); color: var(--dtx-surface); }
+.dtx-pipeline__stage { overflow: hidden; border-radius: var(--dtx-radius-md); box-shadow: inset 0 0 0 1px var(--dtx-border); }
+

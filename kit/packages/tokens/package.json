@@ -1,0 +1,22 @@
+{
+  "name": "@dtx/tokens",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "DIGI-TEXX design tokens: colour, type, shape, motion. Brand rules from the 2024 Branding Guidelines PDF.",
+  "exports": {
+    "./theme.css": "./theme.css",
+    "./fonts.css": "./fonts.css",
+    "./tailwind.css": "./tailwind.css"
+  },
+  "files": [
+    "theme.css",
+    "fonts.css",
+    "tailwind.css"
+  ],
+  "scripts": {
+    "test": "node contrast.test.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/roboto": "^5.3.0"
+  }
+}
