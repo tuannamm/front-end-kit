@@ -1,7 +1,7 @@
 import { useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, Layers, ScanText, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  AppShell, Avatar, Badge, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  AppShell, Avatar, Badge, Checkbox, CheckboxGroup, RadioGroup, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Display, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, OcrShowcase, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -111,6 +111,21 @@ function MultiSelectControlled() {
   return (
     <div className="grid w-72 gap-2">
       <Field label="Loại tài liệu cần xử lý"><MultiSelect items={docTypeGroups} value={value} onValueChange={setValue} /></Field>
+      <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(value)}</code></p>
+    </div>
+  );
+}
+const exportOptions = [
+  { value: 'xlsx', label: 'Excel (.xlsx)', description: 'Một dòng mỗi tài liệu' },
+  { value: 'json', label: 'JSON', description: 'Giữ toạ độ ô và độ tin cậy' },
+  { value: 'pdf', label: 'PDF có lớp chữ', description: 'Tìm kiếm được · sắp ra mắt', disabled: true },
+];
+function CheckboxGroupControlled() {
+  const [value, setValue] = useState(['vat']);
+  const types = [{ value: 'vat', label: 'Hoá đơn VAT' }, { value: 'claim', label: 'Hồ sơ bồi thường' }, { value: 'hr', label: 'Hồ sơ nhân sự' }, { value: 'bill', label: 'Vận đơn' }];
+  return (
+    <div className="grid gap-2">
+      <CheckboxGroup label="Loại tài liệu cần QC" selectAll="Tất cả loại" options={types} value={value} onValueChange={setValue} />
       <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(value)}</code></p>
     </div>
   );
@@ -225,7 +240,17 @@ export const entries: Entry[] = [
     demos: [{ title: 'Trigger', code: "const toast = useToast();\ntoast({ title: 'Đã lưu', description: '…', icon })", render: () => <ToastDemo /> }] },
   { id: 'avatar', name: 'Avatar', category: 'Core', status: 'ready', summary: 'Initials from first + last word, navy tile.', importLine: imp('Avatar'),
     demos: [{ title: 'Sizes', render: () => <><Avatar name="Nguyễn Thị Thuận" /><Avatar name="Trần Minh" size="sm" /></> }] },
-  planned('checkbox', 'Checkbox & Radio', 'Core', 'Base UI Checkbox / RadioGroup with the same focus ring.'),
+  { id: 'checkbox', name: 'Checkbox & Radio', category: 'Core', status: 'ready', summary: 'Checkbox for one on/off choice, CheckboxGroup for several, RadioGroup for exactly one from a short visible list (more than ~6 options: use Select). Whole row is clickable; arrow keys move inside a RadioGroup.',
+    importLine: imp('Checkbox, CheckboxGroup, RadioGroup, type ChoiceOption'),
+    props: [['label', 'ReactNode', 'Checkbox label, or group legend'], ['options', 'ChoiceOption[]', '{ value, label, description?, disabled? }'], ['value / defaultValue / onValueChange', 'string[] (CheckboxGroup) · string (RadioGroup)', ''], ['checked / defaultChecked / onCheckedChange', 'boolean', 'Checkbox'], ['indeterminate', 'boolean', 'Checkbox mixed state'], ['selectAll', 'ReactNode', 'CheckboxGroup parent checkbox label'], ['row', 'boolean', 'Options side by side'], ['description, error', 'ReactNode', ''], ['disabled, required, name', '', '']],
+    demos: [
+      { title: '1 · Checkbox states', note: 'Static: unchecked, checked, mixed, disabled.', render: () => <div className="grid gap-1"><Checkbox label="Tự động gửi email" /><Checkbox label="Bỏ qua trang trắng" defaultChecked /><Checkbox label="Một phần lô đã chọn" indeterminate /><Checkbox label="Khoá cấu hình" disabled /><Checkbox label="Bắt buộc QC lần 2" disabled defaultChecked /></div> },
+      { title: '2 · Description and error', render: () => <div className="grid max-w-sm gap-3"><Checkbox label="Lưu ảnh gốc 90 ngày" description="Dung lượng tăng khoảng 2 lần." defaultChecked /><Checkbox label="Tôi đồng ý với điều khoản xử lý dữ liệu" required error="Cần đồng ý điều khoản trước khi tạo lô." /></div> },
+      { title: '3 · CheckboxGroup with “select all”', note: 'Parent is mixed while only some are ticked.', code: '<CheckboxGroup label="…" selectAll="Tất cả loại" options={types} value={value} onValueChange={setValue} />', render: () => <CheckboxGroupControlled /> },
+      { title: '4 · CheckboxGroup, descriptions + disabled option', render: () => <CheckboxGroup label="Định dạng xuất" options={exportOptions} defaultValue={['xlsx']} description="Chọn ít nhất một định dạng." /> },
+      { title: '5 · RadioGroup', render: () => <RadioGroup label="Mức ưu tiên" defaultValue="normal" options={[{ value: 'urgent', label: 'Khẩn', description: 'Xử lý trong 2 giờ' }, { value: 'normal', label: 'Bình thường', description: 'Trong ngày' }, { value: 'low', label: 'Thấp', description: 'Trong 3 ngày' }]} /> },
+      { title: '6 · RadioGroup in a row, disabled option', render: () => <RadioGroup label="Ca làm việc" row defaultValue="am" options={[{ value: 'am', label: 'Ca sáng' }, { value: 'pm', label: 'Ca chiều' }, { value: 'night', label: 'Ca đêm', disabled: true }]} /> },
+      { title: '7 · Group error', render: () => <RadioGroup label="Ngôn ngữ tài liệu" row options={[{ value: 'vi', label: 'Tiếng Việt' }, { value: 'en', label: 'English' }, { value: 'mixed', label: 'Song ngữ' }]} error="Chọn ngôn ngữ để chọn đúng mô hình OCR." /> }] },
   { id: 'multiselect', name: 'MultiSelect', category: 'Core', status: 'ready', summary: 'Several values as removable chips. Same items as Select (flat, grouped, icon, description). Typing filters accent-insensitively; Backspace removes the last chip, ← / → move between chips.',
     importLine: imp('MultiSelect, type SelectOption, type SelectGroup'), props: [['items', 'SelectOption[] | SelectGroup[]', 'Same as Select'], ['value / defaultValue / onValueChange', 'string[]', ''], ['size', "'sm' | 'md'", ''], ['placeholder, emptyText', 'string', ''], ['disabled', 'boolean', '']],
     demos: [

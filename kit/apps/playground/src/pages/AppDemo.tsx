@@ -1,8 +1,8 @@
 import { useEffect, useState, type ReactElement } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users } from 'lucide-react';
 import {
-  AppShell, Avatar, Badge, Button, Card, CardHeader, CategoryBar, CommandButton, CountUp, Counter, DataTable, Dialog, DialogClose,
-  KpiCard, Logo, Meter, MultiSelect, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
+  AppShell, Avatar, Badge, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, Dialog, DialogClose,
+  KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
   StackedBarChart, TargetBar, Tooltip, Topbar, useToast, type Column,
 } from '@dtx/ui';
 import { aiThroughput, batches, hours, manualThroughput, type Batch } from '../data';
@@ -15,6 +15,16 @@ const statusBadge: Record<Batch['status'], ReactElement> = {
 };
 const statusFilter: { value: Batch['status']; label: string }[] = [
   { value: 'qc', label: 'Đang QC' }, { value: 'risk', label: 'Nguy cơ trễ' }, { value: 'done', label: 'Hoàn tất' }, { value: 'error', label: 'Lỗi mẫu' },
+];
+const exportScopes = [
+  { value: 'shift', label: 'Ca sáng', description: '128 lô · 48.210 tài liệu' },
+  { value: 'today', label: 'Hôm nay', description: '214 lô · 81.930 tài liệu' },
+  { value: '7d', label: '7 ngày qua', description: '1.402 lô · 512.640 tài liệu' },
+];
+const exportFormats = [
+  { value: 'xlsx', label: 'Excel (.xlsx)' },
+  { value: 'csv', label: 'CSV' },
+  { value: 'json', label: 'JSON', description: 'Giữ toạ độ ô và độ tin cậy' },
 ];
 const columns: Column<Batch>[] = [
   { key: 'id', header: 'Mã lô', render: b => <span className="dtx-id">{b.id}</span> },
@@ -34,6 +44,9 @@ const queue = [
 export function AppDemo() {
   const [rail, setRail] = useState(false);
   const [status, setStatus] = useState<string[]>(['qc', 'risk']);
+  const [scope, setScope] = useState('shift');
+  const [formats, setFormats] = useState(['xlsx']);
+  const [withImages, setWithImages] = useState(false);
   const toast = useToast();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); setRail(r => !r); } };
@@ -84,10 +97,16 @@ export function AppDemo() {
             <div className="ml-auto flex flex-wrap gap-2">
               <Dialog
                 trigger={<Button variant="secondary">Xuất báo cáo</Button>}
-                title="Xuất báo cáo ca sáng?"
-                description="Báo cáo gồm 128 lô, 48.210 tài liệu. File Excel sẽ được gửi vào hộp thư của bạn."
-                footer={<><DialogClose><Button variant="ghost">Huỷ</Button></DialogClose><DialogClose><Button onClick={() => toast({ title: 'Đang tạo báo cáo', description: 'Bạn sẽ nhận email trong vài phút.', icon: <Badge tone="brand" size="sm" live /> })}>Xuất báo cáo</Button></DialogClose></>}
-              />
+                title="Xuất báo cáo"
+                description="File sẽ được gửi vào hộp thư của bạn."
+                footer={<><DialogClose><Button variant="ghost">Huỷ</Button></DialogClose><DialogClose><Button disabled={!formats.length} onClick={() => toast({ title: 'Đang tạo báo cáo', description: `${exportScopes.find(o => o.value === scope)?.label} · ${exportFormats.filter(o => formats.includes(o.value)).map(o => o.label).join(', ')}${withImages ? ' · kèm ảnh gốc' : ''}`, icon: <Badge tone="brand" size="sm" live /> })}>Xuất báo cáo</Button></DialogClose></>}
+              >
+                <div className="grid gap-5 py-2">
+                  <RadioGroup label="Phạm vi" options={exportScopes} value={scope} onValueChange={setScope} />
+                  <CheckboxGroup label="Định dạng" row options={exportFormats} value={formats} onValueChange={setFormats} error={formats.length ? undefined : 'Chọn ít nhất một định dạng.'} />
+                  <Checkbox label="Gửi kèm ảnh gốc" description="File nén, dung lượng lớn hơn khoảng 20 lần." checked={withImages} onCheckedChange={setWithImages} />
+                </div>
+              </Dialog>
               <Button onClick={() => toast({ title: 'Đã tạo lô BH-2211', description: '0 trang · Ca sáng', icon: <Badge tone="ok" size="sm" icon={<CheckCircle2 />} /> })}>+ Tạo lô mới</Button>
             </div>
           </div>

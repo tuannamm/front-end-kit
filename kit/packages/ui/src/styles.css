@@ -188,6 +188,36 @@
   .dtx-ms__toggle { display: grid; place-items: center; width: 24px; height: 24px; flex: none; padding: 0; border: 0; border-radius: var(--dtx-radius-sm); background: none; cursor: pointer; }
   .dtx-ms__toggle:hover { background: var(--dtx-hover); }
 
+  /* ---------- checkbox / radio ---------- */
+  .dtx-choices { display: grid; gap: 6px; min-width: 0; }
+  .dtx-choices fieldset, .dtx-choices > [role] { min-width: 0; margin: 0; padding: 0; border: 0; }
+  .dtx-choices .dtx-field__label { margin-bottom: 4px; padding: 0; }
+  .dtx-choices__list { display: grid; gap: 2px; }
+  .dtx-choices__list--row { display: flex; flex-wrap: wrap; column-gap: 24px; }
+  .dtx-choices__list--nested { padding-left: 28px; }
+  .dtx-choice-field { display: grid; gap: 2px; min-width: 0; }
+  .dtx-choice-field > .dtx-field__error { padding-left: 28px; }
+  .dtx-choice__label { display: flex; align-items: flex-start; gap: 10px; min-height: 28px; padding: 4px 0; font-size: var(--dtx-text-sm); font-weight: 400; line-height: 1.4; cursor: pointer; }
+  .dtx-choice__label:has([data-disabled]) { opacity: .5; cursor: not-allowed; }
+  .dtx-choice__text { display: grid; min-width: 0; }
+  .dtx-choice__text small { font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
+  /* unchecked boundary uses fg-muted, not border-strong: an empty box is the only cue, so it needs 3:1 (WCAG 1.4.11) */
+  .dtx-check, .dtx-radio {
+    width: 18px; height: 18px; flex: none; margin-top: 1px; display: grid; place-items: center; cursor: inherit;
+    background: var(--dtx-surface); border: 1.5px solid var(--dtx-fg-muted); color: var(--dtx-on-primary);
+    transition: background var(--dtx-dur-fast), border-color var(--dtx-dur-fast);
+  }
+  .dtx-check { border-radius: var(--dtx-radius-sm); }
+  .dtx-radio { border-radius: 50%; }
+  .dtx-choice__label:hover > :is(.dtx-check, .dtx-radio):not([data-disabled]) { border-color: var(--dtx-primary-strong); }
+  .dtx-check:is([data-checked], [data-indeterminate]) { background: var(--dtx-primary-strong); border-color: var(--dtx-primary-strong); }
+  .dtx-radio[data-checked] { border-color: var(--dtx-primary-strong); }
+  .dtx-check[data-invalid], .dtx-radio[data-invalid] { border-color: var(--dtx-tone-err); }
+  .dtx-check__ind { display: grid; place-items: center; animation: dtx-pop var(--dtx-dur-base) var(--dtx-ease-emphasis); }
+  .dtx-check__ind svg { width: 13px; height: 13px; stroke-width: 3; }
+  .dtx-check[data-indeterminate] .dtx-check__tick, .dtx-check:not([data-indeterminate]) .dtx-check__dash { display: none; }
+  .dtx-radio__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dtx-primary-strong); animation: dtx-pop var(--dtx-dur-base) var(--dtx-ease-emphasis); }
+
   /* ---------- switch ---------- */
   .dtx-switch-label { display: inline-flex; align-items: center; gap: 10px; font-size: var(--dtx-text-sm); font-weight: 500; cursor: pointer; }
   .dtx-switch { position: relative; width: 36px; height: 20px; flex: none; padding: 0; border: 0; border-radius: 999px; background: var(--dtx-border-strong); cursor: pointer; transition: background var(--dtx-dur-fast); }
