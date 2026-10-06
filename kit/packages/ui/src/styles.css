@@ -84,7 +84,8 @@
   .dtx-card { background: var(--dtx-surface); border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-lg); min-width: 0; }
   .dtx-card__head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 16px; border-bottom: 1px solid var(--dtx-border); }
   .dtx-card__title { margin: 0; font-size: var(--dtx-text-base); font-weight: 700; }
-  .dtx-card__action { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .dtx-card__action { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; max-width: 100%; }
+  .dtx-table__empty { padding: 32px 16px; text-align: center; font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted); }
   .dtx-card__body { padding: 16px; }
   .dtx-kpi { display: grid; grid-template-rows: auto auto 28px auto; gap: 8px; padding: 16px; }
   .dtx-kpi__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 22px; }
@@ -126,6 +127,7 @@
   .dtx-input:hover { border-color: color-mix(in srgb, var(--dtx-primary) 45%, var(--dtx-border-strong)); }
   .dtx-input:focus-visible, .dtx-select-trigger:focus-visible { outline: none; border-color: var(--dtx-primary); box-shadow: 0 0 0 3px rgb(37 130 215 / .3), 0 0 18px rgb(37 130 215 / .25); }
   .dtx-input[data-invalid] { border-color: var(--dtx-tone-err); }
+  .dtx-input:disabled { opacity: .5; cursor: not-allowed; }
 
   /* ---------- select ---------- */
   .dtx-select-trigger {
@@ -174,19 +176,92 @@
   .dtx-icon-tile svg { width: 13px; height: 13px; }
   .dtx-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; flex: 1; min-width: 0; }
   /* multi-select: the trigger box grows with its chips; the input inside it filters */
-  .dtx-ms { height: auto; min-height: 40px; padding: 6px; cursor: text; }
+  .dtx-ms { height: auto; min-height: 40px; gap: 4px; padding: 6px; cursor: text; }
   .dtx-ms.dtx-select-trigger--sm { min-height: 32px; padding-block: 2px; }
   .dtx-ms:focus-within { border-color: var(--dtx-primary); box-shadow: 0 0 0 3px rgb(37 130 215 / .3); }
   .dtx-ms[data-disabled] { opacity: .5; cursor: not-allowed; }
   .dtx-ms__chip { min-width: 0; max-width: 100%; cursor: default; }
   .dtx-ms__chip > span { overflow: hidden; text-overflow: ellipsis; }
   .dtx-ms__chip[data-highlighted] { background: rgb(37 130 215 / .13); box-shadow: inset 0 0 0 1px var(--dtx-primary); }
-  .dtx-ms__input { flex: 1 0 6ch; width: 0; min-width: 6ch; height: 26px; padding: 0 4px; border: 0; background: none; font: inherit; color: var(--dtx-fg); }
+  .dtx-ms__input { flex: 1 0 4ch; width: 0; min-width: 4ch; height: 26px; padding: 0 4px; border: 0; background: none; font: inherit; color: var(--dtx-fg); }
   .dtx-ms__input::placeholder { color: var(--dtx-fg-muted); }
   .dtx-ms__input:focus-visible { outline: none; }
   @media (any-pointer: coarse) { .dtx-ms__input { font-size: 16px; } } /* iOS zooms into inputs under 16px */
   .dtx-ms__toggle { display: grid; place-items: center; width: 24px; height: 24px; flex: none; padding: 0; border: 0; border-radius: var(--dtx-radius-sm); background: none; cursor: pointer; }
   .dtx-ms__toggle:hover { background: var(--dtx-hover); }
+
+  /* ---------- checkbox / radio ---------- */
+  .dtx-choices { display: grid; gap: 6px; min-width: 0; }
+  .dtx-choices fieldset, .dtx-choices > [role] { min-width: 0; margin: 0; padding: 0; border: 0; }
+  .dtx-choices .dtx-field__label { margin-bottom: 4px; padding: 0; }
+  .dtx-choices__list { display: grid; gap: 2px; }
+  .dtx-choices__list--row { display: flex; flex-wrap: wrap; column-gap: 24px; }
+  .dtx-choices__list--nested { padding-left: 28px; }
+  .dtx-choice-field { display: grid; gap: 2px; min-width: 0; }
+  .dtx-choice-field > .dtx-field__error { padding-left: 28px; }
+  .dtx-choice__label { display: flex; align-items: flex-start; gap: 10px; min-height: 28px; padding: 4px 0; font-size: var(--dtx-text-sm); font-weight: 400; line-height: 1.4; cursor: pointer; }
+  .dtx-choice__label:has([data-disabled]) { opacity: .5; cursor: not-allowed; }
+  .dtx-choice__text { display: grid; min-width: 0; }
+  .dtx-choice__text small { font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
+  /* unchecked boundary uses fg-muted, not border-strong: an empty box is the only cue, so it needs 3:1 (WCAG 1.4.11) */
+  .dtx-check, .dtx-radio {
+    width: 18px; height: 18px; flex: none; margin-top: 1px; display: grid; place-items: center; cursor: inherit;
+    background: var(--dtx-surface); border: 1.5px solid var(--dtx-fg-muted); color: var(--dtx-on-primary);
+    transition: background var(--dtx-dur-fast), border-color var(--dtx-dur-fast);
+  }
+  .dtx-check { border-radius: var(--dtx-radius-sm); }
+  .dtx-radio { border-radius: 50%; }
+  .dtx-choice__label:hover > :is(.dtx-check, .dtx-radio):not([data-disabled]) { border-color: var(--dtx-primary-strong); }
+  .dtx-check:is([data-checked], [data-indeterminate]) { background: var(--dtx-primary-strong); border-color: var(--dtx-primary-strong); }
+  .dtx-radio[data-checked] { border-color: var(--dtx-primary-strong); }
+  .dtx-check[data-invalid], .dtx-radio[data-invalid] { border-color: var(--dtx-tone-err); }
+  .dtx-check__ind { display: grid; place-items: center; animation: dtx-pop var(--dtx-dur-base) var(--dtx-ease-emphasis); }
+  .dtx-check__ind svg { width: 13px; height: 13px; stroke-width: 3; }
+  .dtx-check[data-indeterminate] .dtx-check__tick, .dtx-check:not([data-indeterminate]) .dtx-check__dash { display: none; }
+  .dtx-radio__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dtx-primary-strong); animation: dtx-pop var(--dtx-dur-base) var(--dtx-ease-emphasis); }
+
+  /* ---------- date picker ---------- */
+  .dtx-date { position: relative; display: block; min-width: 0; }
+  .dtx-date .dtx-input { padding-right: 44px; font-variant-numeric: tabular-nums; }
+  .dtx-date--sm .dtx-input { height: 32px; padding-right: 36px; font-size: var(--dtx-text-xs); }
+  @media (any-pointer: coarse) { .dtx-date .dtx-input { font-size: 16px; } } /* iOS zooms into inputs under 16px */
+  .dtx-date__btn {
+    position: absolute; top: 4px; right: 4px; bottom: 4px; width: 32px; display: grid; place-items: center; padding: 0;
+    border: 0; border-radius: var(--dtx-radius-sm); background: none; color: var(--dtx-fg-muted); cursor: pointer;
+  }
+  .dtx-date--sm .dtx-date__btn { width: 24px; }
+  .dtx-date__btn:hover:not(:disabled) { background: var(--dtx-hover); color: var(--dtx-fg); }
+  .dtx-date__btn:disabled { opacity: .5; cursor: not-allowed; }
+  .dtx-date__btn svg { width: 16px; height: 16px; }
+  .dtx-date__popup { width: 296px; min-width: 0; max-height: none; padding: 8px; }
+  .dtx-range__icon { width: 16px; height: 16px; flex: none; color: var(--dtx-fg-muted); }
+  .dtx-select-trigger[aria-invalid="true"] { border-color: var(--dtx-tone-err); }
+  .dtx-cal__hint { align-self: center; padding-right: 8px; font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
+  .dtx-cal { display: grid; gap: 4px; }
+  .dtx-cal__head { display: flex; align-items: center; gap: 4px; }
+  .dtx-cal__title { flex: 1; text-align: center; font-size: var(--dtx-text-sm); font-weight: 500; }
+  .dtx-cal__nav { width: 32px; height: 32px; display: grid; place-items: center; padding: 0; border: 0; border-radius: var(--dtx-radius-sm); background: none; color: var(--dtx-fg); cursor: pointer; }
+  .dtx-cal__nav:hover:not(:disabled) { background: var(--dtx-hover); }
+  .dtx-cal__nav:disabled { opacity: .35; cursor: not-allowed; }
+  .dtx-cal__nav svg { width: 16px; height: 16px; }
+  .dtx-cal table { width: 100%; border-collapse: separate; border-spacing: 0 2px; table-layout: fixed; }
+  .dtx-cal th { height: 28px; font-size: 11px; font-weight: 500; color: var(--dtx-fg-muted); }
+  .dtx-cal td { padding: 0 1px; text-align: center; }
+  /* range: a tinted band from start to end; only the ends are filled. Lighter while previewing the end. */
+  .dtx-cal td[data-range] { background: rgb(37 130 215 / .13); }
+  .dtx-cal table[data-preview] td[data-range] { background: rgb(37 130 215 / .07); }
+  .dtx-cal td[data-range="start"] { border-start-start-radius: var(--dtx-radius-sm); border-end-start-radius: var(--dtx-radius-sm); }
+  .dtx-cal td[data-range="end"] { border-start-end-radius: var(--dtx-radius-sm); border-end-end-radius: var(--dtx-radius-sm); }
+  .dtx-cal__day {
+    width: 100%; height: 34px; padding: 0; border: 0; border-radius: var(--dtx-radius-sm); background: none; cursor: pointer;
+    font: 400 var(--dtx-text-sm) var(--dtx-font); font-variant-numeric: tabular-nums; color: var(--dtx-fg);
+  }
+  .dtx-cal__day:hover:not(:disabled) { background: var(--dtx-hover); }
+  .dtx-cal__day[data-outside] { color: var(--dtx-fg-muted); }
+  .dtx-cal__day[aria-current="date"] { font-weight: 700; box-shadow: inset 0 0 0 1px var(--dtx-primary); }
+  .dtx-cal td[aria-selected="true"]:not([data-range="mid"]) > .dtx-cal__day { background: var(--dtx-primary-strong); color: var(--dtx-on-primary); font-weight: 500; }
+  .dtx-cal__day:disabled { opacity: .45; text-decoration: line-through; cursor: not-allowed; } /* strike, not only fade: outside-month days are faded too */
+  .dtx-cal__foot { display: flex; justify-content: space-between; margin: 4px -8px -8px; padding: 4px; border-top: 1px solid var(--dtx-border); }
 
   /* ---------- switch ---------- */
   .dtx-switch-label { display: inline-flex; align-items: center; gap: 10px; font-size: var(--dtx-text-sm); font-weight: 500; cursor: pointer; }
@@ -202,8 +277,8 @@
   .dtx-tabs__indicator { position: absolute; bottom: -1px; left: 0; height: 2px; width: var(--active-tab-width); translate: var(--active-tab-left); background: var(--dtx-primary); transition: translate var(--dtx-dur-slow) var(--dtx-ease-emphasis), width var(--dtx-dur-slow) var(--dtx-ease-emphasis); }
   .dtx-tabs__panel { padding-top: 16px; outline: none; }
   .dtx-tabs__panel:not([hidden]) { animation: dtx-fade-up var(--dtx-dur-slow) var(--dtx-ease-enter); }
-  .dtx-seg { display: inline-flex; padding: 3px; gap: 2px; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface); }
-  .dtx-seg__item { min-height: 28px; padding: 0 10px; border: 0; border-radius: var(--dtx-radius-sm); background: none; font: 500 var(--dtx-text-xs) var(--dtx-font); color: var(--dtx-fg-muted); cursor: pointer; transition: background var(--dtx-dur-fast), color var(--dtx-dur-fast); }
+  .dtx-seg { display: inline-flex; flex-wrap: wrap; max-width: 100%; padding: 3px; gap: 2px; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface); }
+  .dtx-seg__item { flex: none; white-space: nowrap; min-height: 28px; padding: 0 10px; border: 0; border-radius: var(--dtx-radius-sm); background: none; font: 500 var(--dtx-text-xs) var(--dtx-font); color: var(--dtx-fg-muted); cursor: pointer; transition: background var(--dtx-dur-fast), color var(--dtx-dur-fast); }
   .dtx-seg__item:hover { color: var(--dtx-fg); }
   .dtx-seg__item[data-pressed] { background: rgb(37 130 215 / .13); color: var(--dtx-tone-brand); }
   .dtx-seg--solid .dtx-seg__item[data-pressed] { background: var(--dtx-primary-strong); color: var(--dtx-on-primary); }
@@ -316,6 +391,10 @@
   .dtx-shell { display: grid; grid-template-columns: 248px minmax(0, 1fr); min-height: 640px; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-lg); overflow: hidden; background: var(--dtx-surface); transition: grid-template-columns var(--dtx-dur-slow) var(--dtx-ease-standard); }
   .dtx-shell[data-rail] { grid-template-columns: 60px minmax(0, 1fr); }
   .dtx-shell__main { min-width: 0; display: flex; flex-direction: column; }
+  .dtx-shell--fill { height: 100%; min-height: 0; border: 0; border-radius: 0; }
+  /* relative: absolute descendants (e.g. .dtx-sr captions) stay inside the scroll area instead of stretching the page */
+  .dtx-shell--fill > .dtx-sidebar, .dtx-shell--fill > .dtx-shell__main { position: relative; min-height: 0; overflow-y: auto; }
+  .dtx-shell--fill .dtx-topbar { position: sticky; top: 0; z-index: 2; background: var(--dtx-surface); }
   .dtx-sidebar { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 8px; background: var(--dtx-surface-2); border-right: 1px solid var(--dtx-border); }
   .dtx-sidebar__ws { display: flex; align-items: center; gap: 10px; width: 100%; height: 54px; padding: 0 8px; margin-bottom: 4px; border: 0; border-radius: var(--dtx-radius-md); background: none; color: var(--dtx-fg); font: inherit; text-align: left; cursor: pointer; transition: background var(--dtx-dur-fast); }
   .dtx-sidebar__ws:hover { background: var(--dtx-hover); }
@@ -351,15 +430,21 @@
   [data-rail] .dtx-sidebar__item[data-alert]::after { content: ""; position: absolute; top: 6px; right: 12px; width: 6px; height: 6px; border-radius: 1px; background: var(--dtx-amber); }
   .dtx-topbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 20px; border-bottom: 1px solid var(--dtx-border); }
   .dtx-cmdk { margin-left: auto; display: flex; align-items: center; gap: 10px; min-width: min(320px, 100%); height: 36px; padding: 0 10px; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface-2); color: var(--dtx-fg-muted); font: 400 var(--dtx-text-sm) var(--dtx-font); cursor: pointer; }
-  .dtx-cmdk svg { width: 16px; height: 16px; }
-  .dtx-cmdk .dtx-kbd { margin-left: auto; }
+  .dtx-cmdk svg { flex: none; width: 16px; height: 16px; }
+  .dtx-cmdk__text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dtx-cmdk .dtx-kbd { flex: none; margin-left: auto; }
   @media (max-width: 960px) {
     .dtx-shell, .dtx-shell[data-rail] { grid-template-columns: 1fr; }
+    /* stacked: one page scroll instead of two scroll areas */
+    .dtx-shell--fill { height: auto; }
+    .dtx-shell--fill > .dtx-sidebar, .dtx-shell--fill > .dtx-shell__main { overflow-y: visible; }
+    .dtx-shell--fill .dtx-topbar { position: static; }
     .dtx-sidebar { border-right: 0; border-bottom: 1px solid var(--dtx-border); }
     .dtx-sidebar__foot { display: none; }
   }
   @media (max-width: 600px) {
     .dtx-cmdk { min-width: 0; flex: 1; }
+    .dtx-cmdk .dtx-kbd { display: none; }
   }
 
   /* ---------- keyframes ---------- */

@@ -3,5 +3,8 @@ export { Badge, Counter, ProgressRing, Kbd, IconTile, type Tone, type BadgeProps
 export { Avatar } from './avatar';
 export { Field, Input } from './field';
 export { Select, MultiSelect, type SelectOption, type SelectGroup, type SelectProps, type MultiSelectProps } from './select';
+export { Checkbox, CheckboxGroup, RadioGroup, type ChoiceOption, type CheckboxProps, type CheckboxGroupProps, type RadioGroupProps } from './choice';
+export { DatePicker, DateRangePicker, Calendar, type DatePickerProps, type DateRangePickerProps, type DateRange, type CalendarProps } from './date-picker';
+export { parseDate, formatDate, todayIso, addDays, addMonths, DEFAULT_DATE_FORMAT } from './date';
 export { Switch, Tabs, Segmented, Tooltip, TooltipProvider, type TabItem } from './controls';
 export { Dialog, DialogClose, ToastProvider, useToast } from './overlays';

@@ -7,10 +7,11 @@ import { Kbd } from '../core/badge';
 const RailCtx = createContext(false);
 
 /** App frame: sidebar + main. `rail` collapses the sidebar to a 60px icon strip. */
-export function AppShell({ sidebar, rail = false, children, className }: { sidebar: ReactNode; rail?: boolean; children: ReactNode; className?: string }) {
+/** `fill`: edge to edge in a parent with a set height (the real app layout): the sidebar stays put, the main area scrolls. */
+export function AppShell({ sidebar, rail = false, fill, children, className }: { sidebar: ReactNode; rail?: boolean; fill?: boolean; children: ReactNode; className?: string }) {
   return (
     <RailCtx.Provider value={rail}>
-      <div className={cx('dtx-shell', className)} data-rail={rail ? '' : undefined}>
+      <div className={cx('dtx-shell', fill && 'dtx-shell--fill', className)} data-rail={rail ? '' : undefined}>
         {sidebar}
         <div className="dtx-shell__main">{children}</div>
       </div>
@@ -80,5 +81,5 @@ export function Topbar({ children }: { children: ReactNode }) {
 
 /** Opens a command palette; pair with a global Ctrl/⌘+K listener. */
 export function CommandButton({ placeholder = 'Tìm kiếm…', shortcut = 'Ctrl K', onClick }: { placeholder?: string; shortcut?: string; onClick?: () => void }) {
-  return <button type="button" className="dtx-cmdk" onClick={onClick}><Search aria-hidden />{placeholder}<Kbd>{shortcut}</Kbd></button>;
+  return <button type="button" className="dtx-cmdk" onClick={onClick}><Search aria-hidden /><span className="dtx-cmdk__text">{placeholder}</span><Kbd>{shortcut}</Kbd></button>;
 }

@@ -1,11 +1,11 @@
 import { useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, Layers, ScanText, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  AppShell, Avatar, Badge, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  AppShell, Avatar, Badge, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Display, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, OcrShowcase, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
-  Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type NormalizedOcr, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
+  Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type DateRange, type NormalizedOcr, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
 } from '@dtx/ui';
 import { aiThroughput, batches, hours, invoiceFields, invoiceRows, manualThroughput } from '../data';
 import { docTypeGroups, shiftOptions, statusOptions } from '../options';
@@ -112,6 +112,52 @@ function MultiSelectControlled() {
     <div className="grid w-72 gap-2">
       <Field label="Loại tài liệu cần xử lý"><MultiSelect items={docTypeGroups} value={value} onValueChange={setValue} /></Field>
       <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(value)}</code></p>
+    </div>
+  );
+}
+const exportOptions = [
+  { value: 'xlsx', label: 'Excel (.xlsx)', description: 'Một dòng mỗi tài liệu' },
+  { value: 'json', label: 'JSON', description: 'Giữ toạ độ ô và độ tin cậy' },
+  { value: 'pdf', label: 'PDF có lớp chữ', description: 'Tìm kiếm được · sắp ra mắt', disabled: true },
+];
+function CheckboxGroupControlled() {
+  const [value, setValue] = useState(['vat']);
+  const types = [{ value: 'vat', label: 'Hoá đơn VAT' }, { value: 'claim', label: 'Hồ sơ bồi thường' }, { value: 'hr', label: 'Hồ sơ nhân sự' }, { value: 'bill', label: 'Vận đơn' }];
+  return (
+    <div className="grid gap-2">
+      <CheckboxGroup label="Loại tài liệu cần QC" selectAll="Tất cả loại" options={types} value={value} onValueChange={setValue} />
+      <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(value)}</code></p>
+    </div>
+  );
+}
+function DatePickerControlled() {
+  const [value, setValue] = useState<string | null>('2026-10-05');
+  return (
+    <div className="grid w-64 gap-2">
+      <Field label="Ngày nhận hồ sơ"><DatePicker value={value} onValueChange={setValue} /></Field>
+      <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(value)}</code></p>
+    </div>
+  );
+}
+function DatePickerFormats() {
+  const [format, setFormat] = useState('yyyy-MM-dd');
+  const [value, setValue] = useState<string | null>('2026-10-05');
+  return (
+    <div className="grid justify-items-start gap-4">
+      <Segmented aria-label="Định dạng ngày" value={format} onValueChange={setFormat} options={['dd/MM/yyyy', 'yyyy-MM-dd', 'MM/dd/yyyy', 'd.M.yyyy'].map(f => ({ value: f, label: f }))} />
+      <div className="grid w-64 gap-2">
+        <Field label="Ngày phát hành"><DatePicker format={format} value={value} onValueChange={setValue} /></Field>
+        <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(value)}</code></p>
+      </div>
+    </div>
+  );
+}
+function DateRangeControlled() {
+  const [range, setRange] = useState<DateRange>({ from: '2026-10-01', to: '2026-10-15' });
+  return (
+    <div className="grid w-72 gap-2">
+      <DateRangePicker label="Kỳ báo cáo" value={range} onValueChange={setRange} />
+      <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(range)}</code></p>
     </div>
   );
 }
@@ -225,7 +271,17 @@ export const entries: Entry[] = [
     demos: [{ title: 'Trigger', code: "const toast = useToast();\ntoast({ title: 'Đã lưu', description: '…', icon })", render: () => <ToastDemo /> }] },
   { id: 'avatar', name: 'Avatar', category: 'Core', status: 'ready', summary: 'Initials from first + last word, navy tile.', importLine: imp('Avatar'),
     demos: [{ title: 'Sizes', render: () => <><Avatar name="Nguyễn Thị Thuận" /><Avatar name="Trần Minh" size="sm" /></> }] },
-  planned('checkbox', 'Checkbox & Radio', 'Core', 'Base UI Checkbox / RadioGroup with the same focus ring.'),
+  { id: 'checkbox', name: 'Checkbox & Radio', category: 'Core', status: 'ready', summary: 'Checkbox for one on/off choice, CheckboxGroup for several, RadioGroup for exactly one from a short visible list (more than ~6 options: use Select). Whole row is clickable; arrow keys move inside a RadioGroup.',
+    importLine: imp('Checkbox, CheckboxGroup, RadioGroup, type ChoiceOption'),
+    props: [['label', 'ReactNode', 'Checkbox label, or group legend'], ['options', 'ChoiceOption[]', '{ value, label, description?, disabled? }'], ['value / defaultValue / onValueChange', 'string[] (CheckboxGroup) · string (RadioGroup)', ''], ['checked / defaultChecked / onCheckedChange', 'boolean', 'Checkbox'], ['indeterminate', 'boolean', 'Checkbox mixed state'], ['selectAll', 'ReactNode', 'CheckboxGroup parent checkbox label'], ['row', 'boolean', 'Options side by side'], ['description, error', 'ReactNode', ''], ['disabled, required, name', '', '']],
+    demos: [
+      { title: '1 · Checkbox states', note: 'Static: unchecked, checked, mixed, disabled.', render: () => <div className="grid gap-1"><Checkbox label="Tự động gửi email" /><Checkbox label="Bỏ qua trang trắng" defaultChecked /><Checkbox label="Một phần lô đã chọn" indeterminate /><Checkbox label="Khoá cấu hình" disabled /><Checkbox label="Bắt buộc QC lần 2" disabled defaultChecked /></div> },
+      { title: '2 · Description and error', render: () => <div className="grid max-w-sm gap-3"><Checkbox label="Lưu ảnh gốc 90 ngày" description="Dung lượng tăng khoảng 2 lần." defaultChecked /><Checkbox label="Tôi đồng ý với điều khoản xử lý dữ liệu" required error="Cần đồng ý điều khoản trước khi tạo lô." /></div> },
+      { title: '3 · CheckboxGroup with “select all”', note: 'Parent is mixed while only some are ticked.', code: '<CheckboxGroup label="…" selectAll="Tất cả loại" options={types} value={value} onValueChange={setValue} />', render: () => <CheckboxGroupControlled /> },
+      { title: '4 · CheckboxGroup, descriptions + disabled option', render: () => <CheckboxGroup label="Định dạng xuất" options={exportOptions} defaultValue={['xlsx']} description="Chọn ít nhất một định dạng." /> },
+      { title: '5 · RadioGroup', render: () => <RadioGroup label="Mức ưu tiên" defaultValue="normal" options={[{ value: 'urgent', label: 'Khẩn', description: 'Xử lý trong 2 giờ' }, { value: 'normal', label: 'Bình thường', description: 'Trong ngày' }, { value: 'low', label: 'Thấp', description: 'Trong 3 ngày' }]} /> },
+      { title: '6 · RadioGroup in a row, disabled option', render: () => <RadioGroup label="Ca làm việc" row defaultValue="am" options={[{ value: 'am', label: 'Ca sáng' }, { value: 'pm', label: 'Ca chiều' }, { value: 'night', label: 'Ca đêm', disabled: true }]} /> },
+      { title: '7 · Group error', render: () => <RadioGroup label="Ngôn ngữ tài liệu" row options={[{ value: 'vi', label: 'Tiếng Việt' }, { value: 'en', label: 'English' }, { value: 'mixed', label: 'Song ngữ' }]} error="Chọn ngôn ngữ để chọn đúng mô hình OCR." /> }] },
   { id: 'multiselect', name: 'MultiSelect', category: 'Core', status: 'ready', summary: 'Several values as removable chips. Same items as Select (flat, grouped, icon, description). Typing filters accent-insensitively; Backspace removes the last chip, ← / → move between chips.',
     importLine: imp('MultiSelect, type SelectOption, type SelectGroup'), props: [['items', 'SelectOption[] | SelectGroup[]', 'Same as Select'], ['value / defaultValue / onValueChange', 'string[]', ''], ['size', "'sm' | 'md'", ''], ['placeholder, emptyText', 'string', ''], ['disabled', 'boolean', '']],
     demos: [
@@ -236,7 +292,27 @@ export const entries: Entry[] = [
       { title: '5 · Controlled', render: () => <MultiSelectControlled /> },
       { title: '6 · Small, no visible label', render: () => <div className="w-64"><MultiSelect size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} defaultValue={['qc', 'risk']} /></div> },
       { title: '7 · Disabled', render: () => <MultiSelectDemo label="Ca làm việc" items={shiftOptions} defaultValue={['night']} disabled /> }] },
-  planned('datepicker', 'Date picker', 'Core', 'Vietnamese locale, dd/MM/yyyy.'),
+  { id: 'daterange', name: 'DateRangePicker', category: 'Core', status: 'ready', summary: 'One bar showing “from – to”. In the calendar the first click sets the start, the second the end, in either order; the band previews the range under the pointer or keyboard focus. No limits unless you pass `min` / `max`. Value { from, to } in ISO; a half-picked range is never emitted (Escape keeps the old one).',
+    importLine: imp('DateRangePicker, type DateRange'),
+    props: [['value / defaultValue / onValueChange', '{ from: string | null; to: string | null }', 'ISO'], ['min / max', 'string', 'Optional ISO bounds, inclusive. Default: none'], ['format', 'string', "As DatePicker, default 'dd/MM/yyyy'"], ['label / aria-label', 'ReactNode / string', 'Visible label, or a name when there is none'], ['description, error', 'ReactNode', ''], ['size, placeholder, disabled', '', ''], ['name', 'string', 'Submits nameFrom / nameTo']],
+    demos: [
+      { title: '1 · Controlled, no limits', code: '<DateRangePicker label="Kỳ báo cáo" value={range} onValueChange={setRange} />', render: () => <DateRangeControlled /> },
+      { title: '2 · Empty', render: () => <div className="w-72"><DateRangePicker label="Ngày nhận hồ sơ" /></div> },
+      { title: '3 · Limited by props', note: 'min = 90 days ago, max = today.', code: '<DateRangePicker min={addDays(todayIso(), -90)} max={todayIso()} />', render: () => <div className="w-72"><DateRangePicker label="Ngày xử lý" description="Trong 90 ngày gần nhất." min={addDays(todayIso(), -90)} max={todayIso()} /></div> },
+      { title: '4 · Small filter, ISO format, no visible label', render: () => <div className="w-64"><DateRangePicker size="sm" format="yyyy-MM-dd" aria-label="Lọc theo ngày nhận" defaultValue={{ from: '2026-09-01', to: '2026-09-30' }} /></div> },
+      { title: '5 · Error · disabled', render: () => <div className="grid w-72 gap-4"><DateRangePicker label="Thời hạn hợp đồng" error="Thời hạn tối đa 12 tháng." defaultValue={{ from: '2026-01-01', to: '2027-06-30' }} /><DateRangePicker label="Kỳ đã khoá sổ" disabled defaultValue={{ from: '2026-09-01', to: '2026-09-30' }} /></div> },
+      { title: '6 · Calendar in range mode (the open state)', note: 'Ends filled, days between on a tinted band.', render: () => <div className="w-[296px] rounded-md border border-border bg-surface p-2"><Calendar range={{ from: addDays(todayIso(), -4), to: addDays(todayIso(), 5) }} /></div> }] },
+  { id: 'datepicker', name: 'DatePicker · Calendar', category: 'Core', status: 'ready', summary: 'Type dd/MM/yyyy (also 5-10-2026 or 05102026), or any `format`, or pick from a Monday-first calendar. Value is an ISO string (“2026-10-05”): no timezone shifts. Invalid or out-of-range typing reverts on blur. Calendar keys: arrows, Home/End, PageUp/PageDown (+Shift = year); Alt+↓ opens it from the input.',
+    importLine: imp('DatePicker, Calendar, parseDate, formatDate'),
+    props: [['value / defaultValue / onValueChange', 'string | null', "ISO 'yyyy-MM-dd'"], ['min / max', 'string', 'ISO, inclusive'], ['format', 'string', "dd / d, MM / M, yyyy, any separator. Default 'dd/MM/yyyy'"], ['size', "'sm' | 'md'", ''], ['placeholder', 'string', 'Default: format in lower case'], ['name', 'string', 'Submits the ISO value'], ['disabled', 'boolean', '']],
+    demos: [
+      { title: '1 · Controlled', note: 'Type “5/10/2026” or “05102026”.', code: '<DatePicker value={value} onValueChange={setValue} />', render: () => <DatePickerControlled /> },
+      { title: '2 · Custom format', note: 'Same ISO value, different display. Typing follows the format order.', code: '<DatePicker format="yyyy-MM-dd" value={value} onValueChange={setValue} />', render: () => <DatePickerFormats /> },
+      { title: '3 · Empty', render: () => <div className="w-64"><Field label="Ngày sinh"><DatePicker max={todayIso()} /></Field></div> },
+      { title: '4 · Range limit', note: 'Only today to +30 days.', render: () => <div className="w-64"><Field label="Hạn SLA" description="Trong vòng 30 ngày."><DatePicker min={todayIso()} max={addDays(todayIso(), 30)} defaultValue={addDays(todayIso(), 3)} /></Field></div> },
+      { title: '5 · Error', render: () => <div className="w-64"><Field label="Ngày ký hợp đồng" error="Ngày ký phải trước ngày hiệu lực."><DatePicker defaultValue="2026-11-20" /></Field></div> },
+      { title: '6 · Small, no visible label · disabled', render: () => <div className="grid w-48 gap-3"><DatePicker size="sm" aria-label="Lọc từ ngày" defaultValue="2026-10-01" /><DatePicker size="sm" aria-label="Ngày khoá sổ" defaultValue="2026-09-30" disabled /></div> },
+      { title: '7 · Calendar (the open state)', note: 'Selected, today (ring), outside-month and disabled days.', render: () => <div className="w-[296px] rounded-md border border-border bg-surface p-2"><Calendar value={addDays(todayIso(), 2)} min={addDays(todayIso(), -3)} /></div> }] },
   planned('upload', 'File upload / dropzone', 'Core', 'Drag-drop PDFs and images, per-file progress.'),
   planned('drawer', 'Drawer', 'Core', 'Side panel for record detail.'),
 
@@ -245,7 +321,7 @@ export const entries: Entry[] = [
     demos: [{ title: 'Card', render: () => <Card className="w-full max-w-md"><CardHeader title="Hàng đợi QC" action={<Badge variant="surface">14 lô</Badge>} /><div className="p-4 text-sm text-fg-muted">Nội dung</div></Card> }] },
   { id: 'app-shell', name: 'AppShell & Sidebar', category: 'Layout', status: 'ready', summary: 'Workspace header, collapsible groups (height animates), active bar, counts, attention counters, shortcut hints on hover, 60px rail mode.',
     importLine: imp('AppShell, Sidebar, SidebarWorkspace, SidebarGroup, SidebarItem, SidebarFooter, Topbar, CommandButton'),
-    props: [['AppShell.rail', 'boolean', 'Icon strip; labels become tooltips'], ['SidebarItem.count', 'number', 'Muted; swaps to kbd on hover'], ['SidebarItem.badge', 'ReactNode', 'For items needing attention'], ['SidebarItem.alert', 'boolean', 'Amber dot in rail mode']],
+    props: [['AppShell.rail', 'boolean', 'Icon strip; labels become tooltips'], ['AppShell.fill', 'boolean', 'Edge to edge in a parent with a set height; sidebar stays, main scrolls (see App page)'], ['SidebarItem.count', 'number', 'Muted; swaps to kbd on hover'], ['SidebarItem.badge', 'ReactNode', 'For items needing attention'], ['SidebarItem.alert', 'boolean', 'Amber dot in rail mode']],
     demos: [{ title: 'Interactive', plain: true, render: () => <RailDemo /> }] },
   planned('command-palette', 'Command palette', 'Layout', 'Ctrl/⌘+K: jump to batches, clients, actions.'),
   planned('empty-state', 'Empty state', 'Layout', 'Mascot (64–160px), one sentence, one action.'),
@@ -261,7 +337,8 @@ export const entries: Entry[] = [
         <KpiCard label="Lô có nguy cơ trễ SLA" badge={<Badge size="sm" tone="warn" variant="surface" live>Cần xử lý</Badge>} value="3" unit="/ 128 lô" viz={<CategoryBar segments={[{ value: 125, color: 'var(--dtx-primary)', label: 'đúng hạn' }, { value: 2, color: 'var(--dtx-amber)', label: 'sắp trễ' }, { value: 1, color: 'var(--dtx-red)', label: 'đã trễ' }]} />} tone="warn" captionIcon={<AlertTriangle />} caption={<><b>1 đã trễ</b> · 2 sắp trễ</>} />
       </div>) }] },
   { id: 'table', name: 'DataTable', category: 'Data', status: 'ready', summary: 'Tabular numbers, hairline rows, hover, right-aligned numeric columns, own horizontal scroll.', importLine: imp('DataTable, type Column'),
-    demos: [{ title: 'Batches', plain: true, render: () => <Card><DataTable rowKey={b => b.id} rows={batches.slice(0, 3)} columns={[{ key: 'id', header: 'Mã lô', render: b => <span className="dtx-id">{b.id}</span> }, { key: 't', header: 'Loại', render: b => b.type }, { key: 'p', header: 'Trang', align: 'right', render: b => b.pages.toLocaleString('en-US') }, { key: 'a', header: 'Độ chính xác', align: 'right', render: b => `${b.accuracy}%` }]} /></Card> }] },
+    demos: [{ title: 'Batches', plain: true, render: () => <Card><DataTable rowKey={b => b.id} rows={batches.slice(0, 3)} columns={[{ key: 'id', header: 'Mã lô', render: b => <span className="dtx-id">{b.id}</span> }, { key: 't', header: 'Loại', render: b => b.type[0] }, { key: 'p', header: 'Trang', align: 'right', render: b => b.pages.toLocaleString('en-US') }, { key: 'a', header: 'Độ chính xác', align: 'right', render: b => `${b.accuracy}%` }]} /></Card> },
+      { title: 'Empty', note: '`empty` says what happened and how to recover.', plain: true, render: () => <Card><DataTable rowKey={(b: { id: string }) => b.id} rows={[]} columns={[{ key: 'id', header: 'Mã lô', render: b => b.id }, { key: 't', header: 'Loại', render: () => '' }]} empty={<div className="grid justify-items-center gap-2"><span>Không có lô nào khớp bộ lọc.</span><Button variant="secondary" size="sm">Xoá bộ lọc</Button></div>} /></Card> }] },
   { id: 'charts', name: 'Sparkline · TargetBar · CategoryBar · Meter', category: 'Data', status: 'ready', summary: 'Small, honest charts: each one draws to its own stated scale.', importLine: imp('Sparkline, TargetBar, CategoryBar, Meter'),
     demos: [{ title: 'Inline charts', replay: true, render: run => <div key={run} className="grid w-full max-w-sm gap-5"><Sparkline data={[3, 5, 4, 8, 7, 11, 10, 14]} label="Xu hướng" /><TargetBar value={99.62} target={99.5} min={98} max={100} label="Độ chính xác" /><CategoryBar legend segments={[{ value: 125, color: 'var(--dtx-primary)', label: 'Đúng hạn' }, { value: 2, color: 'var(--dtx-amber)', label: 'Sắp trễ' }, { value: 1, color: 'var(--dtx-red)', label: 'Đã trễ' }]} /><Meter value={62} label="Tiến độ" /></div> }] },
   { id: 'bar-chart', name: 'StackedBarChart', category: 'Data', status: 'ready', summary: 'One scale for bars, gridlines and labels. Bars grow in with a small stagger.', importLine: imp('StackedBarChart'),

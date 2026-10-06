@@ -21,13 +21,13 @@ export const invoiceFields: ScanField[] = [
   { key: 'total', value: '15,552,000 VND', confidence: 99.7 },
 ];
 
-export type Batch = { id: string; type: string; client: string; pages: number; accuracy: number; status: 'qc' | 'risk' | 'done' | 'error'; sla: string };
+export type Batch = { id: string; type: [vi: string, en: string]; client: string; pages: number; accuracy: number; status: 'qc' | 'risk' | 'done' | 'error'; sla: string; /** ISO */ received: string };
 export const batches: Batch[] = [
-  { id: 'BH-2210', type: 'Hồ sơ bồi thường', client: 'Bảo hiểm Sao Việt (mẫu)', pages: 1240, accuracy: 99.71, status: 'qc', sla: '14:30' },
-  { id: 'HD-5517', type: 'Hoá đơn VAT', client: 'Chuỗi bán lẻ Phương Nam (mẫu)', pages: 3860, accuracy: 99.48, status: 'risk', sla: '16:15' },
-  { id: 'TD-0931', type: 'Hợp đồng tín dụng', client: 'Ngân hàng Đông Á Mới (mẫu)', pages: 610, accuracy: 99.9, status: 'qc', sla: '18:00' },
-  { id: 'NS-0418', type: 'Hồ sơ nhân sự', client: 'Tập đoàn Thành Đạt (mẫu)', pages: 2105, accuracy: 99.83, status: 'done', sla: '11:00' },
-  { id: 'VC-7702', type: 'Vận đơn', client: 'Logistics Cửu Long (mẫu)', pages: 980, accuracy: 97.12, status: 'error', sla: '10:30' },
+  { id: 'BH-2210', type: ['Hồ sơ bồi thường', 'Claim file'], client: 'Bảo hiểm Sao Việt', pages: 1240, accuracy: 99.71, status: 'qc', sla: '14:30', received: '2026-10-05' },
+  { id: 'HD-5517', type: ['Hoá đơn VAT', 'VAT invoice'], client: 'Chuỗi bán lẻ Phương Nam', pages: 3860, accuracy: 99.48, status: 'risk', sla: '16:15', received: '2026-10-03' },
+  { id: 'TD-0931', type: ['Hợp đồng tín dụng', 'Credit agreement'], client: 'Ngân hàng Đông Á Mới', pages: 610, accuracy: 99.9, status: 'qc', sla: '18:00', received: '2026-10-02' },
+  { id: 'NS-0418', type: ['Hồ sơ nhân sự', 'HR file'], client: 'Tập đoàn Thành Đạt', pages: 2105, accuracy: 99.83, status: 'done', sla: '11:00', received: '2026-09-28' },
+  { id: 'VC-7702', type: ['Vận đơn', 'Bill of lading'], client: 'Logistics Cửu Long', pages: 980, accuracy: 97.12, status: 'error', sla: '10:30', received: '2026-09-24' },
 ];
 
 export const hours = ['7h', '8h', '9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h'];
