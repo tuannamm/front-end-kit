@@ -1,9 +1,9 @@
 import { useEffect, useState, type ReactElement } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users } from 'lucide-react';
 import {
-  AppShell, Avatar, Badge, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, Dialog, DialogClose,
+  AppShell, Avatar, Badge, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose,
   KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
-  StackedBarChart, TargetBar, Tooltip, Topbar, useToast, type Column,
+  StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, useToast, type Column, type DateRange,
 } from '@dtx/ui';
 import { aiThroughput, batches, hours, manualThroughput, type Batch } from '../data';
 
@@ -30,6 +30,7 @@ const columns: Column<Batch>[] = [
   { key: 'id', header: 'Mã lô', render: b => <span className="dtx-id">{b.id}</span> },
   { key: 'type', header: 'Loại tài liệu', render: b => b.type },
   { key: 'client', header: 'Khách hàng', render: b => b.client },
+  { key: 'received', header: 'Ngày nhận', render: b => <span className="dtx-num">{formatDate(b.received)}</span> },
   { key: 'pages', header: 'Trang', align: 'right', render: b => b.pages.toLocaleString('en-US') },
   { key: 'acc', header: 'Độ chính xác', align: 'right', render: b => `${b.accuracy.toFixed(2)}%` },
   { key: 'status', header: 'Trạng thái', render: b => statusBadge[b.status] },
@@ -44,6 +45,7 @@ const queue = [
 export function AppDemo() {
   const [rail, setRail] = useState(false);
   const [status, setStatus] = useState<string[]>(['qc', 'risk']);
+  const [received, setReceived] = useState<DateRange>({ from: null, to: null });
   const [scope, setScope] = useState('shift');
   const [formats, setFormats] = useState(['xlsx']);
   const [withImages, setWithImages] = useState(false);
@@ -52,7 +54,9 @@ export function AppDemo() {
     const onKey = (e: KeyboardEvent) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); setRail(r => !r); } };
     addEventListener('keydown', onKey); return () => removeEventListener('keydown', onKey);
   }, []);
-  const rows = status.length ? batches.filter(b => status.includes(b.status)) : batches;
+  const rows = batches.filter(b => (!status.length || status.includes(b.status))
+    && (!received.from || b.received >= received.from) && (!received.to || b.received <= received.to));
+  const resetFilters = () => { setStatus([]); setReceived({ from: null, to: null }); };
 
   const sidebar = (
     <Sidebar>
@@ -77,8 +81,8 @@ export function AppDemo() {
   );
 
   return (
-    <main className="mx-auto my-6 max-w-[1240px] px-4">
-      <AppShell sidebar={sidebar} rail={rail}>
+    <main className="min-h-0 flex-1">
+      <AppShell fill sidebar={sidebar} rail={rail}>
         <Topbar>
           <Tooltip content={rail ? 'Mở rộng thanh bên' : 'Thu gọn thanh bên'} shortcut="Ctrl B">
             <Button variant="secondary" icon aria-label="Thu gọn thanh bên" aria-pressed={rail} onClick={() => setRail(r => !r)}><PanelLeft /></Button>
@@ -144,8 +148,12 @@ export function AppDemo() {
           </div>
 
           <Card aria-labelledby="batches">
-            <CardHeader id="batches" title="Lô tài liệu gần đây" action={<div className="w-72 max-w-full"><MultiSelect size="sm" aria-label="Lọc theo trạng thái" placeholder="Tất cả trạng thái" items={statusFilter} value={status} onValueChange={setStatus} /></div>} />
-            <DataTable caption="Lô tài liệu gần đây" columns={columns} rows={rows} rowKey={b => b.id} />
+            <CardHeader id="batches" title="Lô tài liệu gần đây" action={<>
+              <div className="w-60 max-w-full"><DateRangePicker size="sm" aria-label="Lọc theo ngày nhận" placeholder="Mọi ngày nhận" value={received} onValueChange={setReceived} /></div>
+              <div className="w-72 max-w-full"><MultiSelect size="sm" aria-label="Lọc theo trạng thái" placeholder="Tất cả trạng thái" items={statusFilter} value={status} onValueChange={setStatus} /></div>
+            </>} />
+            <DataTable caption="Lô tài liệu gần đây" columns={columns} rows={rows} rowKey={b => b.id}
+              empty={<div className="grid justify-items-center gap-2"><span>Không có lô nào khớp bộ lọc.</span><Button variant="secondary" size="sm" onClick={resetFilters}>Xoá bộ lọc</Button></div>} />
           </Card>
         </div>
       </AppShell>

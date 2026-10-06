@@ -17,7 +17,8 @@ export function App() {
   const [, page, id] = hash.split('/');
   useEffect(() => { scrollTo(0, 0); }, [page, id]);
   return (
-    <>
+    // App demo fills the viewport (below this header) like a real app; other pages scroll as documents
+    <div className={page === 'app' ? 'flex h-dvh flex-col max-[960px]:h-auto' : undefined}>
       <header className="sticky top-0 z-40 border-b border-border bg-[color-mix(in_srgb,var(--dtx-bg)_82%,transparent)] backdrop-blur-md">
         <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-4 px-4 py-2.5">
           <a href="#/catalog" className="flex items-center gap-2.5 text-sm font-bold text-fg no-underline"><Logo variant="square" width={38} />Frontend Kit <span className="font-normal text-fg-muted">v0.1</span></a>
@@ -29,6 +30,6 @@ export function App() {
         </div>
       </header>
       {page === 'website' ? <Website /> : page === 'app' ? <AppDemo /> : page === 'poc' ? <Poc /> : <Catalog id={id} go={i => { location.hash = i ? `#/catalog/${i}` : '#/catalog'; }} />}
-    </>
+    </div>
   );
 }
