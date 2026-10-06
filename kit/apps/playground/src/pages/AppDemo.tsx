@@ -2,11 +2,10 @@ import { useEffect, useState, type ReactElement } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users } from 'lucide-react';
 import {
   AppShell, Avatar, Badge, Button, Card, CardHeader, CategoryBar, CommandButton, CountUp, Counter, DataTable, Dialog, DialogClose,
-  KpiCard, Logo, Meter, Segmented, Select, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
+  KpiCard, Logo, Meter, MultiSelect, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
   StackedBarChart, TargetBar, Tooltip, Topbar, useToast, type Column,
 } from '@dtx/ui';
 import { aiThroughput, batches, hours, manualThroughput, type Batch } from '../data';
-import { statusOptions } from '../options';
 
 const statusBadge: Record<Batch['status'], ReactElement> = {
   qc: <Badge tone="brand" live>Đang QC</Badge>,
@@ -14,6 +13,9 @@ const statusBadge: Record<Batch['status'], ReactElement> = {
   done: <Badge tone="ok" icon={<CheckCircle2 />}>Hoàn tất</Badge>,
   error: <Badge tone="err" icon={<CircleAlert />}>Lỗi mẫu</Badge>,
 };
+const statusFilter: { value: Batch['status']; label: string }[] = [
+  { value: 'qc', label: 'Đang QC' }, { value: 'risk', label: 'Nguy cơ trễ' }, { value: 'done', label: 'Hoàn tất' }, { value: 'error', label: 'Lỗi mẫu' },
+];
 const columns: Column<Batch>[] = [
   { key: 'id', header: 'Mã lô', render: b => <span className="dtx-id">{b.id}</span> },
   { key: 'type', header: 'Loại tài liệu', render: b => b.type },
@@ -31,13 +33,13 @@ const queue = [
 
 export function AppDemo() {
   const [rail, setRail] = useState(false);
-  const [status, setStatus] = useState<string | null>('all');
+  const [status, setStatus] = useState<string[]>(['qc', 'risk']);
   const toast = useToast();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); setRail(r => !r); } };
     addEventListener('keydown', onKey); return () => removeEventListener('keydown', onKey);
   }, []);
-  const rows = batches.filter(b => !status || status === 'all' || b.status === status);
+  const rows = status.length ? batches.filter(b => status.includes(b.status)) : batches;
 
   const sidebar = (
     <Sidebar>
@@ -123,7 +125,7 @@ export function AppDemo() {
           </div>
 
           <Card aria-labelledby="batches">
-            <CardHeader id="batches" title="Lô tài liệu gần đây" action={<div className="w-52"><Select size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} value={status} onValueChange={setStatus} /></div>} />
+            <CardHeader id="batches" title="Lô tài liệu gần đây" action={<div className="w-72 max-w-full"><MultiSelect size="sm" aria-label="Lọc theo trạng thái" placeholder="Tất cả trạng thái" items={statusFilter} value={status} onValueChange={setStatus} /></div>} />
             <DataTable caption="Lô tài liệu gần đây" columns={columns} rows={rows} rowKey={b => b.id} />
           </Card>
         </div>
