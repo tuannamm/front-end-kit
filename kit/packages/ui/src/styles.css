@@ -74,7 +74,8 @@
   .dtx-dot { position: relative; width: 6px; height: 6px; flex: none; border-radius: 1px; background: rgb(var(--c, 37 130 215)); }
   .dtx-badge--solid .dtx-dot { background: currentColor; }
   .dtx-dot--live::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: inherit; animation: dtx-ping 1.4s var(--dtx-ease-exit) infinite; }
-  .dtx-badge__remove { display: grid; place-items: center; width: 16px; height: 16px; margin-right: -4px; padding: 0; border: 0; border-radius: 3px; background: none; color: inherit; cursor: pointer; }
+  .dtx-badge__remove { position: relative; display: grid; place-items: center; width: 16px; height: 16px; margin-right: -4px; padding: 0; border: 0; border-radius: 3px; background: none; color: inherit; cursor: pointer; }
+  .dtx-badge__remove::before { content: ''; position: absolute; inset: -4px; } /* 24px hit area (WCAG 2.5.8) */
   .dtx-badge__remove:hover { background: rgb(var(--c) / .2); }
   .dtx-ring circle + circle { transition: stroke-dashoffset var(--dtx-dur-page) var(--dtx-ease-standard); }
   .dtx-kbd { display: inline-block; font: 500 10px/1.4 var(--dtx-font); color: var(--dtx-fg-muted); border: 1px solid var(--dtx-border-strong); border-radius: 3px; padding: 1px 5px; }
@@ -171,7 +172,21 @@
   .dtx-select-empty:empty { display: none; }
   .dtx-icon-tile { width: 22px; height: 22px; flex: none; display: grid; place-items: center; border-radius: var(--dtx-radius-sm); background: rgb(var(--c) / .14); color: var(--t); }
   .dtx-icon-tile svg { width: 13px; height: 13px; }
-  .dtx-chips { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; min-width: 0; }
+  .dtx-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; flex: 1; min-width: 0; }
+  /* multi-select: the trigger box grows with its chips; the input inside it filters */
+  .dtx-ms { height: auto; min-height: 40px; padding: 6px; cursor: text; }
+  .dtx-ms.dtx-select-trigger--sm { min-height: 32px; padding-block: 2px; }
+  .dtx-ms:focus-within { border-color: var(--dtx-primary); box-shadow: 0 0 0 3px rgb(37 130 215 / .3); }
+  .dtx-ms[data-disabled] { opacity: .5; cursor: not-allowed; }
+  .dtx-ms__chip { min-width: 0; max-width: 100%; cursor: default; }
+  .dtx-ms__chip > span { overflow: hidden; text-overflow: ellipsis; }
+  .dtx-ms__chip[data-highlighted] { background: rgb(37 130 215 / .13); box-shadow: inset 0 0 0 1px var(--dtx-primary); }
+  .dtx-ms__input { flex: 1 0 6ch; width: 0; min-width: 6ch; height: 26px; padding: 0 4px; border: 0; background: none; font: inherit; color: var(--dtx-fg); }
+  .dtx-ms__input::placeholder { color: var(--dtx-fg-muted); }
+  .dtx-ms__input:focus-visible { outline: none; }
+  @media (any-pointer: coarse) { .dtx-ms__input { font-size: 16px; } } /* iOS zooms into inputs under 16px */
+  .dtx-ms__toggle { display: grid; place-items: center; width: 24px; height: 24px; flex: none; padding: 0; border: 0; border-radius: var(--dtx-radius-sm); background: none; cursor: pointer; }
+  .dtx-ms__toggle:hover { background: var(--dtx-hover); }
 
   /* ---------- switch ---------- */
   .dtx-switch-label { display: inline-flex; align-items: center; gap: 10px; font-size: var(--dtx-text-sm); font-weight: 500; cursor: pointer; }
