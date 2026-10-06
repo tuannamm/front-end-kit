@@ -3,7 +3,7 @@ import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileS
 import {
   AppShell, Avatar, Badge, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Display, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
-  Logo, Meter, OcrShowcase, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
+  Logo, Meter, MultiSelect, OcrShowcase, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
   Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type NormalizedOcr, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
 } from '@dtx/ui';
@@ -101,6 +101,19 @@ function ScanPhaseDemo({ phase, run }: { phase?: ScanPhase; run: number }) {
 function SelectDemo(props: Parameters<typeof Select>[0] & { label: string }) {
   const { label, ...rest } = props;
   return <div className="w-72"><Field label={label}><Select {...rest} /></Field></div>;
+}
+function MultiSelectDemo(props: Parameters<typeof MultiSelect>[0] & { label: string }) {
+  const { label, ...rest } = props;
+  return <div className="w-72"><Field label={label}><MultiSelect {...rest} /></Field></div>;
+}
+function MultiSelectControlled() {
+  const [value, setValue] = useState(['vat', 'hr']);
+  return (
+    <div className="grid w-72 gap-2">
+      <Field label="Loại tài liệu cần xử lý"><MultiSelect items={docTypeGroups} value={value} onValueChange={setValue} /></Field>
+      <p className="m-0 text-xs text-fg-muted">value = <code>{JSON.stringify(value)}</code></p>
+    </div>
+  );
 }
 function RailDemo() {
   const [rail, setRail] = useState(false);
@@ -213,7 +226,16 @@ export const entries: Entry[] = [
   { id: 'avatar', name: 'Avatar', category: 'Core', status: 'ready', summary: 'Initials from first + last word, navy tile.', importLine: imp('Avatar'),
     demos: [{ title: 'Sizes', render: () => <><Avatar name="Nguyễn Thị Thuận" /><Avatar name="Trần Minh" size="sm" /></> }] },
   planned('checkbox', 'Checkbox & Radio', 'Core', 'Base UI Checkbox / RadioGroup with the same focus ring.'),
-  planned('multiselect', 'Multi-select', 'Core', 'Combobox with chips (Base UI multiple).'),
+  { id: 'multiselect', name: 'MultiSelect', category: 'Core', status: 'ready', summary: 'Several values as removable chips. Same items as Select (flat, grouped, icon, description). Typing filters accent-insensitively; Backspace removes the last chip, ← / → move between chips.',
+    importLine: imp('MultiSelect, type SelectOption, type SelectGroup'), props: [['items', 'SelectOption[] | SelectGroup[]', 'Same as Select'], ['value / defaultValue / onValueChange', 'string[]', ''], ['size', "'sm' | 'md'", ''], ['placeholder, emptyText', 'string', ''], ['disabled', 'boolean', '']],
+    demos: [
+      { title: '1 · Plain list', code: "<MultiSelect items={shiftOptions} defaultValue={['am', 'pm']} />", render: () => <MultiSelectDemo label="Ca làm việc" items={shiftOptions} defaultValue={['am', 'pm']} /> },
+      { title: '2 · Empty', note: 'Placeholder until the first chip.', render: () => <MultiSelectDemo label="Ca làm việc" items={shiftOptions} placeholder="Chọn ca…" /> },
+      { title: '3 · Grouped + icon + description', note: 'Type “nhan su” or “ngan hang”.', render: () => <MultiSelectDemo label="Loại tài liệu" items={docTypeGroups} defaultValue={['vat', 'claim']} /> },
+      { title: '4 · Many chips wrap', note: 'The box grows; long labels truncate.', render: () => <MultiSelectDemo label="Loại tài liệu" items={docTypeGroups} defaultValue={['vat', 'bank', 'claim', 'hr', 'bill']} /> },
+      { title: '5 · Controlled', render: () => <MultiSelectControlled /> },
+      { title: '6 · Small, no visible label', render: () => <div className="w-64"><MultiSelect size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} defaultValue={['qc', 'risk']} /></div> },
+      { title: '7 · Disabled', render: () => <MultiSelectDemo label="Ca làm việc" items={shiftOptions} defaultValue={['night']} disabled /> }] },
   planned('datepicker', 'Date picker', 'Core', 'Vietnamese locale, dd/MM/yyyy.'),
   planned('upload', 'File upload / dropzone', 'Core', 'Drag-drop PDFs and images, per-file progress.'),
   planned('drawer', 'Drawer', 'Core', 'Side panel for record detail.'),
