@@ -1,17 +1,20 @@
-import { useEffect, useState, type ReactElement } from 'react';
+import { Fragment, useEffect, useRef, useState, type ReactElement, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users } from 'lucide-react';
 import {
-  AppShell, Avatar, Badge, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose,
+  AppShell, Avatar, Badge, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Select, UploadToast,
   KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
-  StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, useToast, type Column, type DateRange,
+  StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, todayIso, useToast, type Column, type DateRange,
 } from '@dtx/ui';
 import { aiThroughput, batches, hours, manualThroughput, type Batch } from '../data';
 import { useT, type Translate } from '../i18n';
+import { useFakeUpload } from '../fake-upload';
 
 const statusLabel = (t: Translate): Record<Batch['status'], string> => ({
+  processing: t('Đang xử lý', 'Processing'),
   qc: t('Đang QC', 'In QC'), risk: t('Nguy cơ trễ', 'At risk'), done: t('Hoàn tất', 'Done'), error: t('Lỗi mẫu', 'Template error'),
 });
 const statusBadge = (label: Record<Batch['status'], string>): Record<Batch['status'], ReactElement> => ({
+  processing: <Badge tone="violet" live>{label.processing}</Badge>,
   qc: <Badge tone="brand" live>{label.qc}</Badge>,
   risk: <Badge tone="warn" variant="surface" dot>{label.risk}</Badge>,
   done: <Badge tone="ok" icon={<CheckCircle2 />}>{label.done}</Badge>,
@@ -27,15 +30,15 @@ const exportFormats = (t: Translate) => [
   { value: 'csv', label: 'CSV' },
   { value: 'json', label: 'JSON', description: t('Giữ toạ độ ô và độ tin cậy', 'Keeps cell coordinates and confidence') },
 ];
-const columns = (t: Translate, label: Record<Batch['status'], string>): Column<Batch>[] => {
+const columns = (t: Translate, label: Record<Batch['status'], string>, onOpen: (b: Batch) => void): Column<Batch>[] => {
   const badge = statusBadge(label);
   return [
-    { key: 'id', header: t('Mã lô', 'Batch'), render: b => <span className="dtx-id">{b.id}</span> },
+    { key: 'id', header: t('Mã lô', 'Batch'), render: b => <button type="button" className="dtx-id" aria-label={t(`Xem chi tiết lô ${b.id}`, `View batch ${b.id}`)} onClick={() => onOpen(b)}>{b.id}</button> },
     { key: 'type', header: t('Loại tài liệu', 'Document type'), render: b => t(...b.type) },
     { key: 'client', header: t('Khách hàng', 'Client'), render: b => `${b.client} ${t('(mẫu)', '(sample)')}` },
     { key: 'received', header: t('Ngày nhận', 'Received'), render: b => <span className="dtx-num">{formatDate(b.received)}</span> },
-    { key: 'pages', header: t('Trang', 'Pages'), align: 'right', render: b => b.pages.toLocaleString('en-US') },
-    { key: 'acc', header: t('Độ chính xác', 'Accuracy'), align: 'right', render: b => `${b.accuracy.toFixed(2)}%` },
+    { key: 'pages', header: t('Trang', 'Pages'), align: 'right', render: b => b.pages?.toLocaleString('en-US') ?? '—' },
+    { key: 'acc', header: t('Độ chính xác', 'Accuracy'), align: 'right', render: b => b.accuracy === undefined ? '—' : `${b.accuracy.toFixed(2)}%` },
     { key: 'status', header: t('Trạng thái', 'Status'), render: b => badge[b.status] },
     { key: 'sla', header: t('Hạn SLA', 'SLA due'), align: 'right', render: b => b.sla },
   ];
@@ -45,6 +48,92 @@ const queue = (t: Translate) => [
   { name: t('Hoá đơn VAT · HD-5517', 'VAT invoice · HD-5517'), meta: t('Bán lẻ (mẫu) · 3.860 trang', 'Retail (sample) · 3,860 pages'), left: t('còn 3g 05p', '3h 05m left'), pct: 45 },
   { name: t('Hợp đồng tín dụng · TD-0931', 'Credit agreement · TD-0931'), meta: t('Ngân hàng (mẫu) · 610 trang', 'Banking (sample) · 610 pages'), left: t('còn 5g 40p', '5h 40m left'), pct: 18 },
 ];
+
+/** Record detail for one batch: opened from the batch id in the table. */
+function BatchDrawer({ batch: b, open, onOpenChange, t, label }: { batch: Batch | null; open: boolean; onOpenChange: (open: boolean) => void; t: Translate; label: Record<Batch['status'], string> }) {
+  const toast = useToast();
+  if (!b) return null;
+  const client = `${b.client} ${t('(mẫu)', '(sample)')}`;
+  const rows: [string, ReactNode][] = [
+    [t('Trạng thái', 'Status'), statusBadge(label)[b.status]], [t('Loại tài liệu', 'Document type'), t(...b.type)], [t('Khách hàng', 'Client'), client],
+    [t('Ngày nhận', 'Received'), formatDate(b.received)], [t('Số trang', 'Pages'), b.pages?.toLocaleString('en-US') ?? '—'],
+    [t('Độ chính xác', 'Accuracy'), b.accuracy === undefined ? '—' : `${b.accuracy.toFixed(2)}%`], [t('Hạn SLA', 'SLA due'), b.sla],
+  ];
+  const last: Record<Batch['status'], string> = {
+    processing: t('Đang tiền xử lý và OCR', 'Preprocessing and OCR in progress'),
+    qc: t('Đang chờ kiểm tra QC', 'Waiting for QC'), risk: t(`Cảnh báo: có thể trễ hạn SLA ${b.sla}`, `Warning: may miss the ${b.sla} SLA`),
+    done: t('QC đã duyệt, đã bàn giao cho khách hàng', 'Approved by QC and delivered'), error: t('Không khớp mẫu trích xuất, cần cập nhật mẫu', 'Does not match the extraction template; update the template'),
+  };
+  const log = b.pages === undefined || b.accuracy === undefined
+    ? [t(`Đã tải lên ${b.files ?? 0} tệp`, `Uploaded ${files(t, b.files ?? 0)}`), last[b.status]]
+    : [
+      t(`Nhận ${b.pages.toLocaleString('en-US')} trang`, `Received ${b.pages.toLocaleString('en-US')} pages`),
+      t('Tiền xử lý xong: cắt, chỉnh nghiêng', 'Preprocessing done: crop, deskew'),
+      t(`OCR và trích xuất xong · ${b.accuracy.toFixed(2)}%`, `OCR and extraction done · ${b.accuracy.toFixed(2)}%`),
+      last[b.status],
+    ];
+  // nothing to act on while processing
+  const action: Partial<Record<Batch['status'], string>> = { qc: t('Mở hàng đợi QC', 'Open QC queue'), risk: t('Mở hàng đợi QC', 'Open QC queue'), done: t('Tải kết quả', 'Download results'), error: t('Sửa mẫu trích xuất', 'Fix extraction template') };
+  return (
+    <Drawer open={open} onOpenChange={onOpenChange} title={t(`Lô ${b.id}`, `Batch ${b.id}`)} description={`${t(...b.type)} · ${client}`}
+      footer={<><DrawerClose><Button variant="ghost">{t('Đóng', 'Close')}</Button></DrawerClose>
+        {action[b.status] && <DrawerClose><Button onClick={() => toast({ title: action[b.status]!, description: b.id })}>{action[b.status]}</Button></DrawerClose>}</>}>
+      <dl className="m-0 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-6 gap-y-3 text-sm">
+        {rows.map(([k, v]) => <Fragment key={k}><dt className="text-fg-muted">{k}</dt><dd className="m-0 font-medium dtx-num">{v}</dd></Fragment>)}
+      </dl>
+      <h3 className="mb-2 mt-6 text-sm font-bold">{t('Lịch sử xử lý', 'Processing history')}</h3>
+      <ol className="m-0 list-none p-0 text-sm">{log.map(l => <li key={l} className="border-b border-border py-2 dtx-num last:border-b-0">{l}</li>)}</ol>
+    </Drawer>
+  );
+}
+
+const files = (t: Translate, n: number) => t(`${n} tệp`, `${n} ${new Intl.PluralRules('en').select(n) === 'one' ? 'file' : 'files'}`);
+
+/** "+ New batch": client, document type and files; fake uploads, validated on submit. The new batch shows up in the table, not in a toast. */
+function NewBatchDrawer({ t, onCreate }: { t: Translate; onCreate: (b: Batch) => void }) {
+  const nextNo = useRef(9001);
+  const up = useFakeUpload();
+  const [open, setOpen] = useState(false);
+  const [client, setClient] = useState<string | null>(null);
+  const [type, setType] = useState<string | null>(null);
+  const [tried, setTried] = useState(false);
+  const clients = batches.map(b => ({ value: b.client, label: `${b.client} ${t('(mẫu)', '(sample)')}` }));
+  const types = batches.map(b => ({ value: b.type[1], label: t(...b.type) }));
+  const uploading = up.items.filter(u => u.status === 'uploading').length;
+  const failed = up.items.filter(u => u.status === 'error').length;
+  const done = up.items.length - uploading - failed;
+  const errors = {
+    client: !client && t('Chọn khách hàng.', 'Choose a client.'),
+    type: !type && t('Chọn loại tài liệu.', 'Choose a document type.'),
+    files: !up.items.length ? t('Thêm ít nhất một tệp.', 'Add at least one file.')
+      : failed ? t(`${failed} tệp tải lỗi: thử lại hoặc xoá.`, `${files(t, failed)} failed: retry or remove them.`)
+      : uploading ? t(`Đợi ${uploading} tệp tải xong.`, `Wait for ${files(t, uploading)} to finish.`) : false,
+  };
+  const reset = () => { up.clear(); setClient(null); setType(null); setTried(false); };
+  const submit = () => {
+    if (errors.client || errors.type || errors.files) { setTried(true); return; }
+    const sample = batches.find(b => b.type[1] === type)!;
+    onCreate({ id: `${sample.id.split('-')[0]}-${nextNo.current++}`, type: sample.type, client: client!, status: 'processing', sla: '—', received: todayIso(), files: done });
+    reset(); setOpen(false);
+  };
+  return (<>
+    {/* outside the Drawer: its content unmounts on close, and the progress toast must outlive it */}
+    <UploadToast items={up.rows(t('Mất kết nối khi tải lên. Bấm thử lại.', 'Connection lost while uploading. Retry.'))} />
+    <Drawer open={open} onOpenChange={setOpen} trigger={<Button>{t('+ Tạo lô mới', '+ New batch')}</Button>}
+      title={t('Tạo lô mới', 'New batch')} description={t('Tải tệp lên để bắt đầu tiền xử lý và OCR.', 'Upload files to start preprocessing and OCR.')}
+      footer={<>
+        {up.items.length > 0 && <span className="mr-auto self-center text-xs text-fg-muted dtx-num">{t(`${done}/${up.items.length} tệp đã tải lên`, `${done}/${up.items.length} files uploaded`)}</span>}
+        <DrawerClose><Button variant="ghost" onClick={reset}>{t('Huỷ', 'Cancel')}</Button></DrawerClose>
+        <Button onClick={submit}>{t('Tạo lô', 'Create batch')}</Button>
+      </>}>
+      <div className="grid gap-4">
+        <Field label={t('Khách hàng', 'Client')} error={tried && errors.client}><Select items={clients} value={client} onValueChange={setClient} placeholder={t('Chọn khách hàng', 'Choose a client')} /></Field>
+        <Field label={t('Loại tài liệu', 'Document type')} error={tried && errors.type}><Select items={types} value={type} onValueChange={setType} placeholder={t('Chọn loại tài liệu', 'Choose a document type')} /></Field>
+        <FileDropzone label={t('Tài liệu', 'Documents')} accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.zip" maxSize={50 * 1024 * 1024} onFiles={up.add} error={tried && errors.files} />
+      </div>
+    </Drawer>
+  </>);
+}
 
 export function AppDemo() {
   const t = useT();
@@ -56,12 +145,25 @@ export function AppDemo() {
   const [scope, setScope] = useState('shift');
   const [formats, setFormats] = useState(['xlsx']);
   const [withImages, setWithImages] = useState(false);
+  // batch outlives `open` so the drawer keeps its content while sliding out
+  const [detail, setDetail] = useState<Batch | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const openDetail = (b: Batch) => { setDetail(b); setDetailOpen(true); };
   const toast = useToast();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); setRail(r => !r); } };
     addEventListener('keydown', onKey); return () => removeEventListener('keydown', onKey);
   }, []);
-  const rows = batches.filter(b => (!status.length || status.includes(b.status))
+  const [created, setCreated] = useState<Batch[]>([]);
+  const [announce, setAnnounce] = useState('');
+  // the new batch must be visible: widen filters that would hide it (the chip / range change shows why)
+  const addBatch = (b: Batch) => {
+    setCreated(c => [b, ...c]);
+    setStatus(s => s.length && !s.includes(b.status) ? [...s, b.status] : s);
+    setReceived(r => (r.from && b.received < r.from) || (r.to && b.received > r.to) ? { from: null, to: null } : r);
+    setAnnounce(t(`Đã tạo lô ${b.id}, đang xử lý.`, `Created batch ${b.id}, processing.`));
+  };
+  const rows = [...created, ...batches].filter(b => (!status.length || status.includes(b.status))
     && (!received.from || b.received >= received.from) && (!received.to || b.received <= received.to));
   const resetFilters = () => { setStatus([]); setReceived({ from: null, to: null }); };
 
@@ -118,7 +220,7 @@ export function AppDemo() {
                   <Checkbox label={t('Gửi kèm ảnh gốc', 'Attach original images')} description={t('File nén, dung lượng lớn hơn khoảng 20 lần.', 'Zipped, about 20 times larger.')} checked={withImages} onCheckedChange={setWithImages} />
                 </div>
               </Dialog>
-              <Button onClick={() => toast({ title: t('Đã tạo lô BH-2211', 'Created batch BH-2211'), description: t('0 trang · Ca sáng', '0 pages · Morning shift'), icon: <Badge tone="ok" size="sm" icon={<CheckCircle2 />} /> })}>{t('+ Tạo lô mới', '+ New batch')}</Button>
+              <NewBatchDrawer t={t} onCreate={addBatch} />
             </div>
           </div>
 
@@ -159,10 +261,12 @@ export function AppDemo() {
               <div className="w-60 max-w-full"><DateRangePicker size="sm" aria-label={t('Lọc theo ngày nhận', 'Filter by received date')} placeholder={t('Mọi ngày nhận', 'Any received date')} value={received} onValueChange={setReceived} /></div>
               <div className="w-72 max-w-full"><MultiSelect size="sm" aria-label={t('Lọc theo trạng thái', 'Filter by status')} placeholder={t('Tất cả trạng thái', 'All statuses')} items={statusFilter} value={status} onValueChange={setStatus} /></div>
             </>} />
-            <DataTable caption={t('Lô tài liệu gần đây', 'Recent batches')} columns={columns(t, label)} rows={rows} rowKey={b => b.id}
+            <DataTable caption={t('Lô tài liệu gần đây', 'Recent batches')} columns={columns(t, label, openDetail)} rows={rows} rowKey={b => b.id}
               empty={<div className="grid justify-items-center gap-2"><span>{t('Không có lô nào khớp bộ lọc.', 'No batches match the filters.')}</span><Button variant="secondary" size="sm" onClick={resetFilters}>{t('Xoá bộ lọc', 'Clear filters')}</Button></div>} />
           </Card>
         </div>
+        <p role="status" className="dtx-sr">{announce}</p>
+        <BatchDrawer batch={detail} open={detailOpen} onOpenChange={setDetailOpen} t={t} label={label} />
       </AppShell>
     </main>
   );

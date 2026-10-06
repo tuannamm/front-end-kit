@@ -2,7 +2,7 @@
 
 | Folder | What lives there |
 |---|---|
-| `core/` | Generic controls: Button, Badge, Field/Input, Select, MultiSelect, Checkbox/CheckboxGroup/RadioGroup, DatePicker/DateRangePicker/Calendar, Switch, Tabs, Segmented, Tooltip, Dialog, Toast, Avatar |
+| `core/` | Generic controls: Button, Badge, Field/Input, Select, MultiSelect, Checkbox/CheckboxGroup/RadioGroup, DatePicker/DateRangePicker/Calendar, FileDropzone/FileList/FileItem, Switch, Tabs, Segmented, Tooltip, Dialog, Drawer, Toast, Avatar |
 | `layout/` | Page structure: Card, AppShell, Sidebar, Topbar, CommandButton |
 | `data/` | Data display: KpiCard, DataTable, Sparkline, TargetBar, CategoryBar, Meter, StackedBarChart |
 | `motion/` | Generic motion: Reveal, Skeleton, Loadable, CountUp, useReducedMotion |

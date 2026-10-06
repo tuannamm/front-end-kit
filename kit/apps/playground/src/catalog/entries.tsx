@@ -1,8 +1,8 @@
-import { useCallback, useState, type ReactNode } from 'react';
+import { Fragment, useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, Layers, ScanText, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  AppShell, Avatar, Badge, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
-  CountUp, Counter, DataTable, Dialog, DialogClose, Display, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
+  AppShell, Avatar, Badge, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, OcrShowcase, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
   Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type DateRange, type NormalizedOcr, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
@@ -11,6 +11,7 @@ import { aiThroughput, batches, hours, invoiceFields, invoiceRows, manualThrough
 import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
+import { useFakeUpload } from '../fake-upload';
 import { DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
@@ -152,6 +153,44 @@ function DatePickerFormats() {
     </div>
   );
 }
+function DrawerRecord() {
+  const b = batches[1];
+  const rows: [string, ReactNode][] = [['Mã lô', b.id], ['Loại tài liệu', b.type[0]], ['Khách hàng', `${b.client} (mẫu)`], ['Ngày nhận', formatDate(b.received)], ['Số trang', b.pages?.toLocaleString('vi-VN') ?? '—'], ['Độ chính xác', b.accuracy === undefined ? '—' : `${b.accuracy.toFixed(2)}%`], ['Hạn SLA', b.sla]];
+  const log = Array.from({ length: 12 }, (_, i) => `${String(8 + (i >> 1)).padStart(2, '0')}:${i % 2 ? '35' : '05'} · Trang ${i * 300 + 1}–${(i + 1) * 300} đã OCR xong`);
+  return (
+    <Drawer trigger={<Button variant="secondary">Xem chi tiết lô</Button>} title={`Lô ${b.id}`} description={`${b.type[0]} · ${b.client} (mẫu)`}
+      footer={<><DrawerClose><Button variant="ghost">Đóng</Button></DrawerClose><Button>Mở hàng đợi QC</Button></>}>
+      <dl className="m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-6 gap-y-3 text-sm">
+        {rows.map(([k, v]) => <Fragment key={k}><dt className="text-fg-muted">{k}</dt><dd className="m-0 font-medium dtx-num">{v}</dd></Fragment>)}
+      </dl>
+      <h3 className="mb-2 mt-6 text-sm font-bold">Lịch sử xử lý</h3>
+      <ol className="m-0 grid list-none gap-0 p-0 text-sm">{log.map(l => <li key={l} className="border-b border-border py-2 dtx-num last:border-b-0">{l}</li>)}</ol>
+    </Drawer>
+  );
+}
+function DrawerFilters() {
+  return (
+    <Drawer side="left" size="sm" trigger={<Button variant="secondary">Bộ lọc</Button>} title="Lọc lô tài liệu"
+      footer={<><DrawerClose><Button variant="ghost">Xoá lọc</Button></DrawerClose><DrawerClose><Button>Áp dụng</Button></DrawerClose></>}>
+      <div className="grid gap-4">
+        <Field label="Ca làm việc"><Select items={shiftOptions} placeholder="Mọi ca" /></Field>
+        <DateRangePicker label="Ngày nhận" placeholder="Mọi ngày nhận" />
+        <CheckboxGroup label="Trạng thái" selectAll="Tất cả" options={[{ value: 'qc', label: 'Đang QC' }, { value: 'risk', label: 'Nguy cơ trễ' }, { value: 'done', label: 'Hoàn tất' }, { value: 'error', label: 'Lỗi' }]} defaultValue={['qc', 'risk']} />
+      </div>
+    </Drawer>
+  );
+}
+
+function UploadDemo() {
+  const { add, rows } = useFakeUpload();
+  return (
+    <div className="w-full max-w-xl">
+      <FileDropzone label="Tài liệu cần xử lý" accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.zip" maxSize={20 * 1024 * 1024} onFiles={add} />
+      <UploadToast items={rows('Mất kết nối khi tải lên. Bấm thử lại.')} />
+    </div>
+  );
+}
+
 function DateRangeControlled() {
   const [range, setRange] = useState<DateRange>({ from: '2026-10-01', to: '2026-10-15' });
   return (
@@ -267,6 +306,27 @@ export const entries: Entry[] = [
     demos: [{ title: 'Hover or focus', render: () => <><Tooltip content="Thu gọn thanh bên" shortcut="Ctrl B"><Button variant="secondary">Hover me</Button></Tooltip><Tooltip content="Tìm kiếm"><Button variant="secondary" icon aria-label="Tìm kiếm"><ScanText /></Button></Tooltip></> }] },
   { id: 'dialog', name: 'Dialog', category: 'Core', status: 'ready', summary: 'Backdrop fades; panel scales .94 → 1 (slow · emphasis); exit is faster (fast · exit). Focus is trapped and restored.', importLine: imp('Dialog, DialogClose'),
     demos: [{ title: 'Confirm', render: () => <Dialog trigger={<Button variant="danger">Xoá lô</Button>} title="Xoá lô HD-5517?" description="3.860 trang sẽ bị xoá vĩnh viễn." footer={<><DialogClose><Button variant="ghost">Huỷ</Button></DialogClose><DialogClose><Button variant="danger">Xoá</Button></DialogClose></>} /> }] },
+  { id: 'drawer', name: 'Drawer', category: 'Core', status: 'ready', summary: 'Side panel for record detail or filters, or a bottom sheet on phones. Slides in from its edge (page · emphasis), exits faster; swipe toward the edge to dismiss. Header and footer stay put, the body scrolls. Popups inside (Select, DatePicker) sit above it.',
+    importLine: imp('Drawer, DrawerClose'),
+    props: [['title, description', 'ReactNode', ''], ['trigger', 'ReactElement', 'Opens the drawer; or control with open / onOpenChange'], ['side', "'right' | 'left' | 'bottom'", "Default 'right'"], ['size', "'sm' | 'md' | 'lg'", 'Width 360 / 480 / 720px for left/right (default md)'], ['footer', 'ReactNode', 'Buttons; wrap closing ones in <DrawerClose>'], ['open / defaultOpen / onOpenChange', 'boolean', '']],
+    demos: [
+      { title: '1 · Record detail (right)', note: 'Long body scrolls under a fixed header and footer.', render: () => <DrawerRecord /> },
+      { title: '2 · Filters (left, sm)', note: 'Select and DateRangePicker popups open above the drawer.', render: () => <DrawerFilters /> },
+      { title: '3 · Bottom sheet', note: 'Drag the handle or swipe down to close.', render: () => <Drawer side="bottom" trigger={<Button variant="secondary">Thao tác với lô</Button>} title="Lô HD-5517" description="3.860 trang · Nguy cơ trễ SLA"><div className="grid gap-2"><Button variant="secondary">Chuyển ưu tiên Khẩn</Button><Button variant="secondary">Giao cho người khác</Button><DrawerClose><Button variant="danger">Huỷ lô</Button></DrawerClose></div></Drawer> }] },
+  { id: 'upload', name: 'File upload / dropzone', category: 'Core', status: 'ready', summary: 'FileDropzone picks files (drop, click or Enter), checks type and size, and lists rejections with the reason; it never uploads. Upload progress goes to UploadToast: count, overall bar and a collapsible list with retry / remove, still visible after a drawer or dialog closes. FileList + FileItem show the same rows inline when a toast does not fit. The hint defaults to the accepted formats and size limit.',
+    importLine: imp('FileDropzone, UploadToast, FileList, FileItem, formatBytes'),
+    props: [['onFiles', '(files: File[]) => void', 'Accepted files of one pick or drop'], ['onReject', '(r: { file, reason }[]) => void', 'Also listed under the dropzone until the next pick'], ['accept', 'string', 'Same as <input accept>: ".pdf,image/*"'], ['maxSize', 'number', 'Bytes'], ['multiple', 'boolean', 'Default true'], ['label, hint, description, error', 'ReactNode', 'hint defaults to "PDF, JPG · tối đa 20 MB"'], ['compact', 'boolean', 'One row, for forms'], ['disabled', 'boolean', ''], ['UploadToast.items', '(FileItemProps & { id })[]', 'Current files; stays while uploading or failed, closes 5s after all are done'], ['FileItem', '{ name, size, status, progress, error, thumb, onRemove, onRetry }', "status: 'queued' | 'uploading' | 'done' | 'error'"]],
+    demos: [
+      { title: '1 · Drop or pick, progress in a toast', note: 'Progress shows bottom-right. Try a file over 20 MB or a .docx to see rejections. Every 3rd file fails once; retry it from the toast.', render: () => <UploadDemo /> },
+      { title: '2 · File states (inline FileList)', note: 'Static: queued, uploading, done, error. The same rows UploadToast lists.', render: () => (
+        <FileList aria-label="Trạng thái tệp" className="w-full max-w-xl">
+          <FileItem name="HD-5517_trang-001-120.pdf" size={18_400_000} status="queued" onRemove={() => {}} />
+          <FileItem name="BH-2210_bien-ban-giam-dinh.pdf" size={4_210_000} status="uploading" progress={45} onRemove={() => {}} />
+          <FileItem name="scan_CMND_mat-truoc.jpg" size={812_000} status="done" onRemove={() => {}} />
+          <FileItem name="TD-0931_phu-luc-hop-dong-tin-dung-ngan-hang-dong-a-moi-ban-scan-mau.tiff" size={56_700_000} status="error" error="Mất kết nối khi tải lên. Bấm thử lại." onRetry={() => {}} onRemove={() => {}} />
+        </FileList>) },
+      { title: '3 · Compact, one file, in a form', render: () => <div className="grid w-full max-w-md gap-4"><Field label="Tên mẫu"><Input defaultValue="Hoá đơn VAT" /></Field><FileDropzone compact multiple={false} label="Tệp mẫu" description="Một trang PDF đã điền đủ các trường." accept=".pdf" maxSize={10 * 1024 * 1024} onFiles={() => {}} /></div> },
+      { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
   { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>.', importLine: imp('ToastProvider, useToast'),
     demos: [{ title: 'Trigger', code: "const toast = useToast();\ntoast({ title: 'Đã lưu', description: '…', icon })", render: () => <ToastDemo /> }] },
   { id: 'avatar', name: 'Avatar', category: 'Core', status: 'ready', summary: 'Initials from first + last word, navy tile.', importLine: imp('Avatar'),
@@ -313,8 +373,6 @@ export const entries: Entry[] = [
       { title: '5 · Error', render: () => <div className="w-64"><Field label="Ngày ký hợp đồng" error="Ngày ký phải trước ngày hiệu lực."><DatePicker defaultValue="2026-11-20" /></Field></div> },
       { title: '6 · Small, no visible label · disabled', render: () => <div className="grid w-48 gap-3"><DatePicker size="sm" aria-label="Lọc từ ngày" defaultValue="2026-10-01" /><DatePicker size="sm" aria-label="Ngày khoá sổ" defaultValue="2026-09-30" disabled /></div> },
       { title: '7 · Calendar (the open state)', note: 'Selected, today (ring), outside-month and disabled days.', render: () => <div className="w-[296px] rounded-md border border-border bg-surface p-2"><Calendar value={addDays(todayIso(), 2)} min={addDays(todayIso(), -3)} /></div> }] },
-  planned('upload', 'File upload / dropzone', 'Core', 'Drag-drop PDFs and images, per-file progress.'),
-  planned('drawer', 'Drawer', 'Core', 'Side panel for record detail.'),
 
   // ───────────── Layout ─────────────
   { id: 'card', name: 'Card', category: 'Layout', status: 'ready', summary: 'Hairline surface. CardHeader takes a title and an action slot.', importLine: imp('Card, CardHeader, CardBody'),
@@ -337,7 +395,7 @@ export const entries: Entry[] = [
         <KpiCard label="Lô có nguy cơ trễ SLA" badge={<Badge size="sm" tone="warn" variant="surface" live>Cần xử lý</Badge>} value="3" unit="/ 128 lô" viz={<CategoryBar segments={[{ value: 125, color: 'var(--dtx-primary)', label: 'đúng hạn' }, { value: 2, color: 'var(--dtx-amber)', label: 'sắp trễ' }, { value: 1, color: 'var(--dtx-red)', label: 'đã trễ' }]} />} tone="warn" captionIcon={<AlertTriangle />} caption={<><b>1 đã trễ</b> · 2 sắp trễ</>} />
       </div>) }] },
   { id: 'table', name: 'DataTable', category: 'Data', status: 'ready', summary: 'Tabular numbers, hairline rows, hover, right-aligned numeric columns, own horizontal scroll.', importLine: imp('DataTable, type Column'),
-    demos: [{ title: 'Batches', plain: true, render: () => <Card><DataTable rowKey={b => b.id} rows={batches.slice(0, 3)} columns={[{ key: 'id', header: 'Mã lô', render: b => <span className="dtx-id">{b.id}</span> }, { key: 't', header: 'Loại', render: b => b.type[0] }, { key: 'p', header: 'Trang', align: 'right', render: b => b.pages.toLocaleString('en-US') }, { key: 'a', header: 'Độ chính xác', align: 'right', render: b => `${b.accuracy}%` }]} /></Card> },
+    demos: [{ title: 'Batches', plain: true, render: () => <Card><DataTable rowKey={b => b.id} rows={batches.slice(0, 3)} columns={[{ key: 'id', header: 'Mã lô', render: b => <span className="dtx-id">{b.id}</span> }, { key: 't', header: 'Loại', render: b => b.type[0] }, { key: 'p', header: 'Trang', align: 'right', render: b => b.pages?.toLocaleString('en-US') ?? '—' }, { key: 'a', header: 'Độ chính xác', align: 'right', render: b => `${b.accuracy}%` }]} /></Card> },
       { title: 'Empty', note: '`empty` says what happened and how to recover.', plain: true, render: () => <Card><DataTable rowKey={(b: { id: string }) => b.id} rows={[]} columns={[{ key: 'id', header: 'Mã lô', render: b => b.id }, { key: 't', header: 'Loại', render: () => '' }]} empty={<div className="grid justify-items-center gap-2"><span>Không có lô nào khớp bộ lọc.</span><Button variant="secondary" size="sm">Xoá bộ lọc</Button></div>} /></Card> }] },
   { id: 'charts', name: 'Sparkline · TargetBar · CategoryBar · Meter', category: 'Data', status: 'ready', summary: 'Small, honest charts: each one draws to its own stated scale.', importLine: imp('Sparkline, TargetBar, CategoryBar, Meter'),
     demos: [{ title: 'Inline charts', replay: true, render: run => <div key={run} className="grid w-full max-w-sm gap-5"><Sparkline data={[3, 5, 4, 8, 7, 11, 10, 14]} label="Xu hướng" /><TargetBar value={99.62} target={99.5} min={98} max={100} label="Độ chính xác" /><CategoryBar legend segments={[{ value: 125, color: 'var(--dtx-primary)', label: 'Đúng hạn' }, { value: 2, color: 'var(--dtx-amber)', label: 'Sắp trễ' }, { value: 1, color: 'var(--dtx-red)', label: 'Đã trễ' }]} /><Meter value={62} label="Tiến độ" /></div> }] },

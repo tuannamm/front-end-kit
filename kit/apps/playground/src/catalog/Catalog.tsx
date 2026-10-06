@@ -10,8 +10,9 @@ const fold = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,
 function CopyCode({ code }: { code: string }) {
   const t = useT();
   const [done, setDone] = useState(false);
+  // min-w-0: a long import line scrolls inside the block instead of widening the page on phones
   return (
-    <div className="relative">
+    <div className="relative min-w-0">
       <pre className="pg-code">{code}</pre>
       <Button size="sm" variant="ghost" icon aria-label={t('Sao chép', 'Copy')} className="!absolute top-1.5 right-1.5 !text-[#C9CBD1]"
         onClick={() => navigator.clipboard.writeText(code).then(() => { setDone(true); setTimeout(() => setDone(false), 1400); }, () => {})}>
@@ -23,7 +24,7 @@ function CopyCode({ code }: { code: string }) {
 
 export type DemoTheme = 'both' | 'light' | 'dark';
 
-/** Every demo renders in both themes by default, so a component that breaks in one theme is visible at once. */
+/** Demos render in light by default; "Light + Dark" shows both side by side (the a11y check always uses it). */
 function Themed({ theme, plain, children }: { theme: 'light' | 'dark'; plain?: boolean; children: ReactNode }) {
   const t = useT();
   return plain
@@ -70,7 +71,7 @@ function EntryView({ e, theme, setTheme }: { e: Entry; theme: DemoTheme; setThem
       {e.demos.length > 0 && (
         <div className="flex flex-wrap items-center gap-3 text-xs text-fg-muted">
           <Segmented aria-label={t('Giao diện của ví dụ', 'Example theme')} value={theme} onValueChange={v => setTheme(v as DemoTheme)} options={[{ value: 'both', label: t('Sáng + Tối', 'Light + Dark') }, { value: 'light', label: t('Sáng', 'Light') }, { value: 'dark', label: t('Tối', 'Dark') }]} />
-          {t('Mỗi ví dụ chạy trong cả hai giao diện. Popup (Select, Tooltip, Dialog) mở theo giao diện của trang.', 'Every example runs in both themes. Popups (Select, Tooltip, Dialog) open in the page theme.')}
+          {t('Chọn Sáng + Tối để xem mỗi ví dụ trong cả hai giao diện. Popup (Select, Tooltip, Dialog) mở theo giao diện của trang.', 'Pick Light + Dark to see every example in both themes. Popups (Select, Tooltip, Dialog) open in the page theme.')}
         </div>
       )}
       {e.status === 'planned' && <Card className="p-6 text-sm text-fg-muted">{t('Chưa có. Mục này nằm trong lộ trình, để FE biết cái gì sắp có và tránh tự viết trùng.', 'Not built yet. It is on the roadmap so FE knows what is coming and does not write a duplicate.')}</Card>}
@@ -122,7 +123,7 @@ export function Catalog({ id, go }: { id?: string; go: (id?: string) => void }) 
   const t = useT();
   const [q, setQ] = useState('');
   const [filter, setFilter] = useState('all');
-  const [theme, setTheme] = useState<DemoTheme>('both');
+  const [theme, setTheme] = useState<DemoTheme>('light');
   const shown = useMemo(() => entries.filter(e => (filter === 'all' || e.status === filter) && (!q || fold(`${e.name} ${e.summary} ${e.category}`).includes(fold(q)))), [q, filter]);
   const entry = entries.find(e => e.id === id);
   const groups = [{ title: null, cats: categories.filter(c => !c.id.startsWith('AI')) }, { title: 'AI', cats: categories.filter(c => c.id.startsWith('AI')) }];
