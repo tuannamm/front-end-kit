@@ -29,8 +29,14 @@ import { Carousel } from '@dtx/ui';
 - A slide counts as shown when 60% of it is in view.
 - Follows the WAI-ARIA carousel pattern: a `<section aria-roledescription="carousel">` named by `aria-label`, each
   slide a group named "3 / 8". A move made with the buttons or dots is announced ("Đang xem 3–5 / 20"); a swipe is not.
-- No autoplay: moving content needs a pause button (WCAG 2.2.2) and is rarely read. Under reduced motion the row
-  jumps instead of scrolling smoothly.
+- Autoplay is off by default: moving content is rarely read. `autoPlay` advances a page every `interval` ms and wraps
+  to the start. It adds a pause button (WCAG 2.2.2), holds while the mouse is over the carousel or it is off-screen,
+  and stops for good when keyboard focus enters a slide. Rotation is not announced. Under reduced motion it starts
+  paused, and the row jumps instead of scrolling smoothly.
+
+```tsx
+<Carousel aria-label="Thông báo" autoPlay interval={6000}>…</Carousel>
+```
 - Slide content keeps its focus ring: the scroll box has 4px of room around it. Equal slide heights come from the grid;
   give slide content `height: 100%` to fill them.
 
@@ -45,6 +51,8 @@ import { Carousel } from '@dtx/ui';
 | `slideWidth` | `string` | `'100%'` | Any CSS width, e.g. `'min(260px, 80%)'` for a card row |
 | `gap` | `number` | `16` | Space between slides, in px |
 | `indicators` | `boolean` | `true` | Dots (≤ 10 slides) or a count beside the arrows |
+| `autoPlay` | `boolean` | `false` | Advance a page every `interval`, wrapping; adds a pause button |
+| `interval` | `number` | `5000` | Time on each page with `autoPlay`, in ms |
 | `className` | `string` |  | Extra classes |
 
 ## Files

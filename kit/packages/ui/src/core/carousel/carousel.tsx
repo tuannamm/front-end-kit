@@ -1,5 +1,5 @@
 import { Children, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import { cx } from '../../cx';
 import { useReducedMotion } from '../../motion/primitives';
 import { Button } from '../button/button';
@@ -15,6 +15,11 @@ export type CarouselProps = {
   gap?: number;
   /** Dots (10 slides or fewer) or a "3–5 / 20" count beside the arrows. */
   indicators?: boolean;
+  /** Advance a page every `interval` ms, wrapping at the end. Adds a pause button; holds while hovered or off-screen,
+   * stops for good once keyboard focus enters a slide. Starts paused under reduced motion. */
+  autoPlay?: boolean;
+  /** Time on each page when `autoPlay` is on, in ms. */
+  interval?: number;
   className?: string;
 };
 
@@ -22,9 +27,9 @@ const MAX_DOTS = 10;
 
 /**
  * A row of slides that scrolls sideways with native scroll snapping: swipe, trackpad, the arrow buttons, the dots,
- * or arrow keys once the row has focus. Controls hide when every slide fits. No autoplay.
+ * or arrow keys once the row has focus. Controls hide when every slide fits. Optional autoplay with a pause button.
  */
-export function Carousel({ children, 'aria-label': label, slideWidth = '100%', gap = 16, indicators = true, className }: CarouselProps) {
+export function Carousel({ children, 'aria-label': label, slideWidth = '100%', gap = 16, indicators = true, autoPlay = false, interval = 5000, className }: CarouselProps) {
   const slides = Children.toArray(children);
   const n = slides.length;
   const track = useRef<HTMLDivElement>(null);
@@ -32,6 +37,12 @@ export function Carousel({ children, 'aria-label': label, slideWidth = '100%', g
   const [live, setLive] = useState('');
   const announce = useRef(false);
   const reduced = useReducedMotion();
+  const root = useRef<HTMLElement>(null);
+  // undefined until the user picks: then reduced motion decides
+  const [paused, setPaused] = useState<boolean>();
+  const [hover, setHover] = useState(false);
+  const [onScreen, setOnScreen] = useState(false);
+  const playing = autoPlay && !(paused ?? reduced);
 
   // a slide counts as shown once 60% of it is in view
   useEffect(() => {
@@ -59,10 +70,10 @@ export function Carousel({ children, 'aria-label': label, slideWidth = '100%', g
     return () => clearTimeout(id);
   }, [range, n, visible.length]);
 
-  const show = (i: number, inline: ScrollLogicalPosition) => {
+  const show = (i: number, inline: ScrollLogicalPosition, speak = true) => {
     const el = track.current?.children[i] as HTMLElement | undefined;
     if (!el) return;
-    announce.current = true;
+    announce.current = speak;
     // container: 'nearest' scrolls the row only, never the page (ignored where unsupported)
     el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest', inline, container: 'nearest' } as ScrollIntoViewOptions);
   };
@@ -75,10 +86,27 @@ export function Carousel({ children, 'aria-label': label, slideWidth = '100%', g
   });
   const atStart = !visible.length || first === 0, atEnd = !!visible.length && last === n - 1;
 
+  useEffect(() => {
+    const el = root.current;
+    if (!autoPlay || !el) return;
+    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, [autoPlay, n]);
+  // a page every interval, counted from where the row settled, so a manual move restarts the clock;
+  // rotation is not announced (WAI-ARIA carousel: the live region stays quiet while it runs)
+  useEffect(() => {
+    if (!playing || hover || !onScreen || !visible.length || visible.length >= n) return;
+    const id = setTimeout(() => show(atEnd ? 0 : last + 1, 'start', false), interval);
+    return () => clearTimeout(id);
+  }, [playing, hover, onScreen, first, last, atEnd, interval, n]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (!n) return null;
   return (
-    <section className={cx('dtx-carousel', className)} aria-roledescription="carousel" aria-label={label}>
-      <div ref={track} className="dtx-carousel__track" tabIndex={0} role="group" aria-label="Các slide" onFocus={e => reveal(e.target)} style={{ '--slide-w': slideWidth, '--gap': `${gap}px` } as CSSProperties}>
+    <section ref={root} className={cx('dtx-carousel', className)} aria-roledescription="carousel" aria-label={label}
+      onPointerEnter={e => { if (e.pointerType === 'mouse') setHover(true); }} onPointerLeave={() => setHover(false)}>
+      <div ref={track} className="dtx-carousel__track" tabIndex={0} role="group" aria-label="Các slide"
+        onFocus={e => { reveal(e.target); if (autoPlay && e.target.matches(':focus-visible')) setPaused(true); }} style={{ '--slide-w': slideWidth, '--gap': `${gap}px` } as CSSProperties}>
         {slides.map((s, i) => (
           <div key={i} data-index={i} className="dtx-carousel__slide" role="group" aria-roledescription="slide" aria-label={`${i + 1} / ${n}`}>{s}</div>
         ))}
@@ -92,6 +120,7 @@ export function Carousel({ children, 'aria-label': label, slideWidth = '100%', g
             : <span className="dtx-carousel__count dtx-num" aria-hidden>{range} / {n}</span>)}
           {/* aria-disabled, not disabled: the button keeps focus when the row reaches its end */}
           <div className="dtx-carousel__nav">
+            {autoPlay && <Button variant="ghost" size="sm" icon aria-label={playing ? 'Dừng tự chạy' : 'Tự chạy slide'} onClick={() => setPaused(playing)}>{playing ? <Pause aria-hidden /> : <Play aria-hidden />}</Button>}
             <Button variant="secondary" size="sm" icon aria-label="Slide trước" aria-disabled={atStart || undefined} onClick={() => { if (!atStart) show(first - 1, 'end'); }}><ChevronLeft aria-hidden /></Button>
             <Button variant="secondary" size="sm" icon aria-label="Slide tiếp" aria-disabled={atEnd || undefined} onClick={() => { if (!atEnd) show(last + 1, 'start'); }}><ChevronRight aria-hidden /></Button>
           </div>

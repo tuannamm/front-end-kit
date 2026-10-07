@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProp
 import { ArrowRight, Check } from 'lucide-react';
 import {
   Badge, BoxOverlay, Button, CompareSlider, ConfidenceBadge, ConfidenceBar, CountUp, Display, Lede, Logo, Reveal, SampleInvoice, ScanBeam,
-  SectionHeader, Skeleton, Steps, Switch, TechBackdrop, sampleInvoiceInset, useReducedMotion, type OcrBox,
+  Carousel, SectionHeader, Skeleton, Steps, Switch, TechBackdrop, sampleInvoiceInset, useReducedMotion, type OcrBox,
 } from '@dtx/ui';
 import { categories, entries } from '../catalog/entries';
 import { CopyCode } from '../catalog/Catalog';
@@ -13,9 +13,12 @@ import { useT } from '../i18n';
 
 const ready = entries.filter(e => e.status === 'ready');
 const aiEntries = ready.filter(e => e.category.startsWith('AI'));
-/** Editorial pick for the gallery; ids that no longer exist are skipped. */
-const featured = ['steps', 'select', 'table', 'notification', 'command-palette', 'daterange', 'kpi', 'timeline']
+/** Editorial pick for the gallery, one carousel page per 8; ids that no longer exist are skipped. */
+const featured = ['steps', 'select', 'table', 'notification', 'command-palette', 'daterange', 'kpi', 'timeline',
+  'alert', 'pagination', 'slider', 'breadcrumb', 'charts', 'confidence', 'datepicker', 'upload']
   .flatMap(id => entries.find(e => e.id === id && e.status === 'ready') ?? []);
+const PAGE = 8;
+const pages = Array.from({ length: Math.ceil(featured.length / PAGE) }, (_, p) => featured.slice(p * PAGE, (p + 1) * PAGE));
 
 const SCAN = 2400;
 const LOOP = 7200;
@@ -218,9 +221,14 @@ export function Home() {
             <SectionHeader id="gallery-h" title={t(`${ready.length} mục, ví dụ chạy thật`, `${ready.length} entries, live examples`)} description={t(`${categories.length} nhóm, từ token tới component AI. Mỗi mục có ví dụ tương tác, dòng import và bảng props lấy từ README.`, `${categories.length} groups, from tokens to AI components. Each entry has interactive examples, an import line and a props table taken from its README.`)} />
             <Button variant="secondary" href="#/catalog">{t('Xem toàn bộ', 'See all')}<ArrowRight /></Button>
           </div>
-          <ul className="m-0 mt-10 grid list-none grid-cols-[repeat(auto-fill,minmax(232px,1fr))] gap-4 p-0">
-            {featured.map((e, i) => <li key={e.id} data-reveal="" className="min-w-0" style={{ '--i': i % 4 } as CSSProperties}><Tile e={e} /></li>)}
-          </ul>
+          <Carousel className="mt-10" aria-label={t('Component nổi bật', 'Featured components')} autoPlay interval={1000}>
+            {pages.map((page, p) => (
+              <ul key={p} className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(232px,1fr))] gap-4 p-0">
+                {/* only the first page reveals on scroll: later pages sit off to the side, where the observer never sees them */}
+                {page.map((e, i) => <li key={e.id} data-reveal={p ? undefined : ''} className="min-w-0" style={{ '--i': i % 4 } as CSSProperties}><Tile e={e} /></li>)}
+              </ul>
+            ))}
+          </Carousel>
         </div>
       </section>
 

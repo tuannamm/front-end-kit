@@ -56,13 +56,14 @@ function Thumb({ e }: { e: Entry }) {
 export function Tile({ e }: { e: Entry }) {
   const t = useT();
   return (
-    <a href={`#/catalog/${e.id}`} className="pg-tile">
+    // the link is the name, stretched over the tile: wrapping the whole tile would nest the demo's own links in it
+    <div className="pg-tile">
       <Thumb e={e} />
       <span className="pg-tile__foot">
-        <span className="min-w-0 truncate font-medium" title={e.name}>{e.name}</span>
+        <a href={`#/catalog/${e.id}`} className="pg-tile__link min-w-0 truncate font-medium" title={e.name}>{e.name}</a>
         {e.status === 'planned' && <Badge tone="neutral" variant="outline">{t('Dự kiến', 'Planned')}</Badge>}
       </span>
-    </a>
+    </div>
   );
 }
 

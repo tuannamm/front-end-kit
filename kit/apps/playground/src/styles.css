@@ -10,9 +10,11 @@
 .pg-code { margin: 0; padding: 12px 44px 12px 14px; overflow-x: auto; border-radius: var(--dtx-radius-md); background: #16151B; color: #E4E6EB; font: 400 12.5px/1.6 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
 .pg-stage { background-image: radial-gradient(var(--dtx-border) 1px, transparent 1px); background-size: 16px 16px; }
 /* Catalog overview tiles: a live miniature of the first demo over the name. Flat at rest, the border answers hover. */
-.pg-tile { display: grid; grid-template-columns: minmax(0, 1fr); overflow: hidden; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface); color: var(--dtx-fg); text-decoration: none; transition: border-color var(--dtx-dur-fast); }
+.pg-tile { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); overflow: hidden; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface); color: var(--dtx-fg); text-decoration: none; transition: border-color var(--dtx-dur-fast); }
 .pg-tile:hover { border-color: var(--dtx-border-strong); }
-.pg-tile:focus-visible { outline: 2px solid var(--dtx-focus); outline-offset: 2px; }
+.pg-tile:has(.pg-tile__link:focus-visible) { outline: 2px solid var(--dtx-focus); outline-offset: 2px; }
+.pg-tile__link { color: inherit; text-decoration: none; outline: none; }
+.pg-tile__link::after { content: ""; position: absolute; inset: 0; }
 .pg-tile__foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-block-size: 44px; padding: 8px 12px; border-top: 1px solid var(--dtx-border); font-size: 14px; }
 .pg-thumb { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 3; overflow: hidden; contain: size layout paint; background: var(--dtx-surface-2); }
 .pg-thumb__canvas { position: absolute; top: 0; left: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; transform-origin: 0 0; pointer-events: none; }
