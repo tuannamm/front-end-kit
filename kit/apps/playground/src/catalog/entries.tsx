@@ -3,7 +3,7 @@ import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileS
 import {
   AppShell, Avatar, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
-  Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
+  Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
   Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type DateRange, type NormalizedOcr, type NotificationItem, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
 } from '@dtx/ui';
@@ -245,6 +245,22 @@ const notifications: NotificationItem[] = [
   { id: 5, icon: <AlertTriangle />, tone: 'warn', title: 'Dung lượng lưu trữ đã dùng 85%', time: ago(5 * 24 * 60), read: true },
 ];
 const manyUnread = (n: number) => Array.from({ length: n }, (_, i): NotificationItem => ({ id: i, title: `Thông báo ${i + 1}` }));
+const demoPdf = `${import.meta.env.BASE_URL}demo/hop-dong-mau.pdf`;
+/** Never finishes reading, so the loading state can be shown without a slow network. */
+class StalledBlob extends Blob { arrayBuffer() { return new Promise<ArrayBuffer>(() => {}); } }
+const stalled = new StalledBlob([]);
+const notPdf = new Blob(['Đây không phải file PDF.'], { type: 'application/pdf' });
+
+function PdfOpenDemo() {
+  const [file, setFile] = useState<File | null>(null);
+  return (
+    <div className="grid w-full gap-3">
+      <FileDropzone compact multiple={false} label="File PDF" accept=".pdf,application/pdf" maxSize={50 * 1024 * 1024} onFiles={fs => setFile(fs[0] ?? null)} />
+      <PdfViewer src={file} fileName={file?.name} className="h-[480px]" />
+    </div>
+  );
+}
+
 function NotificationDemo() {
   const [items, setItems] = useState(notifications);
   const [next, setNext] = useState(100);
@@ -375,6 +391,13 @@ export const entries: Entry[] = [
       { title: '2 · The open panel (NotificationList)', note: 'Static: 2 unread, 3 read, one long description clamped to two lines.', render: () => <div className="w-full max-w-[380px] rounded-lg border border-border bg-surface"><NotificationList items={notifications} onSelect={() => {}} onMarkAllRead={() => {}} footer={<Button variant="ghost" size="sm">Xem tất cả thông báo</Button>} /></div> },
       { title: '3 · Empty · loading · error', render: () => <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3">{[<NotificationList key="e" items={[]} />, <NotificationList key="l" items={[]} loading />, <NotificationList key="x" items={[]} error="Không tải được thông báo. Kiểm tra kết nối mạng rồi thử lại." onRetry={() => {}} />].map(l => <div key={l.key} className="rounded-lg border border-border bg-surface">{l}</div>)}</div> },
       { title: '4 · Count: none, a few, more than 99', render: () => <><Notification items={[]} /><Notification items={manyUnread(3)} /><Notification items={manyUnread(120)} /></> }] },
+  { id: 'pdf-viewer', name: 'PDF Viewer', category: 'Core', status: 'ready', summary: 'Scrolling column of PDF pages with page and zoom controls and a download button. Takes a URL, a File/Blob or the bytes. pdf.js loads with the first viewer and parses in a worker; only pages near the view are drawn, so long files stay light. Zoom keeps your place; “Vừa chiều rộng” follows the container width. Loading (with progress for URLs), empty, error (password, not a PDF, HTTP) and per-page failure states are built in. No text layer yet: pages are images to assistive tech.',
+    importLine: imp('PdfViewer'),
+    props: [['src', 'string | Blob | ArrayBuffer | Uint8Array', 'URL, File or bytes; nothing = empty state. Keep it stable: a new value reopens the file'], ['fileName', 'string', 'Toolbar title, region name, download file name'], ['defaultZoom', "number | 'fit'", "Default 'fit' (every page fills the width); 1 = 100%"], ['download', 'boolean', 'Download button, default true'], ['className', 'string', 'Size it here: height 640px by default']],
+    demos: [
+      { title: '1 · Multi-page file from a URL', note: 'Synthetic 4-page contract: 3 portrait A4 pages and a landscape one. Scroll, type a page number, zoom with − / +.', code: '<PdfViewer src="/demo/hop-dong-mau.pdf" fileName="hop-dong-mau.pdf" />', render: () => <PdfViewer src={demoPdf} fileName="hop-dong-mau.pdf" className="w-full" /> },
+      { title: '2 · Open a file from the computer', note: 'The File goes straight to the viewer; nothing is uploaded.', code: 'const [file, setFile] = useState<File | null>(null);\n<FileDropzone compact multiple={false} accept=".pdf" onFiles={fs => setFile(fs[0])} />\n<PdfViewer src={file} fileName={file?.name} />', render: () => <PdfOpenDemo /> },
+      { title: '3 · Empty · loading · error', render: () => <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3"><PdfViewer className="h-[300px]" /><PdfViewer src={stalled} className="h-[300px]" /><PdfViewer src={notPdf} fileName="khong-phai-pdf.pdf" className="h-[300px]" /></div> }] },
   { id: 'avatar', name: 'Avatar', category: 'Core', status: 'ready', summary: 'Photo when src loads; otherwise initials of the first + last word (Vietnamese diacritics kept), or a person icon when the name has no letter. Square or circle, navy tile. The name is the accessible label. AvatarPicker makes it a button that opens a dialog to pick, preview, remove and save a photo (it hands back the File; uploading is the app\'s job).', importLine: imp('Avatar, AvatarPicker'),
     props: [['name', 'string', 'Accessible label, tooltip and initials source'], ['src', 'string', 'Photo URL; initials show while it loads and if it fails'], ['shape', "'square' | 'circle'", "Default 'square'"], ['size', "'sm' | 'md' | 'lg'", "28 / 32 / 64px (lg for a profile preview), default 'md'"], ['AvatarPicker.onChange', '(file: File | null) => void', 'On save; null = photo removed'], ['AvatarPicker.accept / maxSize', 'string · number', 'Default PNG, JPEG, WEBP · 5 MB']],
     demos: [
