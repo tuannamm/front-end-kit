@@ -20,7 +20,7 @@ const page = await context.newPage();
 
 await page.goto(`${BASE}/#/catalog`);
 const ids = await page.$$eval('aside a[href^="#/catalog/"]', as => as.map(a => a.getAttribute('href').replace('#/', '')));
-ids.push('website', 'app', 'poc'); // the demo pages too
+ids.push('catalog', 'website', 'app', 'poc'); // the overview grid and the demo pages too
 let bothThemes = 0; // guards against the switcher's label changing and the dark copies silently going unchecked
 const found = new Map(); // `${entry} | ${message}` → { themes, count, example }
 for (const theme of ['light', 'dark']) {

@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
-import { Badge, Reveal } from '@dtx/ui';
+import { Badge, EmptyState, Reveal } from '@dtx/ui';
 import { categories, entries, type Entry } from './entries';
 import { useT } from '../i18n';
 
@@ -52,15 +52,17 @@ function Thumb({ e }: { e: Entry }) {
   );
 }
 
-export function OverviewGrid({ shown }: { shown: Entry[] }) {
+/** Catalog home: every entry as a tile, grouped by category, filtered by the sidebar search and status. */
+export function Overview({ shown }: { shown: Entry[] }) {
   const t = useT();
   const ready = entries.filter(e => e.status === 'ready').length;
   return (
     <Reveal className="grid gap-8">
       <header className="grid gap-2">
         <h1 className="m-0 text-3xl font-bold tracking-tight">{t('Danh mục Frontend Kit', 'Frontend Kit catalog')}</h1>
-        <p className="m-0 max-w-[68ch] text-fg-muted">{t(<><b className="text-fg">{ready}</b> mục đã có, <b className="text-fg">{entries.length - ready}</b> dự kiến.</>, <><b className="text-fg">{ready}</b> ready, <b className="text-fg">{entries.length - ready}</b> planned.</>)}</p>
+        <p className="m-0 max-w-[68ch] text-fg-muted">{t(<><b className="text-fg">{ready}</b> mục đã có, <b className="text-fg">{entries.length - ready}</b> dự kiến. Mỗi mục có ví dụ tương tác, dòng import và props. Chuyển động được tách theo từng pha.</>, <><b className="text-fg">{ready}</b> ready, <b className="text-fg">{entries.length - ready}</b> planned. Each entry has interactive examples, an import line and props. Motion is split by phase.</>)}</p>
       </header>
+      {!shown.length && <EmptyState size="sm" title={t('Không có mục nào khớp', 'No matching entries')}>{t('Thử từ khoá khác, hoặc chọn Tất cả ở bộ lọc trạng thái.', 'Try another word, or pick All in the status filter.')}</EmptyState>}
       {categories.map(c => {
         const list = shown.filter(e => e.category === c.id);
         if (!list.length) return null;

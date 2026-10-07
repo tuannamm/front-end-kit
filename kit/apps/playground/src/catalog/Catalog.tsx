@@ -3,7 +3,7 @@ import { Check, Copy, RotateCcw } from 'lucide-react';
 import { Badge, Button, Card, DataTable, Input, Reveal, Segmented } from '@dtx/ui';
 import { categories, entries, type Entry } from './entries';
 import { Stage } from './demos';
-import { OverviewGrid } from './overview-grid';
+import { Overview } from './overview';
 import { useT } from '../i18n';
 import { readPropsDocs } from '../../../../packages/ui/src/props-doc';
 
@@ -108,36 +108,6 @@ function EntryView({ e, theme, setTheme }: { e: Entry; theme: DemoTheme; setThem
   );
 }
 
-function Overview({ go }: { go: (id: string) => void }) {
-  const t = useT();
-  const ready = entries.filter(e => e.status === 'ready').length;
-  return (
-    <Reveal className="grid gap-6">
-      <header className="grid gap-2">
-        <h1 className="m-0 text-3xl font-bold tracking-tight">{t('Danh mục Frontend Kit', 'Frontend Kit catalog')}</h1>
-        <p className="m-0 max-w-[68ch] text-fg-muted">{t(<><b className="text-fg">{ready}</b> mục đã có, <b className="text-fg">{entries.length - ready}</b> dự kiến. Mỗi mục có ví dụ tương tác, dòng import và props. Chuyển động được tách theo từng pha.</>, <><b className="text-fg">{ready}</b> ready, <b className="text-fg">{entries.length - ready}</b> planned. Each entry has interactive examples, an import line and props. Motion is split by phase.</>)}</p>
-      </header>
-      {categories.map(c => {
-        const list = entries.filter(e => e.category === c.id);
-        return (
-          <section key={c.id} className="grid gap-3">
-            <div className="flex items-baseline gap-3"><h2 className="m-0 text-lg font-bold">{c.id}</h2><code className="text-xs text-fg-muted">{c.folder}</code><span className="ml-auto text-xs text-fg-muted dtx-num">{list.filter(e => e.status === 'ready').length}/{list.length}</span></div>
-            <p className="m-0 -mt-2 text-sm text-fg-muted">{c.blurb}</p>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3">
-              {list.map(e => (
-                <button key={e.id} type="button" onClick={() => go(e.id)} className="dtx-card dtx-hover-lift grid cursor-pointer gap-1.5 p-4 text-left">
-                  <span className="flex items-center gap-2 text-sm font-medium"><i className={`block size-1.5 rounded-[1px] ${e.status === 'ready' ? 'bg-lime' : 'bg-border-strong'}`} />{e.name}</span>
-                  <span className="line-clamp-2 text-xs text-fg-muted">{e.summary}</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        );
-      })}
-    </Reveal>
-  );
-}
-
 export function Catalog({ id, go }: { id?: string; go: (id?: string) => void }) {
   const t = useT();
   const [q, setQ] = useState('');
@@ -179,7 +149,7 @@ export function Catalog({ id, go }: { id?: string; go: (id?: string) => void }) 
         ))}
         {!shown.length && <p className="px-2.5 text-xs text-fg-muted">{t('Không có mục nào khớp.', 'No matching entries.')}</p>}
       </aside>
-      <div className="min-w-0">{entry ? <EntryView e={entry} theme={theme} setTheme={setTheme} /> : id === 'grid-preview' ? <OverviewGrid shown={shown} /> : <Overview go={go} />}</div>
+      <div className="min-w-0">{entry ? <EntryView e={entry} theme={theme} setTheme={setTheme} /> : <Overview shown={shown} />}</div>
     </div>
   );
 }
