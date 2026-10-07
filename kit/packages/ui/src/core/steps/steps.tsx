@@ -53,7 +53,10 @@ export function Steps({ items, current = 0, status = 'process', onChange, orient
     const check = () => {
       const was = ol.dataset.layout;
       ol.dataset.layout = 'horizontal';
-      const over = ol.scrollWidth > ol.clientWidth + 1;
+      // the items' own widths, not the list's scrollWidth: right after the switch Chromium may lay the items out shrunk to
+      // fit, so the list reports no overflow one time and overflow the next, and the layout flips on every resize
+      const need = [...ol.children].reduce((w, li) => w + li.scrollWidth, 0);
+      const over = need > ol.clientWidth + 1;
       ol.dataset.layout = was;
       setFits(!over);
     };
