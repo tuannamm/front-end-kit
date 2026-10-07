@@ -1,7 +1,7 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
-import { Alert, Badge, Button, Card, CommandButton, CommandList, CommandPalette, Loadable, Menu, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
+import { Alert, Badge, Button, Card, CommandButton, CommandList, CommandPalette, Loadable, Menu, Pagination, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -284,6 +284,12 @@ export function MenuViewDemo() {
       <p className="m-0 text-xs text-fg-muted">Cột: {menuColumns.filter(c => shown.includes(c.id)).map(c => c.label).join(', ')} · Sắp xếp: {sorts.find(o => o.value === sort)?.label}</p>
     </div>
   );
+}
+
+export function PaginationDemo({ total, start = 1, size: initial = 20, sizes, itemLabel }: { total: number; start?: number; size?: number; sizes?: boolean; itemLabel?: string }) {
+  const [page, setPage] = useState(start);
+  const [size, setSize] = useState(initial);
+  return <Pagination page={page} total={total} pageSize={size} onPageChange={setPage} onPageSizeChange={sizes ? setSize : undefined} itemLabel={itemLabel} />;
 }
 
 /** Closable warning with its one action; closing it leaves a way back so the demo can be replayed. */

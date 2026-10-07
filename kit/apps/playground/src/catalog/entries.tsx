@@ -12,7 +12,7 @@ import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
-import { AlertDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { AlertDemo, PaginationDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -384,6 +384,13 @@ export const entries: Entry[] = [
       { title: '1 · Row actions', note: 'Icon-only trigger named after its row. “Lịch sử thay đổi” is disabled; the destructive item is last, after a separator.', code: "<Menu align=\"end\" trigger={<Button variant=\"ghost\" size=\"sm\" icon aria-label=\"Thao tác cho HD-5517\"><MoreHorizontal aria-hidden /></Button>} items={[\n  { label: 'Xem chi tiết', icon: <Eye />, onSelect: open },\n  { label: 'Nhân bản', icon: <Copy />, shortcut: 'Ctrl D', onSelect: duplicate },\n  { label: 'Lịch sử thay đổi', icon: <History />, disabled: true },\n  'separator',\n  { label: 'Xoá lô HD-5517', icon: <Trash2 />, danger: true, onSelect: confirmDelete },\n]} />", render: () => <MenuRowDemo /> },
       { title: '2 · Export, grouped', note: 'A group heading, a second line per format, and a link at the end.', render: () => <MenuExportDemo /> },
       { title: '3 · View options', note: 'Column toggles and a sort order. Both keep the menu open; “Mã lô” cannot be hidden.', render: () => <MenuViewDemo /> }] },
+  { id: 'pagination', name: 'Pagination', category: 'Core', status: 'ready', summary: 'Page controls for a table or a list of cards: a “21–40 trên 1.234 dòng” summary, an optional rows-per-page picker and the page buttons. The page list keeps 7 slots so buttons do not jump; in a narrow container it collapses to “Trang 7 / 62”. Changing the page size keeps the first row on screen.',
+    importLine: imp('Pagination'),
+    demos: [
+      { title: '1 · Many pages, rows per page', note: 'Page 7 of 62: first, gap, 6–8, gap, last. Change “Mỗi trang” to 50: the page moves so row 121 stays on screen.', code: '<Pagination page={page} total={1234} pageSize={size} onPageChange={setPage} onPageSizeChange={setSize} itemLabel="hồ sơ" />', render: () => <PaginationDemo total={1234} start={7} sizes itemLabel="hồ sơ" /> },
+      { title: '2 · Few pages', note: 'Five pages fit, so there is no gap. At page 1 “Trang trước” is aria-disabled and keeps focus.', render: () => <PaginationDemo total={45} size={10} /> },
+      { title: '3 · Narrow container', note: 'Under 360px of width the page list becomes “Trang 7 / 62” between the arrows.', render: () => <div className="w-full max-w-[320px] rounded-md border border-border bg-surface p-3"><PaginationDemo total={1234} start={7} /></div> },
+      { title: '4 · No rows', note: 'Nothing to page through: both arrows are off. Show an EmptyState above it.', render: () => <PaginationDemo total={0} /> }] },
   { id: 'breadcrumb', name: 'Breadcrumb', category: 'Core', status: 'ready', summary: 'Where this page sits: root → … → current page. The current page is plain text with aria-current; parents are links, buttons (client-side routing) or plain text. Long labels truncate, crumbs shrink with the space (the trail never widens its container), and long trails fold their middle into “…”.',
     importLine: imp('Breadcrumb, type BreadcrumbItem'),
     demos: [

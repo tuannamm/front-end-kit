@@ -30,6 +30,18 @@ export const batches: Batch[] = [
   { id: 'VC-7702', type: ['Vận đơn', 'Bill of lading'], client: 'Logistics Cửu Long', pages: 980, accuracy: 97.12, status: 'error', sla: '10:30', received: '2026-09-24' },
 ];
 
+/** Older batches, generated so the App table has pages to go through. Deterministic, invented like the rest. */
+export const olderBatches: Batch[] = Array.from({ length: 43 }, (_, i) => {
+  const k = i % 5;
+  return {
+    id: `${batches[k].id.slice(0, 2)}-${1000 + (i * 7919) % 9000}`, type: batches[k].type, client: batches[(i * 3) % 5].client,
+    pages: 300 + (i * 997) % 3500, accuracy: +(98.6 + ((i * 37) % 140) / 100).toFixed(2),
+    status: (['done', 'done', 'qc', 'done', 'error', 'done', 'done', 'qc', 'done', 'risk'] as const)[i % 10],
+    sla: `${String(8 + (i % 10)).padStart(2, '0')}:${i % 2 ? '30' : '00'}`,
+    received: new Date(Date.UTC(2026, 8, 23 - Math.floor(i / 2))).toISOString().slice(0, 10),
+  };
+});
+
 export const hours = ['7h', '8h', '9h', '10h', '11h', '12h', '13h', '14h', '15h', '16h'];
 export const aiThroughput = [2100, 3900, 5200, 5800, 6100, 3400, 5600, 6300, 5900, 4700];
 export const manualThroughput = [420, 610, 760, 820, 790, 450, 700, 840, 810, 620];
