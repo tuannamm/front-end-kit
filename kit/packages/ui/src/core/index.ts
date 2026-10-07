@@ -12,3 +12,4 @@ export { FileDropzone, FileList, FileItem, UploadToast, type FileDropzoneProps, 
 export { formatBytes, acceptsFile, type FileRejection } from './file-upload/file';
 export { Switch, Tabs, Segmented, Tooltip, TooltipProvider, type TabItem } from './controls/controls';
 export { Dialog, DialogClose, Drawer, DrawerClose, ToastProvider, useToast, type DrawerProps } from './overlays/overlays';
+export { Notification, NotificationList, type NotificationItem, type NotificationProps, type NotificationListProps } from './notification/notification';

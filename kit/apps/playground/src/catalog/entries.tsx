@@ -3,9 +3,9 @@ import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileS
 import {
   AppShell, Avatar, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
-  Logo, Meter, MultiSelect, OcrShowcase, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
+  Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
-  Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type DateRange, type NormalizedOcr, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
+  Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type DateRange, type NormalizedOcr, type NotificationItem, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
 } from '@dtx/ui';
 import { aiThroughput, batches, hours, invoiceFields, invoiceRows, manualThroughput } from '../data';
 import { docTypeGroups, shiftOptions, statusOptions } from '../options';
@@ -236,6 +236,35 @@ function AvatarPickerDemo() {
 }
 
 // Stand-in for a user photo (the mascot is reserved for empty states / onboarding / 404, never an avatar)
+const ago = (min: number) => new Date(Date.now() - min * 60_000);
+const notifications: NotificationItem[] = [
+  { id: 1, icon: <CircleAlert />, tone: 'err', title: 'Lô HD-5517 lỗi OCR ở 12 trang', description: 'Ảnh quá mờ. Quét lại các trang này hoặc chuyển sang nhập tay.', time: ago(4) },
+  { id: 2, icon: <CheckCircle2 />, tone: 'ok', title: 'Lô BH-2210 đã qua QC', description: '3.860 trang · độ chính xác 99,2%', time: ago(38) },
+  { id: 3, icon: <Sparkles />, tone: 'violet', title: 'AI gợi ý kiểm tra lại 24 trường', description: 'Hoá đơn VAT của khách hàng Bảo hiểm Bảo Việt chi nhánh Hà Nội, các trường có độ tin cậy dưới 80% cần một người duyệt lại trước khi xuất.', time: ago(190), read: true },
+  { id: 4, icon: <Users />, tone: 'brand', title: 'Trần Minh giao cho bạn lô TD-0931', description: 'Hạn SLA: 17:00 hôm nay.', time: ago(26 * 60), read: true },
+  { id: 5, icon: <AlertTriangle />, tone: 'warn', title: 'Dung lượng lưu trữ đã dùng 85%', time: ago(5 * 24 * 60), read: true },
+];
+const manyUnread = (n: number) => Array.from({ length: n }, (_, i): NotificationItem => ({ id: i, title: `Thông báo ${i + 1}` }));
+function NotificationDemo() {
+  const [items, setItems] = useState(notifications);
+  const [next, setNext] = useState(100);
+  const markRead = (id: NotificationItem['id']) => setItems(xs => xs.map(x => (x.id === id ? { ...x, read: true } : x)));
+  const arrive = () => { setItems(xs => [{ id: next, icon: <FileStack />, tone: 'brand', title: `Lô mới NV-${next} đã vào hàng đợi`, description: '120 trang · khách hàng Ngân hàng Đông Á', time: new Date() }, ...xs]); setNext(n => n + 1); };
+  return (
+    <div className="grid w-full max-w-xl gap-3">
+      <div className="flex items-center gap-3 rounded-md border border-border bg-surface px-4 py-2">
+        <span className="text-sm text-fg-muted">Vận hành / <b className="font-medium text-fg">Tổng quan</b></span>
+        <span className="ml-auto flex items-center gap-2">
+          <Notification items={items} onSelect={n => markRead(n.id)} onMarkAllRead={() => setItems(xs => xs.map(x => ({ ...x, read: true })))}
+            footer={<Button variant="ghost" size="sm">Xem tất cả thông báo</Button>} />
+          <Avatar name="Nguyễn Thị Thuận" size="sm" shape="circle" />
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-2"><Button variant="secondary" size="sm" onClick={arrive}>Giả lập thông báo mới</Button><Button variant="ghost" size="sm" onClick={() => setItems(notifications)}>Đặt lại</Button></div>
+    </div>
+  );
+}
+
 const demoPhoto = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#B9D7EE"/><circle cx="32" cy="26" r="12" fill="#5B6F8F"/><path d="M8 64c2-14 12-21 24-21s22 7 24 21z" fill="#5B6F8F"/></svg>');
 
 export const entries: Entry[] = [
@@ -338,6 +367,14 @@ export const entries: Entry[] = [
       { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
   { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>.', importLine: imp('ToastProvider, useToast'),
     demos: [{ title: 'Trigger', code: "const toast = useToast();\ntoast({ title: 'Đã lưu', description: '…', icon })", render: () => <ToastDemo /> }] },
+  { id: 'notification', name: 'Notification', category: 'Core', status: 'ready', summary: 'Bell button with the unread count; clicking it opens the notifications in a popover. Unread rows have a blue tint, a heavier title and a square dot. Picking a row closes the panel; marking it read and loading the list are the app\'s job. NotificationList is the same panel on its own, for a full page. Times read “5 phút trước”, then calendar days, then the date.',
+    importLine: imp('Notification, NotificationList, type NotificationItem'),
+    props: [['items', 'NotificationItem[]', '{ id, title, description?, time?, read?, icon?, tone?, href? }, in display order'], ['onSelect', '(item) => void', 'A row was picked; Notification closes the popover'], ['onMarkAllRead', '() => void', 'Shows “Đánh dấu đã đọc” while something is unread'], ['loading · error · onRetry', 'boolean · ReactNode · () => void', 'Skeleton rows, or the error in place of the list with a “Thử lại” button'], ['footer', 'ReactNode', 'E.g. a “Xem tất cả” link'], ['open / defaultOpen / onOpenChange', 'boolean', 'Notification only']],
+    demos: [
+      { title: '1 · Bell in a topbar', note: 'Click the bell, pick a row to mark it read, or add one to see the count pop.', code: '<Notification items={items} onSelect={n => markRead(n.id)} onMarkAllRead={markAllRead}\n  footer={<Button variant="ghost" size="sm" href="/notifications">Xem tất cả thông báo</Button>} />', render: () => <NotificationDemo /> },
+      { title: '2 · The open panel (NotificationList)', note: 'Static: 2 unread, 3 read, one long description clamped to two lines.', render: () => <div className="w-full max-w-[380px] rounded-lg border border-border bg-surface"><NotificationList items={notifications} onSelect={() => {}} onMarkAllRead={() => {}} footer={<Button variant="ghost" size="sm">Xem tất cả thông báo</Button>} /></div> },
+      { title: '3 · Empty · loading · error', render: () => <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3">{[<NotificationList key="e" items={[]} />, <NotificationList key="l" items={[]} loading />, <NotificationList key="x" items={[]} error="Không tải được thông báo. Kiểm tra kết nối mạng rồi thử lại." onRetry={() => {}} />].map(l => <div key={l.key} className="rounded-lg border border-border bg-surface">{l}</div>)}</div> },
+      { title: '4 · Count: none, a few, more than 99', render: () => <><Notification items={[]} /><Notification items={manyUnread(3)} /><Notification items={manyUnread(120)} /></> }] },
   { id: 'avatar', name: 'Avatar', category: 'Core', status: 'ready', summary: 'Photo when src loads; otherwise initials of the first + last word (Vietnamese diacritics kept), or a person icon when the name has no letter. Square or circle, navy tile. The name is the accessible label. AvatarPicker makes it a button that opens a dialog to pick, preview, remove and save a photo (it hands back the File; uploading is the app\'s job).', importLine: imp('Avatar, AvatarPicker'),
     props: [['name', 'string', 'Accessible label, tooltip and initials source'], ['src', 'string', 'Photo URL; initials show while it loads and if it fails'], ['shape', "'square' | 'circle'", "Default 'square'"], ['size', "'sm' | 'md' | 'lg'", "28 / 32 / 64px (lg for a profile preview), default 'md'"], ['AvatarPicker.onChange', '(file: File | null) => void', 'On save; null = photo removed'], ['AvatarPicker.accept / maxSize', 'string · number', 'Default PNG, JPEG, WEBP · 5 MB']],
     demos: [
