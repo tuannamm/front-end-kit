@@ -52,6 +52,20 @@ function Thumb({ e }: { e: Entry }) {
   );
 }
 
+/** A catalog entry as a link: frozen miniature of its first demo over the name. */
+export function Tile({ e }: { e: Entry }) {
+  const t = useT();
+  return (
+    <a href={`#/catalog/${e.id}`} className="pg-tile">
+      <Thumb e={e} />
+      <span className="pg-tile__foot">
+        <span className="min-w-0 truncate font-medium" title={e.name}>{e.name}</span>
+        {e.status === 'planned' && <Badge tone="neutral" variant="outline">{t('Dự kiến', 'Planned')}</Badge>}
+      </span>
+    </a>
+  );
+}
+
 /** Catalog home: every entry as a tile, grouped by category, filtered by the sidebar search. */
 export function Overview({ shown }: { shown: Entry[] }) {
   const t = useT();
@@ -75,15 +89,7 @@ export function Overview({ shown }: { shown: Entry[] }) {
             </div>
             <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(232px,1fr))] gap-4 p-0">
               {list.map(e => (
-                <li key={e.id} className="min-w-0">
-                  <a href={`#/catalog/${e.id}`} className="pg-tile">
-                    <Thumb e={e} />
-                    <span className="pg-tile__foot">
-                      <span className="min-w-0 truncate font-medium" title={e.name}>{e.name}</span>
-                      {e.status === 'planned' && <Badge tone="neutral" variant="outline">{t('Dự kiến', 'Planned')}</Badge>}
-                    </span>
-                  </a>
-                </li>
+                <li key={e.id} className="min-w-0"><Tile e={e} /></li>
               ))}
             </ul>
           </section>

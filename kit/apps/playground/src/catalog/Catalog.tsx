@@ -18,7 +18,7 @@ const inline = (s: string) => s.split(/(`[^`]+`|\*\*[^*]+\*\*)/).map((p, i) =>
 
 const fold = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
 
-function CopyCode({ code }: { code: string }) {
+export function CopyCode({ code }: { code: string }) {
   const t = useT();
   const [done, setDone] = useState(false);
   // min-w-0: a long import line scrolls inside the block instead of widening the page on phones
