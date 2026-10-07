@@ -72,6 +72,5 @@ body:has(.dtx-drawer--right) .dtx-toast-viewport { right: auto; left: 16px; }
 .dtx-toast__desc { margin: 0; font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
 /* error: a red-tinted hairline on top of the red icon and the wording, never the colour alone */
 .dtx-toast[data-tone="err"] { border-color: color-mix(in srgb, var(--dtx-tone-err) 55%, var(--dtx-border)); }
-.dtx-toast__action { justify-self: start; margin-top: 6px; }
 .dtx-toast__close { display: grid; place-items: center; width: 24px; height: 24px; border: 0; border-radius: var(--dtx-radius-sm); background: none; color: var(--dtx-fg-muted); cursor: pointer; }
 .dtx-toast__close:hover { background: var(--dtx-hover); color: var(--dtx-fg); }

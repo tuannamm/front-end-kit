@@ -15,7 +15,7 @@ import { Dialog, DialogClose, Drawer, DrawerClose, ToastProvider, useToast, Butt
 <ToastProvider><App /></ToastProvider>              // once, at the app root
 const toast = useToast();
 toast({ title: 'Đã lưu', description: 'Hồ sơ HS-0142', tone: 'ok' });
-toast({ title: 'Không lưu được hồ sơ HS-0142', description: 'Mất kết nối máy chủ.', tone: 'err', action: { label: 'Thử lại', onClick: save } });
+toast({ title: 'Không lưu được hồ sơ HS-0142', description: 'Mất kết nối máy chủ.', tone: 'err' });
 ```
 
 ## Notes
@@ -28,9 +28,8 @@ toast({ title: 'Không lưu được hồ sơ HS-0142', description: 'Mất kế
 - **Layers:** backdrop 60, drawer/dialog 61, popups 65, toasts 70.
 - **Toast:** toasts stack and expand on hover. Swipe right or down to dismiss. Default timeout is 4s.
   `tone` picks the icon (ok, warn, err, brand). An `err` toast stays until it is closed, is announced at once
-  (`priority: 'high'`) and has a red-tinted edge. Its text should say what failed and how to recover; `action` adds the
-  recovery button ("Thử lại"), which also closes the toast. Screen readers hear an error through a `role="alert"` copy;
-  F6 moves keyboard focus to the toasts, so the action is reachable without a pointer.
+  (`priority: 'high'`) and has a red-tinted edge. Its text should say what failed and how to recover. Screen readers hear an error through a
+  `role="alert"` copy.
   While a right drawer is open, toasts move to the left corner so they do not cover its footer.
   On phones they move above the drawer footer instead.
 - Toast `data.body` holds extra content under the text. UploadToast (in `file-upload/`) uses it.
@@ -91,7 +90,6 @@ toast({ title: 'Không lưu được hồ sơ HS-0142', description: 'Mất kế
 | `description` | `string` |  | Line under the title |
 | `tone` | `'ok' \| 'warn' \| 'err' \| 'brand'` |  | Picks the icon; `'err'` also stays until closed and is announced at once |
 | `icon` | `ReactNode` |  | Replaces the tone's icon, e.g. `<Badge size="sm" live />` for work in progress |
-| `action` | `{ label: string; onClick: () => void }` |  | One recovery step, e.g. "Thử lại"; clicking it also closes the toast |
 | `timeout` | `number` | `4000` (`'err'`: `0`) | Milliseconds; `0` keeps it until closed |
 
 Options (`ToastOptions`) of the `toast(options)` function that `useToast()` returns; it returns the toast id.

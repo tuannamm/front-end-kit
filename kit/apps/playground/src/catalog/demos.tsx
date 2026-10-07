@@ -183,8 +183,7 @@ export function ToastDemo() {
   return (
     <div className="flex flex-wrap gap-2">
       <Button onClick={() => toast({ title: 'Đã lưu lô BH-2210', description: '1.240 trang · 09:42', tone: 'ok' })}>Toast thành công</Button>
-      <Button variant="danger" onClick={() => toast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi. Tệp vẫn được giữ, thử lại sau ít phút.', tone: 'err',
-        action: { label: 'Thử lại', onClick: () => toast({ title: 'Đang gửi lại lô BH-2210', icon: <Badge size="sm" live /> }) } })}>Toast lỗi</Button>
+      <Button variant="danger" onClick={() => toast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi. Tệp vẫn được giữ, thử lại sau ít phút.', tone: 'err' })}>Toast lỗi</Button>
       <Button variant="secondary" onClick={() => toast({ title: 'Lô HD-5517 có nguy cơ trễ SLA', description: 'Còn 1.120 trang chưa QC.', tone: 'warn' })}>Toast cảnh báo</Button>
       <Button variant="secondary" onClick={() => toast({ title: 'Đang xuất báo cáo', description: 'Bạn sẽ nhận email trong vài phút.', icon: <Badge size="sm" live /> })}>Toast đang xử lý</Button>
     </div>
