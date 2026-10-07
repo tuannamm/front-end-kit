@@ -215,7 +215,7 @@ export function Home() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-surface" aria-labelledby="gallery-h">
+      <section className="border-y border-border bg-[var(--pg-band)]" aria-labelledby="gallery-h">
         <div className="mx-auto max-w-[1240px] px-4 py-20">
           <div data-reveal="" className="flex flex-wrap items-end justify-between gap-6">
             <SectionHeader id="gallery-h" title={t(`${ready.length} mục, ví dụ chạy thật`, `${ready.length} entries, live examples`)} description={t(`${categories.length} nhóm, từ token tới component AI. Mỗi mục có ví dụ tương tác, dòng import và bảng props lấy từ README.`, `${categories.length} groups, from tokens to AI components. Each entry has interactive examples, an import line and a props table taken from its README.`)} />
