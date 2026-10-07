@@ -1,0 +1,61 @@
+/* ---------- file upload ---------- */
+.dtx-drop {
+  display: grid; justify-items: center; gap: 6px; width: 100%; padding: 28px 16px;
+  border: 1px dashed var(--dtx-border-strong); border-radius: var(--dtx-radius-lg); background: var(--dtx-surface-2);
+  color: var(--dtx-fg); font: 400 var(--dtx-text-sm)/1.4 var(--dtx-font); text-align: center; cursor: pointer;
+  transition: border-color var(--dtx-dur-fast) var(--dtx-ease-standard), background-color var(--dtx-dur-fast) var(--dtx-ease-standard);
+}
+.dtx-drop:hover { border-color: var(--dtx-primary); }
+.dtx-drop[aria-invalid="true"] { border-color: var(--dtx-tone-err); }
+.dtx-drop[data-over] { border-style: solid; border-color: var(--dtx-primary); background: rgb(37 130 215 / .08); }
+.dtx-drop:disabled { opacity: .5; cursor: not-allowed; }
+.dtx-drop:disabled:hover { border-color: var(--dtx-border-strong); }
+.dtx-drop__icon { width: 28px; height: 28px; color: var(--dtx-link); transition: transform var(--dtx-dur-base) var(--dtx-ease-standard); }
+.dtx-drop[data-over] .dtx-drop__icon { transform: translateY(-3px); }
+.dtx-drop__cta { color: var(--dtx-link); font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+.dtx-drop__hint { font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
+.dtx-drop--compact { grid-template-columns: auto minmax(0, 1fr); justify-items: start; column-gap: 12px; row-gap: 0; padding: 12px 16px; text-align: left; }
+.dtx-drop--compact .dtx-drop__icon { grid-row: span 2; width: 22px; height: 22px; }
+.dtx-drop__rejects { margin: 0; padding-left: 18px; }
+.dtx-files { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.dtx-file {
+  display: flex; align-items: center; gap: 12px; padding: 8px 8px 8px 10px;
+  border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface);
+  animation: dtx-fade-up var(--dtx-dur-base) var(--dtx-ease-enter);
+}
+.dtx-file[data-status="error"] { border-color: var(--dtx-tone-err); }
+.dtx-file__icon { flex: none; width: 36px; height: 36px; display: grid; place-items: center; overflow: hidden; border-radius: var(--dtx-radius-sm); background: var(--dtx-surface-2); color: var(--dtx-fg-muted); }
+.dtx-file__icon svg { width: 18px; height: 18px; }
+.dtx-file__icon img { width: 100%; height: 100%; object-fit: cover; }
+.dtx-file__main { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.dtx-file__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--dtx-text-sm); font-weight: 500; }
+.dtx-file__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0 8px; font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
+.dtx-file__state { display: inline-flex; align-items: center; gap: 4px; }
+.dtx-file__state svg { width: 14px; height: 14px; }
+.dtx-file[data-status="done"] .dtx-file__state { color: var(--dtx-tone-ok); }
+.dtx-file[data-status="error"] .dtx-file__state { color: var(--dtx-tone-err); }
+.dtx-file__bar { height: 4px; margin-top: 4px; overflow: hidden; border-radius: 2px; background: var(--dtx-surface-2); }
+.dtx-file__bar > i { display: block; height: 100%; background: var(--dtx-primary); transform-origin: left; transition: transform var(--dtx-dur-base) var(--dtx-ease-standard); }
+.dtx-file__actions { flex: none; display: flex; gap: 2px; }
+
+/* upload progress inside a toast: hairline rows, the list scrolls instead of growing the toast */
+.dtx-toast__body { flex-basis: 100%; min-width: 0; display: grid; gap: 8px; } /* full toast width, below icon / text / close */
+.dtx-toast__toggle { justify-self: start; display: inline-flex; align-items: center; gap: 4px; min-height: 24px; padding: 0; border: 0; background: none; color: var(--dtx-link); font: 500 var(--dtx-text-xs) var(--dtx-font); cursor: pointer; }
+.dtx-toast__toggle svg { width: 14px; height: 14px; transition: transform var(--dtx-dur-fast) var(--dtx-ease-standard); }
+.dtx-toast__toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+.dtx-toast .dtx-files { gap: 0; max-height: 240px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; border-top: 1px solid var(--dtx-border); }
+.dtx-toast .dtx-files::-webkit-scrollbar { display: none; }
+/* no scrollbar, so the bottom edge fades while more rows sit below; mask colour is irrelevant, only its alpha */
+@supports (animation-timeline: scroll()) {
+  .dtx-toast .dtx-files {
+    mask-image: linear-gradient(var(--dtx-fg) calc(100% - var(--dtx-fade-end)), transparent);
+    animation-name: dtx-fade-end; animation-timing-function: linear; animation-fill-mode: both; animation-timeline: scroll(self);
+  }
+}
+.dtx-toast .dtx-file { gap: 10px; padding: 6px 0; border: 0; border-bottom: 1px solid var(--dtx-border); border-radius: 0; background: none; animation: none; }
+.dtx-toast .dtx-file:last-child { border-bottom: 0; }
+.dtx-toast .dtx-file__icon { width: 28px; height: 28px; }
+
+/* UploadToast list fade; 0 when the list does not overflow (scroll timeline inactive) */
+@property --dtx-fade-end { syntax: '<length>'; inherits: false; initial-value: 0px; }
+@keyframes dtx-fade-end { from { --dtx-fade-end: 32px; } to { --dtx-fade-end: 0px; } }

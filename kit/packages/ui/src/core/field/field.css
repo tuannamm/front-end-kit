@@ -1,0 +1,15 @@
+/* ---------- field / input ---------- */
+.dtx-field { display: grid; gap: 6px; min-width: 0; }
+.dtx-field__label { font-size: var(--dtx-text-sm); font-weight: 500; }
+.dtx-field__desc { font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
+.dtx-field__error { font-size: var(--dtx-text-xs); color: var(--dtx-tone-err); }
+.dtx-input {
+  width: 100%; height: 40px; padding: 0 12px; font: 400 var(--dtx-text-sm) var(--dtx-font); color: var(--dtx-fg);
+  background: var(--dtx-surface-2); border: 1px solid var(--dtx-border-strong); border-radius: var(--dtx-radius-md);
+  transition: border-color var(--dtx-dur-fast), box-shadow var(--dtx-dur-fast);
+}
+.dtx-input::placeholder { color: var(--dtx-fg-muted); }
+.dtx-input:hover { border-color: color-mix(in srgb, var(--dtx-primary) 45%, var(--dtx-border-strong)); }
+.dtx-input:focus-visible, .dtx-select-trigger:focus-visible { outline: none; border-color: var(--dtx-primary); box-shadow: 0 0 0 3px rgb(37 130 215 / .3), 0 0 18px rgb(37 130 215 / .25); }
+.dtx-input[data-invalid] { border-color: var(--dtx-tone-err); }
+.dtx-input:disabled { opacity: .5; cursor: not-allowed; }
