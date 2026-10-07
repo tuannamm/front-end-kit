@@ -1,7 +1,7 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
-import { Alert, Badge, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Pagination, Slider, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
+import { Alert, Badge, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -369,6 +369,30 @@ export function SplitterListDemo() {
         ]} />
       </div>
       <p className="m-0 text-xs text-fg-muted" aria-live="polite">{saved ? `Đã lưu: ${saved.map(s => `${Math.round(s)}%`).join(' / ')}` : 'Kéo, hoặc Tab tới đường chia rồi dùng ←/→. Enter thu gọn danh sách.'}</p>
+    </div>
+  );
+}
+
+const wizard = [
+  { title: 'Thông tin lô', description: 'Khách hàng, loại tài liệu' },
+  { title: 'Tải tệp lên', description: 'PDF, TIFF, JPG' },
+  { title: 'Cấu hình OCR', description: 'Ngôn ngữ, ngưỡng tin cậy' },
+  { title: 'Xác nhận' },
+];
+
+/** A wizard: Back/Next, or click any step to go there. */
+export function StepsWizardDemo() {
+  const [step, setStep] = useState(1);
+  return (
+    <div className="grid w-full gap-4">
+      <Steps aria-label="Tạo lô mới" current={step} onChange={setStep} items={wizard} />
+      <div className="flex items-center justify-between gap-3 border-t border-border pt-3">
+        <span className="text-sm text-fg-muted" aria-live="polite">Bước {step + 1} / {wizard.length}: {wizard[step].title}</span>
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm" disabled={step === 0} onClick={() => setStep(s => s - 1)}>Quay lại</Button>
+          <Button size="sm" disabled={step === wizard.length - 1} onClick={() => setStep(s => s + 1)}>Tiếp tục</Button>
+        </div>
+      </div>
     </div>
   );
 }

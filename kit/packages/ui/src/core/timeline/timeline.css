@@ -40,4 +40,3 @@
 .dtx-timeline__item[data-status="pending"] .dtx-timeline__title { font-weight: 400; color: var(--dtx-fg-muted); }
 .dtx-timeline__time { flex: none; font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); white-space: nowrap; }
 .dtx-timeline__desc { grid-column: 2; margin-top: 2px; line-height: 1.5; color: var(--dtx-fg-muted); overflow-wrap: anywhere; }
-.dtx-timeline__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }

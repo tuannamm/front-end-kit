@@ -10,6 +10,7 @@ export { DatePicker, DateRangePicker, Calendar, type DatePickerProps, type DateR
 export { parseDate, formatDate, todayIso, addDays, addMonths, DEFAULT_DATE_FORMAT } from './date-picker/date';
 export { FileDropzone, FileList, FileItem, UploadToast, type FileDropzoneProps, type FileItemProps, type UploadToastItem } from './file-upload/file-upload';
 export { formatBytes, acceptsFile, type FileRejection } from './file-upload/file';
+export { Steps, type StepsProps, type StepItem, type StepStatus } from './steps/steps';
 export { Watermark, type WatermarkProps } from './watermark/watermark';
 export { Splitter, type SplitterProps, type SplitterPanel } from './splitter/splitter';
 export { type PanelSize } from './splitter/split';

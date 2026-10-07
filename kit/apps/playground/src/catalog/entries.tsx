@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, House, Inbox, Layers, LayoutDashboard, ListFilter, Lock, MessageSquare, ScanText, SearchX, Send, Settings, Sparkles, TrendingUp, Upload, Users } from 'lucide-react';
 import {
-  Alert, AppShell, Breadcrumb, Carousel, Collapse, Masonry, Splitter, Timeline, Watermark, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Breadcrumb, Carousel, Collapse, Masonry, Splitter, Steps, Timeline, Watermark, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -12,7 +12,7 @@ import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
-import { AlertDemo, MasonryLiveDemo, SplitterListDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { AlertDemo, MasonryLiveDemo, SplitterListDemo, StepsWizardDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -35,6 +35,11 @@ export type Demo = { title: string; note?: string; replay?: boolean; /** theme-f
 export type Entry = { id: string; name: string; category: Category; status: 'ready' | 'planned'; summary: string; importLine?: string; demos: Demo[] };
 
 const imp = (names: string) => `import { ${names} } from '@dtx/ui';`;
+const stages = [
+  { title: 'Tiếp nhận', description: '3.860 trang' },
+  { title: 'Nhận dạng', subTitle: 'Còn 00:08', description: '2.140 / 3.860 trang' },
+  { title: 'Bàn giao', description: 'Sau khi QC đạt' },
+];
 const tileHeights = [150, 0, 90, 70, 150, 150, 50, 80, 50, 90, 100, 150, 60, 50, 80];
 const feedback = [
   { who: 'Phòng Lưu trữ, Ngân hàng Đông Á Mới', text: 'Lô 03 bàn giao sớm hai ngày, độ chính xác trường thông tin vượt cam kết.' },
@@ -370,6 +375,26 @@ export const entries: Entry[] = [
       { title: '5 · Searchable', note: 'Type “bao hiem” or “vat”.', render: () => <SelectDemo label="Loại tài liệu" items={docTypeGroups} defaultValue="vat" searchable searchPlaceholder="Tìm loại tài liệu…" /> },
       { title: '6 · Mixed options', note: 'Some options have a description, some an icon, some neither.', render: () => <SelectDemo label="Trạng thái" items={statusOptions} defaultValue="all" /> },
       { title: '7 · Small, no visible label', render: () => <div className="w-52"><Select size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} defaultValue="all" /></div> }] },
+  { id: 'steps', name: 'Steps', category: 'Core', status: 'ready', summary: 'Where the user is in a sequence: a wizard, a checkout, the stages of a batch. Finished, in progress, waiting or failed, from one `current`. Horizontal until the titles no longer fit, then vertical by itself. Clickable for wizards; filled or outlined, two sizes.',
+    importLine: imp('Steps, type StepItem'),
+    demos: [
+      { title: '1 · Filled and outlined, two sizes', note: 'current={1}: the first step is finished, the second in progress, the third waits. The line after a finished step is blue.', code: "<Steps current={1} items={[\n  { title: 'Tiếp nhận', description: '3.860 trang' },\n  { title: 'Nhận dạng', subTitle: 'Còn 00:08', description: '2.140 / 3.860 trang' },\n  { title: 'Bàn giao', description: 'Sau khi QC đạt' },\n]} />\n<Steps variant=\"outlined\" … />\n<Steps size=\"sm\" … />", render: () => <div className="grid w-full gap-8">
+        <Steps aria-label="Tiến độ lô" current={1} items={stages} />
+        <Steps aria-label="Tiến độ lô" current={1} items={stages} variant="outlined" />
+        <Steps aria-label="Tiến độ lô" current={1} items={stages} size="sm" />
+        <Steps aria-label="Tiến độ lô" current={1} items={stages} size="sm" variant="outlined" />
+      </div> },
+      { title: '2 · A failed step', note: 'status="error" on the current step: a cross, the title in red, read as “Lỗi: …”.', code: '<Steps current={2} status="error" items={…} />', render: () => <div className="w-full"><Steps aria-label="Tiến độ lô VC-7702" current={2} status="error" items={[
+        { title: 'Tiếp nhận' }, { title: 'Tiền xử lý' }, { title: 'Nhận dạng', description: 'Lỗi ở 12 trang: ảnh quá mờ' }, { title: 'Bàn giao' }]} /></div> },
+      { title: '3 · Wizard', note: 'onChange makes each step a button: click one, or use the buttons below.', code: '<Steps current={step} onChange={setStep} items={…} />', render: () => <StepsWizardDemo /> },
+      { title: '4 · Vertical', note: 'orientation="vertical", for a side panel. Descriptions can be long.', code: '<Steps orientation="vertical" current={2} items={…} />', render: () => <div className="w-full max-w-sm"><Steps aria-label="Quy trình xử lý" orientation="vertical" current={2} items={[
+        { title: 'Tiếp nhận hồ sơ', description: '412 hồ sơ, 3.860 trang, đủ biên bản giao nhận' },
+        { title: 'Tiền xử lý', description: 'Cắt viền, chỉnh nghiêng, khử nhiễu' },
+        { title: 'Nhận dạng (OCR)', subTitle: '55%', description: '2.140 / 3.860 trang' },
+        { title: 'Kiểm tra chất lượng', description: 'Mẫu ngẫu nhiên 5% số trang' },
+        { title: 'Bàn giao' }]} /></div> },
+      { title: '5 · Too many to fit', note: 'Six long titles: horizontal on a wide screen, vertical by itself once they no longer fit. Narrow the window to see it switch.', render: () => <div className="w-full"><Steps aria-label="Quy trình hợp đồng" size="sm" current={3} items={[
+        { title: 'Khởi tạo hợp đồng' }, { title: 'Pháp chế duyệt' }, { title: 'Khách hàng ký' }, { title: 'Số hoá hồ sơ gốc' }, { title: 'Kiểm tra chất lượng' }, { title: 'Nghiệm thu, thanh toán' }]} /></div> }] },
   { id: 'watermark', name: 'Watermark', category: 'Core', status: 'ready', summary: 'Repeated, rotated text over a document, record or page: marks it confidential and names who viewed it and when, so a screenshot can be traced. One canvas tiled as a CSS mask; follows the theme, stays in print, never blocks the pointer. A deterrent, not protection.',
     importLine: imp('Watermark'),
     demos: [

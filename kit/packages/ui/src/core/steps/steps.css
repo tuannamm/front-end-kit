@@ -1,0 +1,70 @@
+/* ---------- steps ---------- */
+/* --m: marker size. The line between two steps takes the colour of the step before it: blue once that one is done. */
+.dtx-steps { --m: 32px; --gap: 12px; display: flex; margin: 0; padding: 0; list-style: none; min-width: 0; }
+.dtx-steps--sm { --m: 24px; --gap: 8px; }
+.dtx-steps__item { display: flex; min-width: 0; }
+
+/* horizontal: marker, title, then the line to the next step on the title's line (descriptions run under it). Titles
+   stay on one line; when the row is too narrow for them, Steps switches itself to vertical. contain: it takes the
+   width it is given and never widens its parent to fit the titles */
+.dtx-steps[data-layout="horizontal"] { overflow: hidden; contain: inline-size; }
+.dtx-steps[data-layout="horizontal"] > .dtx-steps__item { flex: 1 0 auto; }
+.dtx-steps[data-layout="horizontal"] > .dtx-steps__item:last-child { flex: none; }
+.dtx-steps[data-layout="horizontal"] :is(.dtx-steps__step, .dtx-steps__body) { flex: 1 1 auto; }
+.dtx-steps[data-layout="horizontal"] .dtx-steps__head { flex-wrap: nowrap; white-space: nowrap; }
+.dtx-steps[data-layout="horizontal"] .dtx-steps__head::after { content: ""; flex: 1 0 24px; align-self: center; height: 1px; margin-inline: 8px 16px; background: var(--dtx-border-strong); }
+.dtx-steps[data-layout="horizontal"] [data-status="finish"] .dtx-steps__head::after { background: var(--dtx-primary); }
+.dtx-steps[data-layout="horizontal"] > .dtx-steps__item:last-child .dtx-steps__head::after { display: none; }
+.dtx-steps[data-layout="horizontal"] .dtx-steps__desc { max-width: 28ch; }
+
+/* vertical: the line runs down from the marker to the next one, 4px clear of both */
+.dtx-steps[data-layout="vertical"] { flex-direction: column; }
+.dtx-steps[data-layout="vertical"] > .dtx-steps__item { position: relative; padding-bottom: 16px; }
+.dtx-steps[data-layout="vertical"] > .dtx-steps__item:last-child { padding-bottom: 0; }
+.dtx-steps[data-layout="vertical"] > .dtx-steps__item:not(:last-child)::after {
+  content: ""; position: absolute; inset-inline-start: calc(var(--m) / 2 - .5px); top: calc(var(--m) + 4px); bottom: 4px; width: 1px;
+  background: var(--dtx-border-strong);
+}
+.dtx-steps[data-layout="vertical"] > .dtx-steps__item[data-status="finish"]::after { background: var(--dtx-primary); }
+
+.dtx-steps__step {
+  display: flex; align-items: flex-start; gap: var(--gap); min-width: 0; margin: 0; padding: 0;
+  border: 0; border-radius: var(--dtx-radius-sm); background: none; font: inherit; color: inherit; text-align: start;
+}
+button.dtx-steps__step { cursor: pointer; }
+button.dtx-steps__step:disabled { cursor: not-allowed; opacity: .5; }
+button.dtx-steps__step:not(:disabled):hover .dtx-steps__title { color: var(--dtx-link); }
+
+/* rounded square: the logo motif, as in Timeline and the pipeline stepper */
+.dtx-steps__icon {
+  display: grid; place-items: center; flex: none; width: var(--m); height: var(--m); border-radius: var(--dtx-radius-sm);
+  font-size: var(--dtx-text-sm); font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1;
+  transition: background var(--dtx-dur-base), color var(--dtx-dur-base), border-color var(--dtx-dur-base);
+}
+.dtx-steps--sm .dtx-steps__icon { font-size: var(--dtx-text-xs); }
+.dtx-steps__icon svg { width: calc(var(--m) / 2); height: calc(var(--m) / 2); }
+.dtx-steps--filled [data-status="wait"] .dtx-steps__icon { background: var(--dtx-surface-2); color: var(--dtx-fg-muted); box-shadow: inset 0 0 0 1px var(--dtx-border); }
+.dtx-steps--filled [data-status="process"] .dtx-steps__icon { background: var(--dtx-primary-strong); color: var(--dtx-on-primary); }
+.dtx-steps--filled [data-status="finish"] .dtx-steps__icon { background: rgb(37 130 215 / .14); color: var(--dtx-tone-brand); }
+.dtx-steps--filled [data-status="error"] .dtx-steps__icon { background: color-mix(in oklab, var(--dtx-tone-err) 14%, transparent); color: var(--dtx-tone-err); }
+.dtx-steps--outlined .dtx-steps__icon { border: 1px solid; }
+.dtx-steps--outlined [data-status="wait"] .dtx-steps__icon { border-color: var(--dtx-border-strong); color: var(--dtx-fg-muted); }
+.dtx-steps--outlined :is([data-status="process"], [data-status="finish"]) .dtx-steps__icon { border-color: var(--dtx-tone-brand); color: var(--dtx-tone-brand); }
+.dtx-steps--outlined [data-status="error"] .dtx-steps__icon { border-color: var(--dtx-tone-err); color: var(--dtx-tone-err); }
+
+.dtx-steps__body { display: grid; gap: 2px; min-width: 0; }
+/* the title's first line is centred on the marker */
+.dtx-steps__head {
+  display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px;
+  padding-top: calc((var(--m) - 1.5em) / 2); font-size: var(--dtx-text-base); line-height: 1.5;
+}
+.dtx-steps--sm .dtx-steps__head { font-size: var(--dtx-text-sm); }
+.dtx-steps__title { min-width: 0; color: var(--dtx-fg); overflow-wrap: anywhere; transition: color var(--dtx-dur-fast); }
+[data-status="process"] .dtx-steps__title { font-weight: 500; }
+[data-status="wait"] .dtx-steps__title { color: var(--dtx-fg-muted); }
+[data-status="error"] .dtx-steps__title { color: var(--dtx-tone-err); }
+.dtx-steps__sub { font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted); }
+.dtx-steps--sm .dtx-steps__sub { font-size: var(--dtx-text-xs); }
+.dtx-steps__desc { font-size: var(--dtx-text-sm); line-height: 1.5; color: var(--dtx-fg-muted); overflow-wrap: anywhere; }
+[data-status="process"] .dtx-steps__desc { color: var(--dtx-fg); }
+.dtx-steps--sm .dtx-steps__desc { font-size: var(--dtx-text-xs); }

@@ -40,7 +40,7 @@ export function Timeline({ items, timeStyle = 'relative', 'aria-label': label, c
             <span className="dtx-timeline__marker" aria-hidden>{it.icon}</span>
             <div className="dtx-timeline__head">
               <span className="dtx-timeline__title">
-                {status !== 'done' && <span className="dtx-timeline__sr">{statusWord[status]}: </span>}
+                {status !== 'done' && <span className="dtx-sr">{statusWord[status]}: </span>}
                 {it.title}
               </span>
               {iso && <time className="dtx-timeline__time dtx-num" dateTime={iso} title={fullTime(it.time!)}>{timeStyle === 'absolute' ? shortTime(it.time!) : relativeTime(it.time!)}</time>}
