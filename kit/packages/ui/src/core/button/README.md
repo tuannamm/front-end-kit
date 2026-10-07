@@ -24,11 +24,25 @@ import { Button } from '@dtx/ui';
 - When pressed, the button scales to .97. Disabled buttons fade to 50% and do not scale.
 - Child `svg` icons are sized to 16px by the button; a bare lucide icon is enough.
 
+## Props
+
+### Button
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'danger'` | `'primary'` | Visual weight; see the variant table above |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 32 · 40 · 48px tall. `lg` is 19px bold, the only size where brand blue carries white text |
+| `icon` | `boolean` |  | Square icon-only button. Always pass `aria-label` |
+| `href` | `string` |  | Renders an `<a>` instead of a `<button>` |
+| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | Button only. Set `submit` explicitly in forms |
+| `children` | `ReactNode` |  | Label, optionally with a leading icon |
+| `className` | `string` |  | Extra classes |
+
+Plus every `<button>` prop, or every `<a>` prop when `href` is set.
+
 ## Files
 
 - `button.tsx`: component
 - `button.css`: `.dtx-btn*`
 
 Catalog: `#/catalog/button`
-
-Props are documented in TSDoc on the types in the `.tsx`; this file covers usage and decisions only.

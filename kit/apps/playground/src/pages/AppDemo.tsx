@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useRef, useState, type ReactElement, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CalendarDays, CheckCircle2, CircleAlert, CircleCheck, Clock, FileStack, LayoutDashboard, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users, type LucideIcon } from 'lucide-react';
 import {
-  AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Select, UploadToast,
+  AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
   KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
-  StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, todayIso, useToast, type Column, type DateRange,
+  StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, todayIso, useToast, type Column, type DateRange, type NotificationItem,
 } from '@dtx/ui';
 import { aiThroughput, batches, hours, manualThroughput, type Batch } from '../data';
 import { useT, type Translate } from '../i18n';
@@ -30,6 +30,13 @@ const exportFormats = (t: Translate) => [
   { value: 'csv', label: 'CSV' },
   { value: 'json', label: 'JSON', description: t('Giữ toạ độ ô và độ tin cậy', 'Keeps cell coordinates and confidence') },
 ];
+const ago = (min: number) => new Date(Date.now() - min * 60_000);
+const notificationSeed = (t: Translate): (NotificationItem & { id: string; batch?: string })[] => [
+  { id: 'n1', batch: 'HD-5517', icon: <AlertTriangle />, tone: 'warn', time: ago(12), title: t('Lô HD-5517 có nguy cơ trễ SLA 16:15', 'Batch HD-5517 may miss its 16:15 SLA'), description: t('Còn 1.120 trang chưa QC. Chia thêm người hoặc báo khách hàng.', '1,120 pages still need QC. Add reviewers or tell the client.') },
+  { id: 'n2', batch: 'VC-7702', icon: <CircleAlert />, tone: 'err', time: ago(50), title: t('Lô VC-7702 lỗi mẫu trích xuất', 'Batch VC-7702 has a template error'), description: t('Mẫu vận đơn không khớp 41 trang. Cập nhật mẫu rồi chạy lại.', 'The bill of lading template does not match 41 pages. Update it and run again.') },
+  { id: 'n3', batch: 'NS-0418', icon: <CheckCircle2 />, tone: 'ok', time: ago(190), title: t('Lô NS-0418 đã hoàn tất', 'Batch NS-0418 is done'), description: t('2.105 trang · độ chính xác 99,83%', '2,105 pages · 99.83% accuracy') },
+  { id: 'n4', batch: 'TD-0931', icon: <Users />, tone: 'brand', time: ago(26 * 60), title: t('Trần Minh giao cho bạn lô TD-0931 để QC', 'Trần Minh assigned batch TD-0931 to you for QC'), description: t('Hạn SLA: 18:00.', 'SLA: 18:00.') },
+];
 const columns = (t: Translate, label: Record<Batch['status'], string>, onOpen: (b: Batch) => void): Column<Batch>[] => {
   const badge = statusBadge(label);
   return [
@@ -48,6 +55,8 @@ const queue = (t: Translate) => [
   { name: t('Hoá đơn VAT · HD-5517', 'VAT invoice · HD-5517'), meta: t('Bán lẻ (mẫu) · 3.860 trang', 'Retail (sample) · 3,860 pages'), left: t('còn 3g 05p', '3h 05m left'), pct: 45 },
   { name: t('Hợp đồng tín dụng · TD-0931', 'Credit agreement · TD-0931'), meta: t('Ngân hàng (mẫu) · 610 trang', 'Banking (sample) · 610 pages'), left: t('còn 5g 40p', '5h 40m left'), pct: 18 },
 ];
+
+const samplePdf = `${import.meta.env.BASE_URL}demo/hop-dong-mau.pdf`;
 
 /** Record detail for one batch: opened from the batch id in the table. */
 function BatchDrawer({ batch: b, open, onOpenChange, t, label }: { batch: Batch | null; open: boolean; onOpenChange: (open: boolean) => void; t: Translate; label: Record<Batch['status'], string> }) {
@@ -78,18 +87,26 @@ function BatchDrawer({ batch: b, open, onOpenChange, t, label }: { batch: Batch 
   };
   // nothing to act on while processing
   const action: Partial<Record<Batch['status'], string>> = { qc: t('Mở hàng đợi QC', 'Open QC queue'), risk: t('Mở hàng đợi QC', 'Open QC queue'), done: t('Tải kết quả', 'Download results'), error: t('Sửa mẫu trích xuất', 'Fix extraction template') };
+  const info = <>
+    <dl className="m-0 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-6 gap-y-3 text-sm">
+      {rows.map(([k, v]) => <Fragment key={k}><dt className="text-fg-muted">{k}</dt><dd className="m-0 font-medium dtx-num">{v}</dd></Fragment>)}
+    </dl>
+    <h3 className="mb-2 mt-6 text-sm font-bold">{t('Lịch sử xử lý', 'Processing history')}</h3>
+    <ol className="m-0 list-none p-0 text-sm">{log.map((l, i) => {
+      const [icon, tone] = i === log.length - 1 ? lastIcon[b.status] : [CircleCheck, 'ok' as const];
+      return <li key={l} className="flex items-start gap-2 border-b border-border py-2 dtx-num last:border-b-0"><Icon icon={icon} tone={tone} className="mt-0.5" />{l}</li>;
+    })}</ol>
+  </>;
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} title={t(`Lô ${b.id}`, `Batch ${b.id}`)} description={`${t(...b.type)} · ${client}`}
+    <Drawer open={open} onOpenChange={onOpenChange} size="lg" title={t(`Lô ${b.id}`, `Batch ${b.id}`)} description={`${t(...b.type)} · ${client}`}
       footer={<><DrawerClose><Button variant="ghost">{t('Đóng', 'Close')}</Button></DrawerClose>
         {action[b.status] && <DrawerClose><Button onClick={() => toast({ title: action[b.status]!, description: b.id })}>{action[b.status]}</Button></DrawerClose>}</>}>
-      <dl className="m-0 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-6 gap-y-3 text-sm">
-        {rows.map(([k, v]) => <Fragment key={k}><dt className="text-fg-muted">{k}</dt><dd className="m-0 font-medium dtx-num">{v}</dd></Fragment>)}
-      </dl>
-      <h3 className="mb-2 mt-6 text-sm font-bold">{t('Lịch sử xử lý', 'Processing history')}</h3>
-      <ol className="m-0 list-none p-0 text-sm">{log.map((l, i) => {
-        const [icon, tone] = i === log.length - 1 ? lastIcon[b.status] : [CircleCheck, 'ok' as const];
-        return <li key={l} className="flex items-start gap-2 border-b border-border py-2 dtx-num last:border-b-0"><Icon icon={icon} tone={tone} className="mt-0.5" />{l}</li>;
-      })}</ol>
+      {/* keyed by batch so another batch opens on its info tab; the viewer loads only when its tab opens */}
+      <Tabs key={b.id} items={[
+        { value: 'info', label: t('Thông tin', 'Details'), content: info },
+        // every batch shows the same synthetic contract: the demo has no real documents
+        { value: 'doc', label: t('Tài liệu', 'Document'), content: <PdfViewer src={samplePdf} fileName={`${b.id}.pdf`} className="h-[max(360px,calc(100dvh-270px))]" /> },
+      ]} />
     </Drawer>
   );
 }
@@ -161,6 +178,14 @@ export function AppDemo() {
     const onKey = (e: KeyboardEvent) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); setRail(r => !r); } };
     addEventListener('keydown', onKey); return () => removeEventListener('keydown', onKey);
   }, []);
+  const [read, setRead] = useState(() => new Set(['n3', 'n4']));
+  const notifications = notificationSeed(t).map(n => ({ ...n, read: read.has(n.id) }));
+  // a notification about a batch opens that batch, like clicking its id in the table
+  const openNotification = (n: NotificationItem) => {
+    setRead(r => new Set(r).add(n.id as string));
+    const b = batches.find(x => x.id === notifications.find(x => x.id === n.id)?.batch);
+    if (b) openDetail(b);
+  };
   const [photo, setPhoto] = useState<string>();
   const me = 'Nguyễn Thị Thuận';
   // no backend: the photo lives in this tab as an object URL
@@ -213,6 +238,8 @@ export function AppDemo() {
           </Tooltip>
           <span className="text-sm text-fg-muted">{t('Vận hành', 'Operations')} / <b className="font-medium text-fg">{t('Tổng quan', 'Overview')}</b></span>
           <CommandButton placeholder={t('Tìm lô, khách hàng, lệnh…', 'Search batches, clients, commands…')} />
+          <Notification items={notifications} onSelect={openNotification} onMarkAllRead={() => setRead(new Set(notifications.map(n => n.id)))}
+            title={t('Thông báo', 'Notifications')} aria-label={t('Thông báo', 'Notifications')} />
           <AvatarPicker name={me} src={photo} onChange={savePhoto} />
         </Topbar>
 
