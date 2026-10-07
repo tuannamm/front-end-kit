@@ -67,6 +67,25 @@
   .dtx-chart rect { transform-box: fill-box; transform-origin: bottom; animation: dtx-grow-y var(--dtx-dur-page) var(--dtx-ease-emphasis) both; }
   .dtx-meter { height: 4px; border-radius: 2px; background: var(--dtx-surface-2); overflow: hidden; }
   .dtx-meter > i { display: block; height: 100%; background: var(--dtx-primary); transform-origin: left; animation: dtx-grow-x var(--dtx-dur-page) var(--dtx-ease-standard); }
+  /* LineChart / AreaChart: drawn at the box's real width, so axis text stays 12px on a phone */
+  .dtx-xy { display: grid; gap: 12px; min-width: 0; }
+  .dtx-xy__plot { position: relative; min-width: 0; border-radius: var(--dtx-radius-sm); touch-action: pan-y; }
+  .dtx-xy__plot > svg { display: block; overflow: visible; }
+  .dtx-xy__empty { display: grid; place-items: center; }
+  .dtx-xy text { fill: var(--dtx-fg-muted); font: 400 12px var(--dtx-font); font-variant-numeric: tabular-nums; }
+  .dtx-xy__grid { stroke: var(--dtx-border); }
+  .dtx-xy__zero { stroke: var(--dtx-border-strong); }
+  .dtx-xy__line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .dtx-xy__guide { stroke: var(--dtx-border-strong); stroke-dasharray: 3 3; }
+  .dtx-xy__dot { fill: var(--dtx-surface); stroke-width: 2; }
+  /* entrance: the clip uncovers lines and fills left to right, the way the data reads */
+  .dtx-xy__reveal { transform-box: fill-box; transform-origin: left; animation: dtx-grow-x calc(var(--dtx-dur-page) * 2) var(--dtx-ease-standard) both; }
+  .dtx-xy__tip { position: absolute; z-index: 1; display: grid; inline-size: max-content; gap: 4px; min-inline-size: 160px; padding: 8px 10px; border: 1px solid var(--dtx-border-strong); border-radius: var(--dtx-radius-sm); background: var(--dtx-surface); color: var(--dtx-fg); font-size: var(--dtx-text-xs); line-height: 1.35; box-shadow: var(--dtx-shadow-pop); pointer-events: none; white-space: nowrap; }
+  .dtx-xy__row { display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; align-items: center; gap: 8px; color: var(--dtx-fg-muted); }
+  .dtx-xy__row > :last-child { color: var(--dtx-fg); font-weight: 500; text-align: right; }
+  .dtx-xy__total { padding-top: 4px; border-top: 1px solid var(--dtx-border); }
+  .dtx-xy__swatch { display: block; width: 18px; height: 8px; flex: none; }
+  .dtx-xy__legend > span::before { content: none; }
 
   /* ---------- skeleton ---------- */
   .dtx-skeleton { position: relative; display: block; overflow: hidden; height: 10px; border-radius: 3px; background: var(--dtx-border); }

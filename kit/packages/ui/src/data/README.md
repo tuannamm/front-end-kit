@@ -7,7 +7,19 @@ import { KpiCard, Sparkline, DataTable, type Column } from '@dtx/ui';
 
 <KpiCard label="Tài liệu xử lý hôm nay" value="48,210" viz={<Sparkline data={trend} label="Xu hướng 12 giờ" />} />
 <DataTable caption="Lô gần đây" columns={columns} rows={batches} rowKey={b => b.id} />
+<LineChart label="Độ chính xác theo ngày" labels={days} min={98} max={100} format={{ maximumFractionDigits: 1 }} series={[{ name: 'OCR', data: accuracy }]} />
+<AreaChart label="Sản lượng theo giờ" labels={hours} stacked curve="smooth" series={[{ name: 'AI tự động', data: ai }, { name: 'Thủ công', data: manual }]} />
 ```
+
+### LineChart and AreaChart
+
+- Drawn in SVG at the container's real width (a ResizeObserver), so 12px axis text stays 12px on a phone. Gridlines
+  land on round numbers (1, 2, 2.5 or 5 × 10ⁿ); x labels thin out before they touch.
+- Hover, touch or ←/→ (Home/End) on the focused chart shows a guide, a dot per series and a tooltip with every value
+  at that label. Keyboard moves are announced. Screen readers also get the full data as a hidden table.
+- Colour is never the only channel: each series after the first has a dash, repeated in the legend and the tooltip.
+- `null` breaks a line; a lone value between two gaps gets a dot. Stacked areas count a gap as 0.
+- Entrance: lines and fills are uncovered left to right (transform on a clip). Reduced motion shows the final chart.
 
 ## Props
 
@@ -93,6 +105,49 @@ import { KpiCard, Sparkline, DataTable, type Column } from '@dtx/ui';
 | `height` | `number` | `220` | Chart height in px (width follows the container) |
 | `label` | `string` | **required** | Accessible name of the chart |
 
+### LineChart
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `labels` | `string[]` | **required** | Ordered x values: days, hours, months. Thinned on the axis when they would touch |
+| `series` | `ChartSeries[]` | **required** | One line each |
+| `label` | `string` | **required** | Accessible name of the chart and caption of its screen-reader table |
+| `height` | `number` | `240` | Plot height in px; the width follows the container |
+| `min` | `number` | `0`, or below it for negative data | Bottom of the scale. Pass it for a tight scale, e.g. `98` for accuracy in % |
+| `max` | `number` | highest value, rounded up to a gridline | Top of the scale; values past `min`/`max` are clipped |
+| `format` | `Intl.NumberFormatOptions` |  | How values read in the tooltip, the axis (compact) and the table, e.g. `{ style: 'percent' }` |
+| `curve` | `'linear' \| 'smooth'` | `'linear'` | `'smooth'` is monotone: it never draws past a peak or a dip |
+| `legend` | `boolean` | more than one series | Names with their colour and dash under the plot |
+| `defaultActive` | `number` |  | Label index whose readout shows at rest (e.g. the latest), and again when pointer or focus leaves |
+| `empty` | `ReactNode` | `'Chưa có dữ liệu'` | No labels or no values: text becomes an EmptyState title, or pass an `<EmptyState>` |
+| `className` | `string` |  | Extra classes |
+
+### AreaChart
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `labels` | `string[]` | **required** | Ordered x values |
+| `series` | `ChartSeries[]` | **required** | One filled band each, first at the bottom when stacked |
+| `label` | `string` | **required** | Accessible name of the chart |
+| `stacked` | `boolean` | `false` | Pile the series up: the top edge is the total, shown in the tooltip. A gap counts as 0 |
+| `height` | `number` | `240` | Plot height in px |
+| `min` | `number` | `0`, or below it for negative data | Bottom of the scale; the fill runs to 0 when it is inside the scale |
+| `max` | `number` | highest value (or total), rounded up | Top of the scale |
+| `format` | `Intl.NumberFormatOptions` |  | Value formatting, as in LineChart |
+| `curve` | `'linear' \| 'smooth'` | `'linear'` | Monotone smoothing |
+| `legend` | `boolean` | more than one series | Names under the plot |
+| `defaultActive` | `number` |  | Label index whose readout shows at rest |
+| `empty` | `ReactNode` | `'Chưa có dữ liệu'` | Shown when there is nothing to draw |
+| `className` | `string` |  | Extra classes |
+
+### ChartSeries
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `name` | `string` | **required** | Legend, tooltip and table text |
+| `data` | `(number \| null)[]` | **required** | One value per label; `null` is a gap that breaks the line |
+| `color` | `string` | next of blue, olive, violet, amber, red | CSS colour; keep it 3:1 against the page in both themes, e.g. a `--dtx-tone-*` token |
+
 ### Series
 
 | Prop | Type | Default | Description |
@@ -106,4 +161,5 @@ import { KpiCard, Sparkline, DataTable, type Column } from '@dtx/ui';
 - `kpi-card.tsx`: KpiCard
 - `table.tsx`: DataTable, `Column`
 - `charts.tsx`: Sparkline, TargetBar, CategoryBar, Meter, StackedBarChart, `Segment`, `Series`
-- Styles: `.dtx-kpi*`, `.dtx-table*`, `.dtx-spark`, `.dtx-target`, `.dtx-catbar`, `.dtx-meter`, `.dtx-chart`, `.dtx-legend` in `styles.css`
+- `xy-chart.tsx`: LineChart, AreaChart, `ChartSeries`; geometry (nice scale, monotone curve, paths with gaps) in `xy-scale.ts`, checked by `xy-scale.check.ts`
+- Styles: `.dtx-kpi*`, `.dtx-table*`, `.dtx-spark`, `.dtx-target`, `.dtx-catbar`, `.dtx-meter`, `.dtx-chart`, `.dtx-xy*`, `.dtx-legend` in `styles.css`
