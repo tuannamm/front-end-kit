@@ -25,6 +25,58 @@ import { Select, MultiSelect, Field } from '@dtx/ui';
   DatePicker, DateRangePicker and Tooltip reuse `.dtx-select-positioner` and `.dtx-select-popup`.
 - On touch devices the MultiSelect input is 16px, so iOS does not zoom in.
 
+## Props
+
+### Select
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `items` | `SelectOption[] \| SelectGroup[]` | **required** | Flat options, or groups with headings |
+| `value` | `string \| null` |  | Controlled value |
+| `defaultValue` | `string \| null` |  | Initial value when uncontrolled |
+| `onValueChange` | `(value: string \| null) => void` |  |  |
+| `searchable` | `boolean` |  | Adds an accent-insensitive search box in the popup |
+| `searchPlaceholder` | `string` | `'Tìm…'` | With `searchable` |
+| `placeholder` | `string` | `'Chọn…'` | Shown while nothing is selected |
+| `emptyText` | `string` | `'Không tìm thấy kết quả'` | Shown when the filter matches nothing |
+| `size` | `'sm' \| 'md'` | `'md'` | 32 · 40px tall |
+| `disabled` | `boolean` |  |  |
+| `aria-label` | `string` |  | Accessible name when there is no visible `<Field label>` |
+| `className` | `string` |  | On the trigger |
+
+### MultiSelect
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `items` | `SelectOption[] \| SelectGroup[]` | **required** | Same as Select |
+| `value` | `string[]` |  | Controlled values |
+| `defaultValue` | `string[]` |  | Initial values when uncontrolled |
+| `onValueChange` | `(value: string[]) => void` |  |  |
+| `placeholder` | `string` | `'Chọn…'` | Shown while nothing is selected |
+| `emptyText` | `string` | `'Không tìm thấy kết quả'` | Shown when the filter matches nothing |
+| `size` | `'sm' \| 'md'` | `'md'` | 32 · 40px tall |
+| `disabled` | `boolean` |  |  |
+| `aria-label` | `string` |  | Accessible name of the filter input |
+| `className` | `string` |  | On the chip box |
+
+### SelectOption
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `value` | `string` | **required** |  |
+| `label` | `string` | **required** | Text; also what typeahead and search match |
+| `description` | `string` |  | Second line under the label; search matches it too |
+| `icon` | `ReactNode` |  | Shown in a tinted tile |
+| `tone` | `Tone` |  | Tint of the icon tile |
+| `disabled` | `boolean` |  |  |
+
+### SelectGroup
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `label` | `string` | **required** | Group heading |
+| `items` | `SelectOption[]` | **required** |  |
+
 ## Files
 
 - `select.tsx`: Select, MultiSelect, `SelectOption`, `SelectGroup`
@@ -32,5 +84,3 @@ import { Select, MultiSelect, Field } from '@dtx/ui';
   and before `date-picker.css` (which resizes the popup).
 
 Catalog: `#/catalog/select`, `#/catalog/multiselect`
-
-Props are documented in TSDoc on the types in the `.tsx`; this file covers usage and decisions only.

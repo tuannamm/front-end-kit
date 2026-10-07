@@ -32,6 +32,68 @@ import { FileDropzone, FileList, FileItem, UploadToast } from '@dtx/ui';
 
 `formatBytes` (1536 → "1,5 KB") and `acceptsFile` are exported. `acceptLabel` and `checkFiles` are internal.
 
+## Props
+
+### FileDropzone
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `onFiles` | `(files: File[]) => void` | **required** | Accepted files of one pick or drop |
+| `onReject` | `(rejections: FileRejection[]) => void` |  | Rejected files, with the reason |
+| `accept` | `string` |  | Same as `<input accept>`, e.g. `.pdf,image/*` |
+| `maxSize` | `number` |  | Bytes |
+| `multiple` | `boolean` | `true` |  |
+| `disabled` | `boolean` |  |  |
+| `label` | `ReactNode` |  | Visible label |
+| `hint` | `ReactNode` |  | Default: accepted formats and size limit |
+| `description` | `ReactNode` |  | Line under the box |
+| `error` | `ReactNode` |  | Error message. Marks the box invalid |
+| `compact` | `boolean` |  | One row instead of a tall box |
+| `aria-label` | `string` |  | Accessible name when there is no `label` |
+| `className` | `string` |  | On the field wrapper |
+
+### FileList
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `children` | `ReactNode` | **required** | `<FileItem>` rows |
+| `aria-label` | `string` |  | Accessible name of the list |
+| `className` | `string` |  | Extra classes |
+
+### FileItem
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `name` | `string` | **required** | File name |
+| `size` | `number` |  | Bytes |
+| `status` | `'queued' \| 'uploading' \| 'done' \| 'error'` | `'done'` |  |
+| `progress` | `number` | `0` | 0–100 while uploading |
+| `error` | `ReactNode` | `'Tải lên thất bại'` | What failed and how to recover; shown when `status` is error |
+| `thumb` | `string` |  | Thumbnail URL for images, e.g. `URL.createObjectURL(file)` |
+| `onRemove` | `() => void` |  | Remove; reads "Huỷ tải" while uploading |
+| `onRetry` | `() => void` |  | Shown when `status` is error |
+
+### UploadToast
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `items` | `UploadToastItem[]` | **required** | Current files; pass the new list on every change |
+
+### UploadToastItem
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `id` | `string \| number` | **required** | Stable key |
+
+Plus every FileItem prop.
+
+### FileRejection
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `file` | `File` | **required** | The rejected file |
+| `reason` | `string` | **required** | Why, and how to recover (Vietnamese) |
+
 ## Files
 
 - `file-upload.tsx`: components
@@ -39,5 +101,3 @@ import { FileDropzone, FileList, FileItem, UploadToast } from '@dtx/ui';
 - `file.ts` + `file.check.ts`: validation and formatting helpers and their node check
 
 Catalog: `#/catalog/upload`
-
-Props are documented in TSDoc on the types in the `.tsx`; this file covers usage and decisions only.

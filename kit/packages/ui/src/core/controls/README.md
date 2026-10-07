@@ -25,11 +25,62 @@ import { Switch, Tabs, Segmented, Tooltip, TooltipProvider } from '@dtx/ui';
 - **Tooltip:** needs `<TooltipProvider>` once at the app root. The trigger must be one element that can hold a ref.
   It uses Select's positioner (z-index 65), so it shows above dialogs.
 
+## Props
+
+### Switch
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `label` | `ReactNode` | **required** | Clickable text next to the switch |
+| `checked` | `boolean` |  | Controlled state |
+| `defaultChecked` | `boolean` |  | Initial state when uncontrolled |
+| `onCheckedChange` | `(checked: boolean) => void` |  |  |
+| `disabled` | `boolean` |  |  |
+
+### Tabs
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `items` | `TabItem[]` | **required** |  |
+| `value` | `string` |  | Controlled active tab |
+| `defaultValue` | `string` | first item | Initial tab when uncontrolled |
+| `onValueChange` | `(value: string) => void` |  |  |
+| `className` | `string` |  | On the root |
+
+### TabItem
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `value` | `string` | **required** |  |
+| `label` | `ReactNode` | **required** | Tab text |
+| `content` | `ReactNode` | **required** | Panel content |
+
+### Segmented
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `options` | `{ value: string; label: ReactNode }[]` | **required** |  |
+| `aria-label` | `string` | **required** | Accessible name of the group |
+| `value` | `string` |  | Controlled value |
+| `defaultValue` | `string` | first option | Initial value when uncontrolled |
+| `onValueChange` | `(value: string) => void` |  | Never called with an empty value |
+| `solid` | `boolean` |  | Fills the active item with blue |
+
+### Tooltip
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `content` | `ReactNode` | **required** | Tooltip text |
+| `children` | `ReactElement` | **required** | The trigger: one element that can hold a ref |
+| `shortcut` | `string` |  | Key hint, shown as `<Kbd>` |
+
+### TooltipProvider
+
+Base UI `Tooltip.Provider`: wrap the app once. Its props (e.g. `delay`) pass through.
+
 ## Files
 
 - `controls.tsx`: Switch, Tabs, Segmented, Tooltip, TooltipProvider, `TabItem`
 - `controls.css`: `.dtx-switch*`, `.dtx-tabs__*`, `.dtx-seg*`, `.dtx-tooltip`
 
 Catalog: `#/catalog/switch`, `#/catalog/tabs`, `#/catalog/segmented`, `#/catalog/tooltip`
-
-Props are documented in TSDoc on the types in the `.tsx`; this file covers usage and decisions only.

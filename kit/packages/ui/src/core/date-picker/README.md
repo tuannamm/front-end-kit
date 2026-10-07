@@ -33,6 +33,64 @@ import { DatePicker, DateRangePicker, Calendar, Field } from '@dtx/ui';
 `parseDate`, `formatDate`, `todayIso`, `addDays`, `addMonths` (clamps 31/01 + 1 month to 28/02) and `DEFAULT_DATE_FORMAT`
 are exported. `clampDate`, `monthGrid`, `weekday` and `toIso` are internal.
 
+## Props
+
+### Calendar
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `value` | `string \| null` |  | Selected ISO date ('yyyy-MM-dd') |
+| `range` | `DateRange` |  | Range mode instead of `value`. While only `from` is set, the band previews the end |
+| `onValueChange` | `(value: string) => void` |  | Called with the clicked ISO date |
+| `min` | `string` |  | ISO lower bound, inclusive |
+| `max` | `string` |  | ISO upper bound, inclusive |
+| `autoFocus` | `boolean` |  | Focuses the selected (or today's) day on mount |
+| `className` | `string` |  | Extra classes |
+
+### DatePicker
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `value` | `string \| null` |  | Controlled ISO date, or null when empty |
+| `defaultValue` | `string \| null` | `null` | Initial value when uncontrolled |
+| `onValueChange` | `(value: string \| null) => void` |  | Called with a valid, in-range date, or null when cleared |
+| `min` | `string` |  | ISO lower bound, inclusive |
+| `max` | `string` |  | ISO upper bound, inclusive |
+| `format` | `string` | `'dd/MM/yyyy'` | How the date is shown and typed: `dd`/`d`, `MM`/`M`, `yyyy`, any separator |
+| `placeholder` | `string` |  | Default: `format` in lower case (`dd/mm/yyyy`) |
+| `size` | `'sm' \| 'md'` | `'md'` | 32 · 40px tall |
+| `disabled` | `boolean` |  |  |
+| `name` | `string` |  | Submits the ISO value in a hidden input |
+| `aria-label` | `string` |  | Accessible name when there is no visible `<Field label>` |
+| `className` | `string` |  | On the wrapper |
+
+### DateRangePicker
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `value` | `DateRange` |  | Controlled range |
+| `defaultValue` | `DateRange` | `{ from: null, to: null }` | Initial range when uncontrolled |
+| `onValueChange` | `(value: DateRange) => void` |  | Called with a complete range, or an empty one when cleared |
+| `min` | `string` |  | ISO lower bound for both ends, inclusive |
+| `max` | `string` |  | ISO upper bound for both ends, inclusive |
+| `format` | `string` | `'dd/MM/yyyy'` | Display pattern, as DatePicker |
+| `placeholder` | `string` | `'Chọn khoảng ngày'` |  |
+| `size` | `'sm' \| 'md'` | `'md'` | 32 · 40px tall |
+| `disabled` | `boolean` |  |  |
+| `label` | `ReactNode` |  | Visible label. Without it, pass `aria-label` |
+| `aria-label` | `string` |  | Accessible name when there is no `label` |
+| `description` | `ReactNode` |  | Hint under the bar. Hidden while `error` is set |
+| `error` | `ReactNode` |  | Error message. Marks the bar invalid |
+| `name` | `string` |  | Submits `${name}From` and `${name}To` (ISO) in hidden inputs |
+| `className` | `string` |  | On the field wrapper |
+
+### DateRange
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `from` | `string \| null` | **required** | Start, ISO |
+| `to` | `string \| null` | **required** | End, ISO |
+
 ## Files
 
 - `date-picker.tsx`: DatePicker, DateRangePicker, Calendar
@@ -40,5 +98,3 @@ are exported. `clampDate`, `monthGrid`, `weekday` and `toIso` are internal.
 - `date.ts` + `date.check.ts`: ISO date helpers and their node check
 
 Catalog: `#/catalog/datepicker`, `#/catalog/daterange`
-
-Props are documented in TSDoc on the types in the `.tsx`; this file covers usage and decisions only.

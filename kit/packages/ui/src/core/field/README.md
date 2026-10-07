@@ -19,11 +19,29 @@ import { Field, Input } from '@dtx/ui';
   DateRangePicker and FileDropzone use them for the same layout.
 - The `:focus-visible` rule also styles `.dtx-select-trigger`, so Select and Input focus look the same.
 
+## Props
+
+### Field
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `label` | `ReactNode` | **required** | Visible label, linked to the control |
+| `children` | `ReactNode` | **required** | The control: Input, Select, DatePicker… |
+| `description` | `ReactNode` |  | Hint under the control. Hidden while `error` is set |
+| `error` | `ReactNode` |  | Error message. Marks the field invalid |
+| `className` | `string` |  | Extra classes |
+
+### Input
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `className` | `string` |  | Extra classes |
+
+Plus every `<input>` prop (Base UI `Input`): `value`, `onChange`, `name`, `type`, `required`…
+
 ## Files
 
 - `field.tsx`: Field, Input
 - `field.css`: `.dtx-field*`, `.dtx-input`
 
 Catalog: `#/catalog/input`
-
-Props are documented in TSDoc on the types in the `.tsx`; this file covers usage and decisions only.
