@@ -1,0 +1,19 @@
+/* ---------- slider ---------- */
+.dtx-slider { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; }
+/* 32px tall so the whole row takes a press, not only the 4px track */
+.dtx-slider__control { position: relative; display: flex; align-items: center; flex: 1; min-width: 80px; height: 32px; touch-action: none; cursor: pointer; }
+.dtx-slider__track { position: relative; width: 100%; height: 4px; border-radius: 999px; background: color-mix(in srgb, var(--dtx-fg-muted) 45%, transparent); }
+.dtx-slider__range { height: 100%; border-radius: inherit; background: var(--dtx-primary-strong); }
+.dtx-slider__thumb {
+  width: 18px; height: 18px; border-radius: 50%; background: var(--dtx-surface); box-shadow: inset 0 0 0 2px var(--dtx-primary-strong);
+  transition: box-shadow var(--dtx-dur-fast) var(--dtx-ease-standard);
+}
+/* 30px hit area around the 18px thumb (WCAG 2.5.8) */
+.dtx-slider__thumb::before { content: ""; position: absolute; inset: -6px; border-radius: 50%; }
+.dtx-slider__thumb:hover, .dtx-slider__thumb[data-dragging] { box-shadow: inset 0 0 0 2px var(--dtx-primary-strong), 0 0 0 6px rgb(37 130 215 / .18); }
+/* the focused element is the hidden range input inside the thumb */
+.dtx-slider__thumb:has(:focus-visible) { outline: 2px solid var(--dtx-focus); outline-offset: 2px; }
+.dtx-slider__value { flex: none; text-align: end; font-size: var(--dtx-text-sm); font-weight: 500; color: var(--dtx-fg); white-space: nowrap; }
+.dtx-slider[data-disabled] { opacity: .5; }
+.dtx-slider[data-disabled] .dtx-slider__control { cursor: not-allowed; }
+.dtx-slider[data-disabled] .dtx-slider__thumb { box-shadow: inset 0 0 0 2px var(--dtx-primary-strong); }

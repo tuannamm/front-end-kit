@@ -15,6 +15,8 @@
 @import "./core/choice/choice.css" layer(dtx);
 @import "./core/date-picker/date-picker.css" layer(dtx);
 @import "./core/controls/controls.css" layer(dtx);
+@import "./core/slider/slider.css" layer(dtx);
+@import "./core/carousel/carousel.css" layer(dtx);
 @import "./core/overlays/overlays.css" layer(dtx);
 @import "./core/command-palette/command-palette.css" layer(dtx);
 @import "./core/menu/menu.css" layer(dtx);

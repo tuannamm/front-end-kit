@@ -10,6 +10,8 @@ export { DatePicker, DateRangePicker, Calendar, type DatePickerProps, type DateR
 export { parseDate, formatDate, todayIso, addDays, addMonths, DEFAULT_DATE_FORMAT } from './date-picker/date';
 export { FileDropzone, FileList, FileItem, UploadToast, type FileDropzoneProps, type FileItemProps, type UploadToastItem } from './file-upload/file-upload';
 export { formatBytes, acceptsFile, type FileRejection } from './file-upload/file';
+export { Carousel, type CarouselProps } from './carousel/carousel';
+export { Slider, type SliderProps } from './slider/slider';
 export { Switch, Tabs, Segmented, Tooltip, TooltipProvider, type TabItem } from './controls/controls';
 export { Menu, type MenuProps, type MenuEntry, type MenuAction, type MenuCheckbox, type MenuRadio, type MenuGroup } from './menu/menu';
 export { Pagination, type PaginationProps } from './pagination/pagination';

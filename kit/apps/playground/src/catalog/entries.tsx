@@ -1,18 +1,18 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, House, Inbox, Layers, LayoutDashboard, ListFilter, Lock, ScanText, SearchX, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  Alert, AppShell, Breadcrumb, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Breadcrumb, Carousel, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
   Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type DateRange, type NormalizedOcr, type NotificationItem, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
 } from '@dtx/ui';
-import { aiThroughput, batches, hours, invoiceFields, invoiceRows, manualThroughput } from '../data';
+import { aiThroughput, batches, hours, invoiceFields, invoiceRows, manualThroughput, olderBatches, type Batch } from '../data';
 import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
-import { AlertDemo, PaginationDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { AlertDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -227,6 +227,20 @@ function RailDemo() {
   );
 }
 
+const news: { tone: Tone; tag: string; title: string; text: string }[] = [
+  { tone: 'brand', tag: 'Tính năng mới', title: 'Đọc chữ viết tay trên hồ sơ bồi thường', text: 'Bản 2.4 nhận dạng ghi chú viết tay, độ chính xác 96,8% trên bộ thử 12.000 trang.' },
+  { tone: 'ok', tag: 'Hiệu năng', title: 'Xử lý lô nhanh hơn 32%', text: 'Hàng đợi OCR chạy song song theo trang; lô 4.000 trang xong trong khoảng 18 phút.' },
+  { tone: 'warn', tag: 'Bảo trì', title: 'Tạm dừng nhận lô 22:00–23:00 thứ Bảy', text: 'Các lô gửi trong khung giờ này được xếp hàng và chạy ngay sau khi bảo trì xong.' },
+  { tone: 'violet', tag: 'AI', title: 'Gợi ý trường thông tin cho mẫu mới', text: 'Tải lên 5 hồ sơ mẫu, hệ thống đề xuất danh sách trường cần trích xuất để bạn duyệt.' },
+];
+const BatchSlide = ({ b }: { b: Batch }) => (
+  <a href="#/catalog/carousel" className="grid h-full content-start gap-1 rounded-lg border border-border bg-surface p-4 text-fg no-underline hover:border-border-strong">
+    <span className="dtx-id text-sm font-medium">{b.id}</span>
+    <span className="text-sm">{b.type[0]}</span>
+    <span className="text-xs text-fg-muted">{b.client} · <span className="dtx-num">{b.pages?.toLocaleString('vi-VN') ?? '—'}</span> trang</span>
+  </a>
+);
+
 const planned = (id: string, name: string, category: Category, summary: string): Entry => ({ id, name, category, status: 'planned', summary, demos: [] });
 
 function AvatarPickerDemo() {
@@ -347,6 +361,22 @@ export const entries: Entry[] = [
       { title: '5 · Searchable', note: 'Type “bao hiem” or “vat”.', render: () => <SelectDemo label="Loại tài liệu" items={docTypeGroups} defaultValue="vat" searchable searchPlaceholder="Tìm loại tài liệu…" /> },
       { title: '6 · Mixed options', note: 'Some options have a description, some an icon, some neither.', render: () => <SelectDemo label="Trạng thái" items={statusOptions} defaultValue="all" /> },
       { title: '7 · Small, no visible label', render: () => <div className="w-52"><Select size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} defaultValue="all" /></div> }] },
+  { id: 'carousel', name: 'Carousel', category: 'Core', status: 'ready', summary: 'A row of slides that scrolls sideways with native scroll snapping: swipe, trackpad, arrow buttons, dots, or arrow keys once the row has focus. One slide at a time or a row of cards with the next one peeking. Dots for up to 10 slides, a “3–5 / 20” count beyond. Controls hide when everything fits. No autoplay.',
+    importLine: imp('Carousel'),
+    demos: [
+      { title: '1 · One slide at a time', note: 'Arrows page through; the dot of the slide in view is a longer pill. Press a dot to jump.', code: '<Carousel aria-label="Tin mới">\n  {news.map(n => <NewsSlide key={n.id} {...n} />)}\n</Carousel>', render: () => <div className="w-full max-w-xl"><Carousel aria-label="Tin mới">
+        {news.map(n => <div key={n.title} className="grid h-full content-start justify-items-start gap-2 rounded-lg border border-border bg-surface p-5"><Badge tone={n.tone} variant="surface" size="sm">{n.tag}</Badge><h3 className="m-0 text-lg font-bold italic leading-snug">{n.title}</h3><p className="m-0 text-sm text-fg-muted">{n.text}</p></div>)}
+      </Carousel></div> },
+      { title: '2 · Card row', note: 'slideWidth="min(240px, 80%)": several cards per page, the next one peeks. Each dot of a card in view is lit. Tab into a card: the row scrolls to it.', code: '<Carousel aria-label="Lô gần đây" slideWidth="min(240px, 80%)">\n  {batches.map(b => <BatchCard key={b.id} batch={b} />)}\n</Carousel>', render: () => <div className="w-full"><Carousel aria-label="Lô gần đây" slideWidth="min(240px, 80%)">{[...batches, ...olderBatches.slice(0, 3)].map(b => <BatchSlide key={b.id} b={b} />)}</Carousel></div> },
+      { title: '3 · Many slides: a count', note: 'Over 10 slides the dots become “1–4 / 20”.', render: () => <div className="w-full"><Carousel aria-label="Tất cả lô" slideWidth="min(240px, 80%)">{[...batches, ...olderBatches.slice(0, 15)].map(b => <BatchSlide key={b.id} b={b} />)}</Carousel></div> },
+      { title: '4 · Everything fits', note: 'Two cards in a wide row: no controls. On a phone the same row overflows and the controls appear.', render: () => <div className="w-full"><Carousel aria-label="Lô ưu tiên" slideWidth="240px">{batches.slice(0, 2).map(b => <BatchSlide key={b.id} b={b} />)}</Carousel></div> }] },
+  { id: 'slider', name: 'Slider', category: 'Core', status: 'ready', summary: 'One value or a range on a track: a threshold, a page range, a budget. Arrow keys step, Page Up/Down take a large step, Home/End jump to the ends. `onValueCommitted` runs once on release, the place to fetch or save. Values are formatted with Intl, on screen and for screen readers; the readout keeps a fixed width so the track never resizes.',
+    importLine: imp('Slider'),
+    demos: [
+      { title: '1 · In a Field, saved on release', note: 'Drag: the readout follows every move, “Đã lưu” changes only when the thumb is released.', code: "<Field label=\"Ngưỡng tin cậy tối thiểu\">\n  <Slider value={value} onValueChange={setValue} onValueCommitted={save} min={50} max={100} format={{ style: 'unit', unit: 'percent' }} />\n</Field>", render: () => <SliderThresholdDemo /> },
+      { title: '2 · Range', note: 'Pass [from, to]. The thumbs are named “Số trang: Từ” and “Số trang: Đến”; they cannot cross.', code: '<Slider aria-label="Số trang" defaultValue={[500, 3000]} max={5000} step={100} largeStep={1000} />', render: () => <div className="w-full max-w-md"><Slider aria-label="Số trang" defaultValue={[500, 3000]} max={5000} step={100} largeStep={1000} /></div> },
+      { title: '3 · Currency', note: 'format takes Intl options; the readout is as wide as “20.000.000 ₫”.', code: "<Slider aria-label=\"Ngân sách tháng\" defaultValue={5000000} max={20000000} step={500000} format={{ style: 'currency', currency: 'VND' }} />", render: () => <div className="w-full max-w-md"><Slider aria-label="Ngân sách tháng" defaultValue={5000000} max={20000000} step={500000} format={{ style: 'currency', currency: 'VND' }} /></div> },
+      { title: '4 · Disabled, no readout', render: () => <div className="w-full max-w-md"><Slider aria-label="Âm lượng" defaultValue={40} disabled showValue={false} /></div> }] },
   { id: 'switch', name: 'Switch', category: 'Core', status: 'ready', summary: 'Thumb moves with emphasis easing. Label is clickable.', importLine: imp('Switch'),
     demos: [{ title: 'States', render: () => <><Switch label="Tự động QC" defaultChecked /><Switch label="Gửi email" /><Switch label="Khoá" disabled /></> }] },
   { id: 'tabs', name: 'Tabs', category: 'Core', status: 'ready', summary: 'Underline indicator glides between tabs (slow · emphasis). Panel content fades up.', importLine: imp('Tabs'),

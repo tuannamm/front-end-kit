@@ -1,0 +1,23 @@
+/* ---------- carousel ---------- */
+.dtx-carousel { position: relative; display: grid; gap: 12px; min-width: 0; }
+.dtx-carousel__track {
+  display: grid; grid-auto-flow: column; grid-auto-columns: var(--slide-w, 100%); gap: var(--gap, 16px);
+  overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none;
+  /* room for the focus rings of slide content, which the scroll box would otherwise clip */
+  padding: 4px; margin: -4px; scroll-padding-inline: 4px;
+}
+.dtx-carousel__track::-webkit-scrollbar { display: none; }
+.dtx-carousel__slide { min-width: 0; scroll-snap-align: start; }
+.dtx-carousel__bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.dtx-carousel__dots { display: flex; flex-wrap: wrap; }
+/* 24px target around an 8px dot; the shown slides are longer pills, so state is not colour alone */
+.dtx-carousel__dot { display: grid; place-items: center; width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; }
+.dtx-carousel__dot::before { content: ""; width: 8px; height: 8px; border-radius: 999px; background: var(--dtx-fg-muted); transition: background var(--dtx-dur-fast); }
+.dtx-carousel__dot:hover::before { background: var(--dtx-fg); }
+.dtx-carousel__dot[aria-current]::before { width: 18px; background: var(--dtx-primary-strong); }
+.dtx-carousel__dot[aria-current] { width: 30px; }
+.dtx-carousel__count { font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted); }
+.dtx-carousel__nav { display: flex; gap: 4px; margin-inline-start: auto; }
+.dtx-carousel__nav .dtx-btn[aria-disabled] { opacity: .45; cursor: not-allowed; }
+.dtx-carousel__nav .dtx-btn[aria-disabled]:hover { background: transparent; }
+.dtx-carousel__nav svg:dir(rtl) { scale: -1 1; }

@@ -1,7 +1,7 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
-import { Alert, Badge, Button, Card, CommandButton, CommandList, CommandPalette, Loadable, Menu, Pagination, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
+import { Alert, Badge, Button, Card, CommandButton, CommandList, CommandPalette, Field, Loadable, Menu, Pagination, Slider, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -290,6 +290,19 @@ export function PaginationDemo({ total, start = 1, size: initial = 20, sizes, it
   const [page, setPage] = useState(start);
   const [size, setSize] = useState(initial);
   return <Pagination page={page} total={total} pageSize={size} onPageChange={setPage} onPageSizeChange={sizes ? setSize : undefined} itemLabel={itemLabel} />;
+}
+
+export function SliderThresholdDemo() {
+  const [value, setValue] = useState(85);
+  const [saved, setSaved] = useState(85);
+  return (
+    <div className="grid w-full max-w-md gap-2">
+      <Field label="Ngưỡng tin cậy tối thiểu" description="Trường dưới ngưỡng này được chuyển sang QC thủ công.">
+        <Slider value={value} onValueChange={setValue} onValueCommitted={setSaved} min={50} max={100} format={{ style: 'unit', unit: 'percent' }} />
+      </Field>
+      <p className="m-0 text-xs text-fg-muted" aria-live="polite">Đã lưu: {saved}%</p>
+    </div>
+  );
 }
 
 /** Closable warning with its one action; closing it leaves a way back so the demo can be replayed. */
