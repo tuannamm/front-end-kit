@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, House, Inbox, Layers, LayoutDashboard, ListFilter, Lock, ScanText, SearchX, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  Alert, AppShell, Breadcrumb, Carousel, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Breadcrumb, Carousel, Collapse, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -361,6 +361,24 @@ export const entries: Entry[] = [
       { title: '5 · Searchable', note: 'Type “bao hiem” or “vat”.', render: () => <SelectDemo label="Loại tài liệu" items={docTypeGroups} defaultValue="vat" searchable searchPlaceholder="Tìm loại tài liệu…" /> },
       { title: '6 · Mixed options', note: 'Some options have a description, some an icon, some neither.', render: () => <SelectDemo label="Trạng thái" items={statusOptions} defaultValue="all" /> },
       { title: '7 · Small, no visible label', render: () => <div className="w-52"><Select size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} defaultValue="all" /></div> }] },
+  { id: 'collapse', name: 'Collapse', category: 'Core', status: 'ready', summary: 'Sections that open and close under their headings: FAQ, settings groups, long record details. Several open at once, or one at a time (accordion). A second line and a right-side slot (badge, switch) per header. Closed panels stay findable with Ctrl/⌘+F, which opens them.',
+    importLine: imp('Collapse, type CollapseItem'),
+    demos: [
+      { title: '1 · FAQ, one at a time', note: 'multiple={false}: opening a question closes the open one. Try Ctrl+F “300 dpi”: the browser finds it in a closed panel and opens it.', code: "<Collapse multiple={false} defaultValue={['sla']} items={[\n  { value: 'sla', title: 'SLA được tính từ lúc nào?', content: '…' },\n  …\n]} />", render: () => <div className="w-full max-w-2xl"><Collapse multiple={false} defaultValue={['sla']} items={[
+        { value: 'sla', title: 'SLA được tính từ lúc nào?', content: 'Từ khi lô được nhận đủ hồ sơ gốc và bàn giao biên bản. Lô thiếu hồ sơ được tạm dừng SLA cho tới khi bổ sung đủ.' },
+        { value: 'format', title: 'Hệ thống nhận những định dạng nào?', content: 'PDF, TIFF nhiều trang, JPG và PNG. Ảnh chụp điện thoại được chỉnh nghiêng và khử bóng trước khi OCR; bản quét nên đạt 300 dpi trở lên.' },
+        { value: 'qc', title: 'Khi nào một trường được chuyển sang QC thủ công?', content: 'Khi độ tin cậy của trường thấp hơn ngưỡng đã cấu hình (mặc định 85%), hoặc khi trường bắt buộc bị trống.' },
+        { value: 'delete', title: 'Dữ liệu được lưu bao lâu?', content: 'Ảnh gốc được xoá sau 30 ngày kể từ ngày bàn giao; dữ liệu trích xuất được giữ theo hợp đồng.' },
+      ]} /></div> },
+      { title: '2 · Settings groups', note: 'bordered, a second line under each title, a status on the right. “Xuất dữ liệu” is disabled. Several can be open at once.', code: "<Collapse bordered headingLevel={2} items={[\n  { value: 'ocr', title: 'Nhận dạng (OCR)', description: 'Ngôn ngữ, ngưỡng tin cậy', extra: <Badge tone=\"ok\">Đang bật</Badge>, content: <OcrSettings /> },\n]} />", render: () => <div className="w-full max-w-2xl"><Collapse bordered defaultValue={['ocr']} items={[
+        { value: 'ocr', title: 'Nhận dạng (OCR)', description: 'Ngôn ngữ, ngưỡng tin cậy', extra: <Badge tone="ok" variant="surface" size="sm">Đang bật</Badge>, content: <Field label="Ngưỡng tin cậy tối thiểu"><Slider defaultValue={85} min={50} max={100} format={{ style: 'unit', unit: 'percent' }} /></Field> },
+        { value: 'notify', title: 'Thông báo', description: 'Email và trong ứng dụng', extra: <Badge variant="surface" size="sm">3 kênh</Badge>, content: 'Gửi thông báo khi lô có nguy cơ trễ SLA, khi lô bị lỗi và khi lô được bàn giao.' },
+        { value: 'export', title: 'Xuất dữ liệu', description: 'Cần quyền Quản trị', disabled: true, content: 'Định dạng và lịch xuất tự động.' },
+      ]} /></div> },
+      { title: '3 · Long titles', note: 'Titles wrap; the chevron and the right-side badge stay on the first line.', render: () => <div className="w-full max-w-sm"><Collapse items={[
+        { value: 'a', title: 'Hợp đồng dịch vụ số hoá tài liệu lưu trữ giai đoạn 2026–2027 cho Ngân hàng Đông Á Mới', extra: <Badge variant="surface" size="sm">12</Badge>, content: 'Phụ lục, biên bản nghiệm thu và lịch bàn giao theo từng lô.' },
+        { value: 'b', title: 'Biên bản', content: 'Ba biên bản đã ký.' },
+      ]} /></div> }] },
   { id: 'carousel', name: 'Carousel', category: 'Core', status: 'ready', summary: 'A row of slides that scrolls sideways with native scroll snapping: swipe, trackpad, arrow buttons, dots, or arrow keys once the row has focus. One slide at a time or a row of cards with the next one peeking. Dots for up to 10 slides, a “3–5 / 20” count beyond. Controls hide when everything fits. No autoplay.',
     importLine: imp('Carousel'),
     demos: [
