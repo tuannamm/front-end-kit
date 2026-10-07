@@ -17,6 +17,7 @@
 @import "./core/controls/controls.css" layer(dtx);
 @import "./core/overlays/overlays.css" layer(dtx);
 @import "./core/command-palette/command-palette.css" layer(dtx);
+@import "./core/menu/menu.css" layer(dtx);
 @import "./core/alert/alert.css" layer(dtx);
 @import "./core/empty-state/empty-state.css" layer(dtx);
 @import "./core/breadcrumb/breadcrumb.css" layer(dtx);

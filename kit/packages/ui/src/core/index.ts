@@ -11,6 +11,7 @@ export { parseDate, formatDate, todayIso, addDays, addMonths, DEFAULT_DATE_FORMA
 export { FileDropzone, FileList, FileItem, UploadToast, type FileDropzoneProps, type FileItemProps, type UploadToastItem } from './file-upload/file-upload';
 export { formatBytes, acceptsFile, type FileRejection } from './file-upload/file';
 export { Switch, Tabs, Segmented, Tooltip, TooltipProvider, type TabItem } from './controls/controls';
+export { Menu, type MenuProps, type MenuEntry, type MenuAction, type MenuCheckbox, type MenuRadio, type MenuGroup } from './menu/menu';
 export { Breadcrumb, type BreadcrumbItem, type BreadcrumbProps } from './breadcrumb/breadcrumb';
 export { EmptyState, type EmptyStateProps } from './empty-state/empty-state';
 export { Alert, type AlertProps } from './alert/alert';

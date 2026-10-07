@@ -1,7 +1,7 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
-import { BarChart3, CircleCheck, FileDown, FileStack, LayoutDashboard, Plus, Trash2 } from 'lucide-react';
-import { Alert, Badge, Button, Card, CommandButton, CommandList, CommandPalette, Loadable, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
+import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
+import { Alert, Badge, Button, Card, CommandButton, CommandList, CommandPalette, Loadable, Menu, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -225,6 +225,65 @@ export function CommandPaletteDemo() {
 
 export function CommandListDemo() {
   return <CommandList items={useCommandItems()} className="h-[420px] w-full max-w-[640px]" />;
+}
+
+/** Last picked action, announced, so the demo shows that onSelect ran. */
+function Picked({ text }: { text: string }) {
+  return <p className="m-0 text-xs text-fg-muted" aria-live="polite">{text ? `Vừa chọn: ${text}` : 'Chưa chọn mục nào'}</p>;
+}
+
+export function MenuRowDemo() {
+  const [picked, setPicked] = useState('');
+  return (
+    <div className="grid justify-items-center gap-3">
+      <Menu align="end" trigger={<Button variant="ghost" size="sm" icon aria-label="Thao tác cho HD-5517"><MoreHorizontal aria-hidden /></Button>} items={[
+        { label: 'Xem chi tiết', icon: <Eye />, onSelect: () => setPicked('Xem chi tiết') },
+        { label: 'Nhân bản', icon: <Copy />, shortcut: 'Ctrl D', onSelect: () => setPicked('Nhân bản') },
+        { label: 'Lịch sử thay đổi', icon: <History />, disabled: true },
+        'separator',
+        { label: 'Xoá lô HD-5517', icon: <Trash2 />, danger: true, onSelect: () => setPicked('Xoá lô HD-5517') },
+      ]} />
+      <Picked text={picked} />
+    </div>
+  );
+}
+
+export function MenuExportDemo() {
+  const [picked, setPicked] = useState('');
+  const pick = (s: string) => () => setPicked(s);
+  return (
+    <div className="grid justify-items-center gap-3">
+      <Menu trigger={<Button variant="secondary">Xuất file<ChevronDown aria-hidden /></Button>} items={[
+        { type: 'group', label: 'Định dạng', items: [
+          { label: 'Excel (.xlsx)', description: 'Giữ định dạng số và ngày', icon: <FileSpreadsheet />, onSelect: pick('Excel') },
+          { label: 'CSV', description: 'Cho công cụ khác đọc', icon: <FileText />, onSelect: pick('CSV') },
+          { label: 'PDF', description: 'Để in hoặc gửi khách hàng', icon: <FileDown />, onSelect: pick('PDF') },
+        ] },
+        'separator',
+        { label: 'Lịch sử xuất file', href: '#/catalog/menu', icon: <History /> },
+      ]} />
+      <Picked text={picked} />
+    </div>
+  );
+}
+
+const menuColumns = [{ id: 'code', label: 'Mã lô' }, { id: 'client', label: 'Khách hàng' }, { id: 'pages', label: 'Số trang' }, { id: 'status', label: 'Trạng thái' }, { id: 'due', label: 'Hạn SLA' }];
+
+export function MenuViewDemo() {
+  const [shown, setShown] = useState(['code', 'client', 'status']);
+  const [sort, setSort] = useState('due');
+  const sorts = [{ value: 'due', label: 'Hạn SLA gần nhất' }, { value: 'pages', label: 'Nhiều trang nhất' }, { value: 'new', label: 'Mới tạo' }];
+  const toggle = (id: string, on: boolean) => setShown(s => on ? menuColumns.map(c => c.id).filter(c => c === id || s.includes(c)) : s.filter(c => c !== id));
+  return (
+    <div className="grid justify-items-center gap-3">
+      <Menu trigger={<Button variant="secondary" size="sm"><SlidersHorizontal aria-hidden />Hiển thị</Button>} items={[
+        { type: 'group', label: 'Cột', items: menuColumns.map(c => ({ type: 'checkbox' as const, label: c.label, checked: shown.includes(c.id), disabled: c.id === 'code', onCheckedChange: (on: boolean) => toggle(c.id, on) })) },
+        'separator',
+        { type: 'group', label: 'Sắp xếp theo', items: [{ type: 'radio', value: sort, onValueChange: setSort, options: sorts }] },
+      ]} />
+      <p className="m-0 text-xs text-fg-muted">Cột: {menuColumns.filter(c => shown.includes(c.id)).map(c => c.label).join(', ')} · Sắp xếp: {sorts.find(o => o.value === sort)?.label}</p>
+    </div>
+  );
 }
 
 /** Closable warning with its one action; closing it leaves a way back so the demo can be replayed. */

@@ -12,7 +12,7 @@ import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
-import { AlertDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { AlertDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -378,6 +378,12 @@ export const entries: Entry[] = [
       { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
   { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>. tone picks the icon; an error (tone \'err\') stays until closed, is announced at once, and has a red-tinted edge.', importLine: imp('ToastProvider, useToast, type ToastOptions'),
     demos: [{ title: 'Success · error · warning · in progress', note: 'The error toast stays until you close it.', code: "const toast = useToast();\ntoast({ title: 'Đã lưu lô BH-2210', tone: 'ok' });\ntoast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi…', tone: 'err' });", render: () => <ToastDemo /> }] },
+  { id: 'menu', name: 'Menu', category: 'Core', status: 'ready', summary: 'Actions behind a button: row actions (“⋯”), export, view options. Actions close the menu; checkbox and radio entries keep it open so several can be changed in a row. Icons, a second line, key hints, links, groups, separators, disabled and destructive items. Arrow keys, typeahead and Esc built in.',
+    importLine: imp('Menu, type MenuEntry, type MenuAction, type MenuCheckbox, type MenuRadio, type MenuGroup'),
+    demos: [
+      { title: '1 · Row actions', note: 'Icon-only trigger named after its row. “Lịch sử thay đổi” is disabled; the destructive item is last, after a separator.', code: "<Menu align=\"end\" trigger={<Button variant=\"ghost\" size=\"sm\" icon aria-label=\"Thao tác cho HD-5517\"><MoreHorizontal aria-hidden /></Button>} items={[\n  { label: 'Xem chi tiết', icon: <Eye />, onSelect: open },\n  { label: 'Nhân bản', icon: <Copy />, shortcut: 'Ctrl D', onSelect: duplicate },\n  { label: 'Lịch sử thay đổi', icon: <History />, disabled: true },\n  'separator',\n  { label: 'Xoá lô HD-5517', icon: <Trash2 />, danger: true, onSelect: confirmDelete },\n]} />", render: () => <MenuRowDemo /> },
+      { title: '2 · Export, grouped', note: 'A group heading, a second line per format, and a link at the end.', render: () => <MenuExportDemo /> },
+      { title: '3 · View options', note: 'Column toggles and a sort order. Both keep the menu open; “Mã lô” cannot be hidden.', render: () => <MenuViewDemo /> }] },
   { id: 'breadcrumb', name: 'Breadcrumb', category: 'Core', status: 'ready', summary: 'Where this page sits: root → … → current page. The current page is plain text with aria-current; parents are links, buttons (client-side routing) or plain text. Long labels truncate, crumbs shrink with the space (the trail never widens its container), and long trails fold their middle into “…”.',
     importLine: imp('Breadcrumb, type BreadcrumbItem'),
     demos: [
