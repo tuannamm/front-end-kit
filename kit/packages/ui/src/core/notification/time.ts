@@ -1,4 +1,4 @@
-// Pure helpers behind NotificationList; no DOM, so time.check.ts can run them in node.
+// Pure helpers behind NotificationList and Timeline; no DOM, so time.check.ts can run them in node.
 
 const rel = new Intl.RelativeTimeFormat('vi', { numeric: 'auto' });
 const day = new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -20,6 +20,18 @@ export function relativeTime(when: string | Date, now = Date.now()): string {
   // calendar days, not 24h blocks: 30 hours ago at 03:00 two days back is "Hôm kia", not "Hôm qua"
   const days = Math.round((midnight(now) - midnight(t)) / 86400000);
   return days < 7 ? rel.format(-days, 'day') : day.format(t);
+}
+
+/** "14:32 · 07/10/2026": exact but short, for lists where a relative time is too vague. */
+export function shortTime(when: string | Date): string {
+  const d = new Date(when);
+  return Number.isNaN(d.getTime()) ? '' : `${clock.format(d)} · ${day.format(d)}`;
+}
+
+/** For `<time dateTime>`; "" for an invalid time, where toISOString() would throw. */
+export function isoTime(when: string | Date): string {
+  const d = new Date(when);
+  return Number.isNaN(d.getTime()) ? '' : d.toISOString();
 }
 
 /** "17:05 · Thứ Năm, 03/09/2026": the exact time, for the tooltip next to a relative one. */

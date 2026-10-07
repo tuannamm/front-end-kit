@@ -1,6 +1,6 @@
 // Run: node --experimental-strip-types core/notification/time.check.ts. Local-time dates, so any TZ gives the same result.
 import assert from 'node:assert/strict';
-import { fullTime, relativeTime } from './time.ts';
+import { fullTime, isoTime, relativeTime, shortTime } from './time.ts';
 
 const now = new Date(2026, 9, 7, 9, 0).getTime();
 const at = (d: number, h: number, m = 0, s = 0) => new Date(2026, 9, d, h, m, s);
@@ -19,4 +19,8 @@ assert.equal(relativeTime('not a date', now), '');
 
 assert.equal(fullTime(new Date(2026, 8, 3, 17, 5)), '17:05 · Thứ Năm, 03/09/2026');
 assert.equal(fullTime('not a date'), '');
+assert.equal(shortTime(new Date(2026, 9, 7, 14, 32)), '14:32 · 07/10/2026');
+assert.equal(shortTime('not a date'), '');
+assert.equal(isoTime('2026-10-07T07:32:00Z'), '2026-10-07T07:32:00.000Z');
+assert.equal(isoTime('not a date'), '', 'no RangeError');
 console.log('time ok');

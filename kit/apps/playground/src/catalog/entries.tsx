@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
-import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, House, Inbox, Layers, LayoutDashboard, ListFilter, Lock, ScanText, SearchX, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
+import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, House, Inbox, Layers, LayoutDashboard, ListFilter, Lock, MessageSquare, ScanText, SearchX, Send, Settings, Sparkles, TrendingUp, Upload, Users } from 'lucide-react';
 import {
-  Alert, AppShell, Breadcrumb, Carousel, Collapse, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Breadcrumb, Carousel, Collapse, Timeline, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -361,6 +361,34 @@ export const entries: Entry[] = [
       { title: '5 · Searchable', note: 'Type “bao hiem” or “vat”.', render: () => <SelectDemo label="Loại tài liệu" items={docTypeGroups} defaultValue="vat" searchable searchPlaceholder="Tìm loại tài liệu…" /> },
       { title: '6 · Mixed options', note: 'Some options have a description, some an icon, some neither.', render: () => <SelectDemo label="Trạng thái" items={statusOptions} defaultValue="all" /> },
       { title: '7 · Small, no visible label', render: () => <div className="w-52"><Select size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} defaultValue="all" /></div> }] },
+  { id: 'timeline', name: 'Timeline', category: 'Core', status: 'ready', summary: 'Events in order down a rail: activity log, audit trail, the steps of a batch. Square markers in a tone, or icons; done, current (ringed) and pending (hollow, dashed line). Relative or exact times in a <time> element, the full time on hover.',
+    importLine: imp('Timeline, type TimelineItem'),
+    demos: [
+      { title: '1 · Activity log', note: 'Newest first, relative times. Tones mark the outcome; the title says it too.', code: "<Timeline aria-label=\"Hoạt động của lô HD-5517\" items={[\n  { title: 'Bàn giao cho khách hàng', time, tone: 'ok' },\n  { title: 'OCR lỗi 12 trang', description: 'Ảnh mờ, đã chuyển QC thủ công.', time, tone: 'err' },\n  …\n]} />", render: () => <div className="w-full max-w-lg"><Timeline aria-label="Hoạt động của lô HD-5517" items={[
+        { title: 'Bàn giao cho khách hàng', time: ago(4), tone: 'ok' },
+        { title: 'Trần Thu Hà duyệt QC', description: '3.848 / 3.860 trang đạt, độ chính xác 99,7%.', time: ago(52) },
+        { title: 'OCR lỗi 12 trang', description: 'Ảnh mờ, đã chuyển QC thủ công.', time: ago(3 * 60 + 10), tone: 'err' },
+        { title: 'Nhận dạng xong 3.860 trang', time: ago(26 * 60) },
+        { title: 'Nguyễn Minh Anh tải lên lô HD-5517', time: ago(3 * 24 * 60), tone: 'neutral' },
+      ]} /></div> },
+      { title: '2 · Steps of a batch', note: 'Oldest first, exact times. status="current" rings the marker (aria-current="step"); pending ones are hollow, behind a dashed line.', code: "<Timeline timeStyle=\"absolute\" items={[\n  { title: 'Tiếp nhận hồ sơ', time },\n  { title: 'Nhận dạng (OCR)', description: '2.140 / 3.860 trang', status: 'current' },\n  { title: 'Kiểm tra chất lượng', status: 'pending' },\n]} />", render: () => <div className="w-full max-w-lg"><Timeline aria-label="Tiến độ lô HD-5517" timeStyle="absolute" items={[
+        { title: 'Tiếp nhận hồ sơ', description: '3.860 trang, 412 hồ sơ', time: '2026-10-06T08:30:00+07:00' },
+        { title: 'Tiền xử lý', description: 'Cắt viền, chỉnh nghiêng, khử nhiễu', time: '2026-10-06T10:05:00+07:00' },
+        { title: 'Nhận dạng (OCR)', description: '2.140 / 3.860 trang', status: 'current' },
+        { title: 'Kiểm tra chất lượng', status: 'pending' },
+        { title: 'Bàn giao', status: 'pending' },
+      ]} /></div> },
+      { title: '3 · Icons and rich content', note: 'icon swaps the square for an icon; description takes any content.', render: () => <div className="w-full max-w-lg"><Timeline aria-label="Lịch sử hồ sơ" timeStyle="absolute" items={[
+        { title: 'Gửi lại khách hàng', icon: <Send />, time: '2026-10-07T09:12:00+07:00', tone: 'ok' },
+        { title: 'Trần Thu Hà bình luận', icon: <MessageSquare />, time: '2026-10-07T08:47:00+07:00', description: <p className="m-0 border-l-2 border-border pl-3 italic">Trang 14 thiếu dấu giáp lai, đề nghị bên A bổ sung bản gốc.</p> },
+        { title: 'Phát hiện thiếu trang', icon: <AlertTriangle />, time: '2026-10-07T08:30:00+07:00', tone: 'warn', description: <Badge tone="warn" variant="surface" size="sm">Thiếu 2 trang</Badge> },
+        { title: 'Tải lên', icon: <Upload />, time: '2026-10-06T16:02:00+07:00', tone: 'neutral' },
+        { title: 'Ký số', icon: <Lock />, status: 'pending' },
+      ]} /></div> },
+      { title: '4 · Narrow, long titles', note: 'Titles wrap beside the marker; the time drops under the title when there is no room.', render: () => <div className="w-full max-w-xs"><Timeline timeStyle="absolute" items={[
+        { title: 'Phụ lục hợp đồng tín dụng Ngân hàng Đông Á Mới được ký và gửi lại', time: '2026-10-07T09:12:00+07:00', tone: 'ok' },
+        { title: 'Biên bản nghiệm thu lô 03', time: '2026-10-05T14:00:00+07:00' },
+      ]} /></div> }] },
   { id: 'collapse', name: 'Collapse', category: 'Core', status: 'ready', summary: 'Sections that open and close under their headings: FAQ, settings groups, long record details. Several open at once, or one at a time (accordion). A second line and a right-side slot (badge, switch) per header. Closed panels stay findable with Ctrl/⌘+F, which opens them.',
     importLine: imp('Collapse, type CollapseItem'),
     demos: [

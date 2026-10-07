@@ -6,7 +6,7 @@ import { Skeleton } from '../../motion/primitives';
 import { Counter, IconTile, type Tone } from '../badge/badge';
 import { Button } from '../button/button';
 import { EmptyState } from '../empty-state/empty-state';
-import { fullTime, relativeTime } from './time';
+import { fullTime, isoTime, relativeTime } from './time';
 
 export type NotificationItem = {
   id: string | number;
@@ -78,7 +78,7 @@ function Row({ item, onSelect }: { item: NotificationItem; onSelect?: (item: Not
       <span className="dtx-notif__main">
         <span className="dtx-notif__item-title">{!item.read && <span className="dtx-sr">Chưa đọc: </span>}{item.title}</span>
         {item.description && <span className="dtx-notif__desc">{item.description}</span>}
-        {item.time && <time className="dtx-notif__time" dateTime={new Date(item.time).toISOString()} title={fullTime(item.time)}>{relativeTime(item.time)}</time>}
+        {item.time && isoTime(item.time) && <time className="dtx-notif__time" dateTime={isoTime(item.time)} title={fullTime(item.time)}>{relativeTime(item.time)}</time>}
       </span>
       {!item.read && <i className="dtx-notif__dot" aria-hidden />}
     </>

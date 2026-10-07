@@ -1,0 +1,43 @@
+/* ---------- timeline ---------- */
+/* --row: height of a title's first line; the marker centres on it. --m: marker size. --gap: room between marker and line */
+.dtx-timeline { margin: 0; padding: 0; list-style: none; font-size: var(--dtx-text-sm); }
+.dtx-timeline__item {
+  --row: max(24px, 1.5em); --m: 10px; --gap: 4px; --top: calc((var(--row) - var(--m)) / 2);
+  /* the next item's marker top, so this item's line stops short of it */
+  --next: calc((var(--row) - 10px) / 2 - var(--gap));
+  position: relative; display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 12px; padding-bottom: 20px;
+}
+.dtx-timeline__item:last-child { padding-bottom: 0; }
+.dtx-timeline__item--icon { --m: 24px; }
+.dtx-timeline__item[data-status="current"] { --gap: 7px; }
+.dtx-timeline__item:has(+ .dtx-timeline__item--icon) { --next: calc((var(--row) - 24px) / 2 - 4px); }
+.dtx-timeline__item:has(+ [data-status="current"]) { --next: calc((var(--row) - 10px) / 2 - 7px); }
+.dtx-timeline__item:has(+ .dtx-timeline__item--icon[data-status="current"]) { --next: calc((var(--row) - 24px) / 2 - 7px); }
+.dtx-timeline__item:not(:last-child)::after {
+  content: ""; position: absolute; inset-inline-start: 11.5px; top: calc(var(--top) + var(--m) + var(--gap)); bottom: calc(-1 * var(--next));
+  border-inline-start: 1px solid var(--dtx-border-strong);
+}
+/* the way ahead is dashed */
+.dtx-timeline__item:has(+ [data-status="pending"])::after { border-inline-start-style: dashed; }
+
+/* square marker: the logo motif, like Badge's dot */
+.dtx-timeline__marker {
+  grid-column: 1; grid-row: 1 / span 2; justify-self: center; align-self: start; display: grid; place-items: center;
+  width: var(--m); height: var(--m); margin-top: var(--top); box-sizing: border-box; border-radius: 2px; background: var(--t); color: var(--t);
+}
+.dtx-timeline__item[data-status="current"] > .dtx-timeline__marker { outline: 2px solid var(--t); outline-offset: 2px; }
+.dtx-timeline__item[data-status="pending"] > .dtx-timeline__marker { border: 1.5px solid var(--dtx-fg-muted); background: none; }
+.dtx-timeline__item--icon > .dtx-timeline__marker { border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-sm); background: none; }
+.dtx-timeline__item--icon[data-status="pending"] > .dtx-timeline__marker { border-style: dashed; color: var(--dtx-fg-muted); }
+.dtx-timeline__marker svg { width: 14px; height: 14px; }
+
+.dtx-timeline__head {
+  grid-column: 2; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px;
+  padding-top: calc((var(--row) - 1.5em) / 2); line-height: 1.5;
+}
+/* a long title wraps first; the time drops below it only when the row is too narrow for both */
+.dtx-timeline__title { flex: 1 1 16ch; min-width: 0; font-weight: 500; color: var(--dtx-fg); overflow-wrap: anywhere; }
+.dtx-timeline__item[data-status="pending"] .dtx-timeline__title { font-weight: 400; color: var(--dtx-fg-muted); }
+.dtx-timeline__time { flex: none; font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); white-space: nowrap; }
+.dtx-timeline__desc { grid-column: 2; margin-top: 2px; line-height: 1.5; color: var(--dtx-fg-muted); overflow-wrap: anywhere; }
+.dtx-timeline__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
