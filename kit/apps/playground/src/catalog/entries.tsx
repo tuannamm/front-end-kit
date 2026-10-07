@@ -12,7 +12,7 @@ import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
-import { DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -378,6 +378,11 @@ export const entries: Entry[] = [
       { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
   { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>. tone picks the icon; an error (tone \'err\') stays until closed, is announced at once, and has a red-tinted edge.', importLine: imp('ToastProvider, useToast, type ToastOptions'),
     demos: [{ title: 'Success · error · warning · in progress', note: 'The error toast stays until you close it.', code: "const toast = useToast();\ntoast({ title: 'Đã lưu lô BH-2210', tone: 'ok' });\ntoast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi…', tone: 'err' });", render: () => <ToastDemo /> }] },
+  { id: 'command-palette', name: 'Command palette', category: 'Core', status: 'ready', summary: 'Ctrl/⌘+K search over pages, records and actions. Typing filters without caring about accents or word order (“lo 5517” finds “Lô HD-5517”), ↑/↓ move, Enter runs the item and closes the palette. Groups, icons, a second line, key hints and disabled items with a reason.',
+    importLine: imp('CommandPalette, CommandList, CommandButton, type CommandItem'),
+    demos: [
+      { title: '1 · Opened from the search box', note: 'In an app Ctrl/⌘+K opens it too; it is off here because the catalog shows each demo twice. Try it on the App page.', code: '<CommandPalette items={items} trigger={<CommandButton placeholder="Tìm lô, khách hàng, lệnh…" />} />', render: () => <CommandPaletteDemo /> },
+      { title: '2 · The open list (CommandList)', note: 'Static. Type “phuong nam”, “invoice” or “zz” to see a match by client, by English keyword, and the empty state.', render: () => <CommandListDemo /> }] },
   { id: 'notification', name: 'Notification', category: 'Core', status: 'ready', summary: 'Bell button with the unread count; clicking it opens the notifications in a popover. Unread rows have a blue tint, a heavier title and a square dot. Picking a row closes the panel; marking it read and loading the list are the app\'s job. NotificationList is the same panel on its own, for a full page. Times read “5 phút trước”, then calendar days, then the date.',
     importLine: imp('Notification, NotificationList, type NotificationItem'),
     demos: [
@@ -448,7 +453,6 @@ export const entries: Entry[] = [
   { id: 'app-shell', name: 'AppShell & Sidebar', category: 'Layout', status: 'ready', summary: 'Workspace header, collapsible groups (height animates), active bar, counts, attention counters, shortcut hints on hover, 60px rail mode.',
     importLine: imp('AppShell, Sidebar, SidebarWorkspace, SidebarGroup, SidebarItem, SidebarFooter, Topbar, CommandButton'),
     demos: [{ title: 'Interactive', plain: true, render: () => <RailDemo /> }] },
-  planned('command-palette', 'Command palette', 'Layout', 'Ctrl/⌘+K: jump to batches, clients, actions.'),
   planned('empty-state', 'Empty state', 'Layout', 'Mascot (64–160px), one sentence, one action.'),
 
   // ───────────── Data ─────────────

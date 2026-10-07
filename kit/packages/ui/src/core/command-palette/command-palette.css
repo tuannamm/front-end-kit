@@ -1,0 +1,35 @@
+/* ---------- command palette ---------- */
+/* items reuse .dtx-select-item / .dtx-select-text / .dtx-select-group-label, so every list in the kit reads the same */
+.dtx-cmdp { display: flex; flex-direction: column; min-height: 0; overflow: hidden; background: var(--dtx-surface); color: var(--dtx-fg); border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-lg); }
+/* anchored at the top, so the box does not jump while results shrink and grow */
+.dtx-cmdp--dialog {
+  position: fixed; z-index: 61; top: max(16px, 12vh); left: 50%; translate: -50% 0; outline: none;
+  width: min(640px, calc(100vw - 32px)); max-height: min(520px, calc(100dvh - max(16px, 12vh) - 16px));
+  box-shadow: var(--dtx-shadow-pop);
+  transition: opacity var(--dtx-dur-base) var(--dtx-ease-standard), transform var(--dtx-dur-base) var(--dtx-ease-enter);
+}
+.dtx-cmdp--dialog[data-starting-style], .dtx-cmdp--dialog[data-ending-style] { opacity: 0; transform: translateY(-6px) scale(.98); }
+.dtx-cmdp--dialog[data-ending-style] { transition-duration: var(--dtx-dur-fast); transition-timing-function: var(--dtx-ease-exit); }
+@media (max-width: 600px) { .dtx-cmdp--dialog { top: 8px; width: calc(100vw - 16px); max-height: calc(100dvh - 16px); } }
+
+.dtx-cmdp__search { flex: none; display: flex; align-items: center; gap: 10px; padding: 0 8px 0 14px; border-bottom: 1px solid var(--dtx-border); color: var(--dtx-fg-muted); }
+.dtx-cmdp__search > svg { width: 18px; height: 18px; flex: none; }
+/* 16px: iOS zooms into smaller inputs */
+.dtx-cmdp__input { flex: 1; min-width: 0; height: 52px; padding: 0; border: 0; outline: none; background: none; font: 400 16px var(--dtx-font); color: var(--dtx-fg); }
+.dtx-cmdp__input::placeholder { color: var(--dtx-fg-muted); }
+/* the caret is the focus cue: it is the panel's only field and always holds focus */
+.dtx-cmdp__input:focus-visible { outline: none; }
+.dtx-cmdp__list { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 6px; scroll-padding-block: 6px; }
+.dtx-cmdp__list[data-empty] { display: none; }
+.dtx-cmdp__group + .dtx-cmdp__group { margin-top: 4px; }
+.dtx-cmdp__icon { display: grid; place-items: center; width: 20px; flex: none; color: var(--dtx-fg-muted); }
+.dtx-cmdp__icon svg { width: 16px; height: 16px; }
+.dtx-cmdp .dtx-select-item[data-highlighted] .dtx-cmdp__icon { color: var(--dtx-fg); }
+.dtx-cmdp .dtx-select-item .dtx-kbd { flex: none; }
+.dtx-cmdp__empty { display: grid; gap: 4px; padding: 32px 16px; text-align: center; font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted); }
+.dtx-cmdp__empty:empty { display: none; }
+.dtx-cmdp__empty b { font-weight: 500; color: var(--dtx-fg); overflow-wrap: anywhere; }
+.dtx-cmdp__foot { flex: none; display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 8px 14px; border-top: 1px solid var(--dtx-border); font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
+.dtx-cmdp__foot > span { display: inline-flex; align-items: center; gap: 4px; }
+/* no keyboard on touch screens: the key hints would only be noise */
+@media (hover: none) { .dtx-cmdp__foot { display: none; } }

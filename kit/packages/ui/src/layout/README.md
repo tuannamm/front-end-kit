@@ -103,8 +103,10 @@ Plus every `<a>` attribute (`href`, `onClick`…).
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `placeholder` | `string` | `'Tìm kiếm…'` | Text in the box |
-| `shortcut` | `string` | `'Ctrl K'` | Key hint; pair it with a global key listener |
-| `onClick` | `() => void` |  | Open the command palette |
+| `shortcut` | `string` | `'Ctrl K'` (`'⌘ K'` on Apple) | Key hint; CommandPalette binds the key |
+| `className` | `string` |  | Extra classes |
+
+Plus every `<button>` prop. Pass it as `<CommandPalette trigger={<CommandButton />} />`.
 
 ## Files
 

@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useRef, useState, type ReactElement, type ReactNode } from 'react';
-import { AlertTriangle, BarChart3, CalendarDays, CheckCircle2, CircleAlert, CircleCheck, Clock, FileStack, LayoutDashboard, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users, type LucideIcon } from 'lucide-react';
+import { AlertTriangle, BarChart3, CalendarDays, CheckCircle2, CircleAlert, CircleCheck, Clock, FileStack, Languages, LayoutDashboard, ListFilter, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users, type LucideIcon } from 'lucide-react';
 import {
-  AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
+  AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CommandPalette, type CommandItem, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
   KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
   StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, todayIso, useToast, type Column, type DateRange, type NotificationItem,
 } from '@dtx/ui';
 import { aiThroughput, batches, hours, manualThroughput, type Batch } from '../data';
-import { useT, type Translate } from '../i18n';
+import { setLang, useLang, useT, type Translate } from '../i18n';
 import { useFakeUpload } from '../fake-upload';
 
 const statusLabel = (t: Translate): Record<Batch['status'], string> => ({
@@ -206,6 +206,17 @@ export function AppDemo() {
   const rows = [...created, ...batches].filter(b => (!status.length || status.includes(b.status))
     && (!received.from || b.received >= received.from) && (!received.to || b.received <= received.to));
   const resetFilters = () => { setStatus([]); setReceived({ from: null, to: null }); };
+  const lang = useLang();
+  const showBatches = (s: string[]) => { setStatus(s); setReceived({ from: null, to: null }); document.getElementById('batches')?.scrollIntoView({ block: 'start' }); };
+  const commands: CommandItem[] = [
+    { id: 'all', group: t('Đi tới', 'Go to'), label: t('Tất cả lô', 'All batches'), icon: <FileStack />, keywords: ['batches'], onSelect: () => showBatches([]) },
+    { id: 'qc', group: t('Đi tới', 'Go to'), label: t('Lô cần QC', 'Batches needing QC'), description: t('Chờ QC và có nguy cơ trễ SLA', 'Awaiting QC and at risk of missing SLA'), icon: <CircleCheck />, keywords: ['qc', 'kiểm tra', 'quality'], onSelect: () => showBatches(['qc', 'risk']) },
+    { id: 'err', group: t('Đi tới', 'Go to'), label: t('Lô bị lỗi', 'Failed batches'), icon: <ListFilter />, keywords: ['error', 'lỗi'], onSelect: () => showBatches(['error']) },
+    ...[...created, ...batches].map(b => ({ id: b.id, group: t('Lô tài liệu', 'Batches'), label: `${b.id} · ${t(...b.type)}`, description: `${b.client} · ${label[b.status]}`,
+      icon: <FileStack />, keywords: [...b.type, label[b.status]], onSelect: () => openDetail(b) })),
+    { id: 'rail', group: t('Lệnh', 'Commands'), label: rail ? t('Mở rộng thanh bên', 'Expand sidebar') : t('Thu gọn thanh bên', 'Collapse sidebar'), icon: <PanelLeft />, shortcut: 'Ctrl B', keywords: ['sidebar'], onSelect: () => setRail(r => !r) },
+    { id: 'lang', group: t('Lệnh', 'Commands'), label: lang === 'vi' ? 'Chuyển sang English' : 'Chuyển sang Tiếng Việt', icon: <Languages />, keywords: ['language', 'ngôn ngữ'], onSelect: () => setLang(lang === 'vi' ? 'en' : 'vi') },
+  ];
 
   const sidebar = (
     <Sidebar>
@@ -237,7 +248,8 @@ export function AppDemo() {
             <Button variant="secondary" icon aria-label={t('Thu gọn thanh bên', 'Collapse sidebar')} aria-pressed={rail} onClick={() => setRail(r => !r)}><PanelLeft /></Button>
           </Tooltip>
           <span className="text-sm text-fg-muted">{t('Vận hành', 'Operations')} / <b className="font-medium text-fg">{t('Tổng quan', 'Overview')}</b></span>
-          <CommandButton placeholder={t('Tìm lô, khách hàng, lệnh…', 'Search batches, clients, commands…')} />
+          <CommandPalette items={commands} placeholder={t('Tìm lô, khách hàng, lệnh…', 'Search batches, clients, commands…')}
+            trigger={<CommandButton placeholder={t('Tìm lô, khách hàng, lệnh…', 'Search batches, clients, commands…')} />} />
           <Notification items={notifications} onSelect={openNotification} onMarkAllRead={() => setRead(new Set(notifications.map(n => n.id)))}
             title={t('Thông báo', 'Notifications')} aria-label={t('Thông báo', 'Notifications')} />
           <AvatarPicker name={me} src={photo} onChange={savePhoto} />

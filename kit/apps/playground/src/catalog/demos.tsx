@@ -1,6 +1,8 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
-import { Badge, Button, Card, Loadable, Reveal, SkeletonText, useToast } from '@dtx/ui';
+import { BarChart3, CircleCheck, FileDown, FileStack, LayoutDashboard, Plus, Trash2 } from 'lucide-react';
+import { Badge, Button, Card, CommandButton, CommandList, CommandPalette, Loadable, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
+import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
 export const swatches: Swatch[] = [
@@ -200,3 +202,27 @@ export function Stage({ children, theme, dots }: { children: ReactNode; theme?: 
 
 export const spacing = [4, 8, 12, 16, 24, 32, 48, 64, 96];
 export const radii = [{ n: 'sm', px: 4, use: 'Controls, badges' }, { n: 'md', px: 6, use: 'Buttons, inputs' }, { n: 'lg', px: 10, use: 'Cards, popovers' }, { n: 'full', px: 999, use: 'Trend pills only' }];
+
+/** Sample palette content: pages, batches (with client and a code keyword) and actions, one disabled with its reason. */
+function useCommandItems(): CommandItem[] {
+  const toast = useToast();
+  const run = (label: string) => () => toast({ title: label, description: 'Ví dụ: ứng dụng thật sẽ chuyển trang hoặc chạy lệnh.' });
+  return [
+    { id: 'go-overview', group: 'Đi tới', label: 'Tổng quan', icon: <LayoutDashboard />, keywords: ['overview', 'dashboard'], onSelect: run('Tổng quan') },
+    { id: 'go-qc', group: 'Đi tới', label: 'Hàng đợi QC', icon: <CircleCheck />, keywords: ['kiểm tra', 'quality'], onSelect: run('Hàng đợi QC') },
+    { id: 'go-reports', group: 'Đi tới', label: 'Báo cáo', icon: <BarChart3 />, keywords: ['reports'], onSelect: run('Báo cáo') },
+    ...batches.slice(0, 4).map(b => ({ id: b.id, group: 'Lô tài liệu', label: `${b.id} · ${b.type[0]}`, description: `${b.client} · ${b.pages?.toLocaleString('vi-VN')} trang`,
+      icon: <FileStack />, keywords: [b.type[1]], onSelect: run(`Mở lô ${b.id}`) })),
+    { id: 'new', group: 'Lệnh', label: 'Tạo lô mới', icon: <Plus />, keywords: ['new batch'], onSelect: run('Tạo lô mới') },
+    { id: 'export', group: 'Lệnh', label: 'Xuất báo cáo ca', icon: <FileDown />, shortcut: 'Ctrl E', keywords: ['export'], onSelect: run('Xuất báo cáo ca') },
+    { id: 'delete', group: 'Lệnh', label: 'Xoá lô đã chọn', icon: <Trash2 />, description: 'Chỉ trưởng ca được xoá lô', disabled: true, onSelect: run('Xoá lô') },
+  ];
+}
+
+export function CommandPaletteDemo() {
+  return <CommandPalette hotkey={false} items={useCommandItems()} trigger={<CommandButton placeholder="Tìm lô, khách hàng, lệnh…" />} />;
+}
+
+export function CommandListDemo() {
+  return <CommandList items={useCommandItems()} className="h-[420px] w-full max-w-[640px]" />;
+}
