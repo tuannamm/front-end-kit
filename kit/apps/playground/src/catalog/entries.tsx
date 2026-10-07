@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
-import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, Inbox, Layers, LayoutDashboard, ListFilter, Lock, ScanText, SearchX, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
+import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, House, Inbox, Layers, LayoutDashboard, ListFilter, Lock, ScanText, SearchX, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  Alert, AppShell, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Breadcrumb, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -220,7 +220,7 @@ function RailDemo() {
           </SidebarGroup>
         </Sidebar>
       }>
-        <Topbar><span className="text-sm text-fg-muted">Vận hành / <b className="font-medium text-fg">Tổng quan</b></span><CommandButton /></Topbar>
+        <Topbar><Breadcrumb items={[{ label: 'Vận hành' }, { label: 'Tổng quan' }]} /><CommandButton /></Topbar>
         <div className="p-5 text-sm text-fg-muted">Nội dung trang</div>
       </AppShell>
     </div>
@@ -269,7 +269,7 @@ function NotificationDemo() {
   return (
     <div className="grid w-full max-w-xl gap-3">
       <div className="flex items-center gap-3 rounded-md border border-border bg-surface px-4 py-2">
-        <span className="text-sm text-fg-muted">Vận hành / <b className="font-medium text-fg">Tổng quan</b></span>
+        <Breadcrumb items={[{ label: 'Vận hành' }, { label: 'Tổng quan' }]} />
         <span className="ml-auto flex items-center gap-2">
           <Notification items={items} onSelect={n => markRead(n.id)} onMarkAllRead={() => setItems(xs => xs.map(x => ({ ...x, read: true })))}
             footer={<Button variant="ghost" size="sm">Xem tất cả thông báo</Button>} />
@@ -378,6 +378,18 @@ export const entries: Entry[] = [
       { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
   { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>. tone picks the icon; an error (tone \'err\') stays until closed, is announced at once, and has a red-tinted edge.', importLine: imp('ToastProvider, useToast, type ToastOptions'),
     demos: [{ title: 'Success · error · warning · in progress', note: 'The error toast stays until you close it.', code: "const toast = useToast();\ntoast({ title: 'Đã lưu lô BH-2210', tone: 'ok' });\ntoast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi…', tone: 'err' });", render: () => <ToastDemo /> }] },
+  { id: 'breadcrumb', name: 'Breadcrumb', category: 'Core', status: 'ready', summary: 'Where this page sits: root → … → current page. The current page is plain text with aria-current; parents are links, buttons (client-side routing) or plain text. Long labels truncate, crumbs shrink with the space (the trail never widens its container), and long trails fold their middle into “…”.',
+    importLine: imp('Breadcrumb, type BreadcrumbItem'),
+    demos: [
+      { title: '1 · In a topbar', note: '“Vận hành” has no page of its own, so it is plain text.', code: "<Breadcrumb items={[\n  { label: 'Vận hành' },\n  { label: 'Lô tài liệu', href: '/ops/batches' },\n  { label: 'HD-5517' },\n]} />", plain: true, render: () => <div className="w-full rounded-md border border-border bg-surface px-4 py-2">
+        <Breadcrumb items={[{ label: 'Vận hành' }, { label: 'Lô tài liệu', href: '#/catalog/breadcrumb' }, { label: 'HD-5517' }]} />
+      </div> },
+      { title: '2 · Long trail, folded', note: 'Seven levels: the first, “…”, then the last three. Press “…” to show the rest.', render: () => <Breadcrumb items={[
+        { label: 'Trang chủ', href: '#/catalog/breadcrumb', icon: <House /> }, { label: 'Khách hàng', href: '#/catalog/breadcrumb' }, { label: 'Ngân hàng Đông Á Mới', href: '#/catalog/breadcrumb' },
+        { label: 'Hợp đồng 2026', href: '#/catalog/breadcrumb' }, { label: 'Lô TD-0931', href: '#/catalog/breadcrumb' }, { label: 'Trang 12', href: '#/catalog/breadcrumb' }, { label: 'Trường “Số hợp đồng”' }]} /> },
+      { title: '3 · Long labels in a narrow box', note: 'The longest label gives up the most room; the full text stays in the title tooltip and for screen readers.', render: () => <div className="w-full max-w-[340px] rounded-md border border-border bg-surface px-3 py-2">
+        <Breadcrumb items={[{ label: 'Chuỗi bán lẻ Phương Nam', href: '#/catalog/breadcrumb' }, { label: 'Hoá đơn VAT tháng 10/2026', href: '#/catalog/breadcrumb' }, { label: 'HD-5517_hoa-don-ban-hang-chi-nhanh-thu-duc.pdf' }]} />
+      </div> }] },
   { id: 'textarea', name: 'Textarea', category: 'Core', status: 'ready', summary: 'Multi-line Input for notes, rejection reasons and comments. Starts at `rows` lines and grows with its text up to `maxRows`, then scrolls. `maxLength` adds a counter; screen readers hear it only near the limit. Inside Field it gets the label, description and error like Input.',
     importLine: imp('Field, Textarea'),
     demos: [

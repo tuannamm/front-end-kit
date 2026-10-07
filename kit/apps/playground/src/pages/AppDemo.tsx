@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState, type ReactElement, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CalendarDays, CheckCircle2, CircleAlert, CircleCheck, Clock, FileStack, Languages, LayoutDashboard, ListFilter, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users, type LucideIcon } from 'lucide-react';
 import {
-  Alert, AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CommandPalette, type CommandItem, CountUp, EmptyState, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
+  Alert, AppShell, AvatarPicker, Breadcrumb, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CommandPalette, type CommandItem, CountUp, EmptyState, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
   KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
   StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, todayIso, useToast, type Column, type DateRange, type NotificationItem,
 } from '@dtx/ui';
@@ -252,7 +252,7 @@ export function AppDemo() {
           <Tooltip content={rail ? t('Mở rộng thanh bên', 'Expand sidebar') : t('Thu gọn thanh bên', 'Collapse sidebar')} shortcut="Ctrl B">
             <Button variant="secondary" icon aria-label={t('Thu gọn thanh bên', 'Collapse sidebar')} aria-pressed={rail} onClick={() => setRail(r => !r)}><PanelLeft /></Button>
           </Tooltip>
-          <span className="text-sm text-fg-muted">{t('Vận hành', 'Operations')} / <b className="font-medium text-fg">{t('Tổng quan', 'Overview')}</b></span>
+          <Breadcrumb aria-label={t('Đường dẫn', 'Breadcrumb')} items={[{ label: t('Vận hành', 'Operations') }, { label: t('Tổng quan', 'Overview') }]} />
           <CommandPalette items={commands} placeholder={t('Tìm lô, khách hàng, lệnh…', 'Search batches, clients, commands…')}
             trigger={<CommandButton placeholder={t('Tìm lô, khách hàng, lệnh…', 'Search batches, clients, commands…')} />} />
           <Notification items={notifications} onSelect={openNotification} onMarkAllRead={() => setRead(new Set(notifications.map(n => n.id)))}
