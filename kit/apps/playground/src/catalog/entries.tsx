@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, House, Inbox, Layers, LayoutDashboard, ListFilter, Lock, MessageSquare, ScanText, SearchX, Send, Settings, Sparkles, TrendingUp, Upload, Users } from 'lucide-react';
 import {
-  Alert, AppShell, Breadcrumb, Carousel, Collapse, Timeline, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Breadcrumb, Carousel, Collapse, Masonry, Timeline, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -12,7 +12,7 @@ import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
-import { AlertDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { AlertDemo, MasonryLiveDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -35,6 +35,15 @@ export type Demo = { title: string; note?: string; replay?: boolean; /** theme-f
 export type Entry = { id: string; name: string; category: Category; status: 'ready' | 'planned'; summary: string; importLine?: string; demos: Demo[] };
 
 const imp = (names: string) => `import { ${names} } from '@dtx/ui';`;
+const tileHeights = [150, 0, 90, 70, 150, 150, 50, 80, 50, 90, 100, 150, 60, 50, 80];
+const feedback = [
+  { who: 'Phòng Lưu trữ, Ngân hàng Đông Á Mới', text: 'Lô 03 bàn giao sớm hai ngày, độ chính xác trường thông tin vượt cam kết.' },
+  { who: 'Chi nhánh Đà Nẵng', text: 'Cần thêm trường “Nơi cấp” cho hồ sơ CCCD.' },
+  { who: 'Ban Quản lý dự án', text: 'Báo cáo tiến độ hằng tuần rõ ràng. Đề nghị bổ sung biểu đồ số trang theo ngày và tách riêng các lô có hồ sơ gốc bị rách, ố để chúng tôi theo dõi việc phục chế song song với số hoá.' },
+  { who: 'Kế toán', text: 'Hoá đơn tháng 9 đã nhận.' },
+  { who: 'Phòng Pháp chế', text: 'Biên bản nghiệm thu cần ghi rõ tỷ lệ mẫu kiểm tra 5% cho từng lô.' },
+  { who: 'Trung tâm Dữ liệu', text: 'File xuất JSON khớp schema v2. Cảm ơn đội QC đã xử lý nhanh 12 trang lỗi.' },
+];
 const tones: Tone[] = ['brand', 'ok', 'warn', 'err', 'neutral', 'violet'];
 const toneLabel: Record<Tone, string> = { brand: 'Thông tin', ok: 'Hoàn tất', warn: 'Cảnh báo', err: 'Lỗi', neutral: 'Nháp', violet: 'AI gợi ý' };
 
@@ -361,6 +370,21 @@ export const entries: Entry[] = [
       { title: '5 · Searchable', note: 'Type “bao hiem” or “vat”.', render: () => <SelectDemo label="Loại tài liệu" items={docTypeGroups} defaultValue="vat" searchable searchPlaceholder="Tìm loại tài liệu…" /> },
       { title: '6 · Mixed options', note: 'Some options have a description, some an icon, some neither.', render: () => <SelectDemo label="Trạng thái" items={statusOptions} defaultValue="all" /> },
       { title: '7 · Small, no visible label', render: () => <div className="w-52"><Select size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} defaultValue="all" /></div> }] },
+  { id: 'masonry', name: 'Masonry', category: 'Core', status: 'ready', summary: 'Columns of tiles of different heights: notes, document thumbnails, uneven widgets. Each tile goes to the shortest column; the column count follows the container width, not the viewport. Re-flows when a tile changes size (an image loads, a panel opens). Tab order is the children\'s order.',
+    importLine: imp('Masonry'),
+    demos: [
+      { title: '1 · Tiles of mixed heights', note: 'Numbered in DOM order: 1–4 fill the first row, then each tile drops into the shortest column. Resize the window: the count follows the width.', code: '<Masonry aria-label="Tài liệu">\n  {tiles.map(t => <Tile key={t.id} {...t} />)}\n</Masonry>', render: () => <div className="w-full"><Masonry aria-label="Tài liệu">
+        {tileHeights.map((h, i) => i === 1
+          ? <figure key={i} className="m-0 overflow-hidden rounded-lg border border-border bg-surface"><div className="border-b border-border"><SampleInvoice /></div><figcaption className="grid gap-1 p-3"><strong className="text-sm">Hoá đơn GTGT 0001234</strong><span className="text-xs text-fg-muted">Nhận dạng 99,1% · 2 trang</span></figcaption></figure>
+          : <div key={i} className="rounded-lg border border-border bg-surface p-3 text-sm" style={{ minHeight: h }}>{i + 1}</div>)}
+      </Masonry></div> },
+      { title: '2 · Notes of different lengths', note: 'Text tiles keep their natural height. minColumnWidth={220}.', code: '<Masonry minColumnWidth={220} aria-label="Phản hồi">{notes}</Masonry>', render: () => <div className="w-full"><Masonry minColumnWidth={220} aria-label="Phản hồi khách hàng">
+        {feedback.map(f => <blockquote key={f.who} className="m-0 grid gap-2 rounded-lg border border-border bg-surface p-4"><p className="m-0 text-sm leading-relaxed">{f.text}</p><footer className="text-xs text-fg-muted">{f.who}</footer></blockquote>)}
+      </Masonry></div> },
+      { title: '3 · Live content', note: 'Open a note or add one: the grid re-flows on every size change.', render: () => <MasonryLiveDemo /> },
+      { title: '4 · Fixed columns', note: 'columns={2} gap={8}: two columns at any width.', code: '<Masonry columns={2} gap={8}>{tiles}</Masonry>', render: () => <div className="w-full max-w-md"><Masonry columns={2} gap={8}>
+        {[96, 56, 72, 120, 64, 88].map((h, i) => <div key={i} className="rounded-md border border-border bg-surface p-2 text-sm" style={{ minHeight: h }}>{i + 1}</div>)}
+      </Masonry></div> }] },
   { id: 'timeline', name: 'Timeline', category: 'Core', status: 'ready', summary: 'Events in order down a rail: activity log, audit trail, the steps of a batch. Square markers in a tone, or icons; done, current (ringed) and pending (hollow, dashed line). Relative or exact times in a <time> element, the full time on hover.',
     importLine: imp('Timeline, type TimelineItem'),
     demos: [

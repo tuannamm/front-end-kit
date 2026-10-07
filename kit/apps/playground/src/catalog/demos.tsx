@@ -1,7 +1,7 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
-import { Alert, Badge, Button, Card, CommandButton, CommandList, CommandPalette, Field, Loadable, Menu, Pagination, Slider, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
+import { Alert, Badge, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Pagination, Slider, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -314,5 +314,32 @@ export function AlertDemo() {
       action={<Button size="sm" variant="secondary">Mở hàng đợi QC</Button>}>
       Còn 1.120 trang chưa QC. Chuyển lô sang mức Khẩn hoặc giao thêm người kiểm tra.
     </Alert>
+  );
+}
+
+const qcNotes = [
+  { title: 'Trang 14 thiếu dấu giáp lai', text: 'Đề nghị bên A bổ sung bản gốc trước khi bàn giao lô 03.' },
+  { title: 'Ảnh mờ', text: '12 trang chụp bằng điện thoại, chữ nhoè ở mép phải. Đã chuyển nhập tay.' },
+  { title: 'Sai định dạng ngày', text: 'Trường “Ngày cấp” ghi theo tháng/ngày/năm ở 38 hồ sơ của chi nhánh Đà Nẵng. Chuẩn hoá về dd/mm/yyyy trước khi xuất.' },
+  { title: 'Trùng hồ sơ', text: 'HS-0412 và HS-0419 cùng số CCCD.' },
+];
+
+/** Tiles that change height (a Collapse opens) and a tile added at the end: the grid re-flows each time. */
+export function MasonryLiveDemo() {
+  const [count, setCount] = useState(5);
+  return (
+    <div className="grid w-full gap-3">
+      <div><Button variant="secondary" size="sm" onClick={() => setCount(c => c + 1)}><Plus aria-hidden />Thêm ghi chú</Button></div>
+      <Masonry aria-label="Ghi chú QC" minColumnWidth={220}>
+        {Array.from({ length: count }, (_, i) => {
+          const n = qcNotes[i % qcNotes.length];
+          return (
+            <div key={i} className="rounded-lg border border-border bg-surface px-3 py-1">
+              <Collapse headingLevel={4} items={[{ value: 'n', title: `${i + 1}. ${n.title}`, content: n.text }]} />
+            </div>
+          );
+        })}
+      </Masonry>
+    </div>
   );
 }

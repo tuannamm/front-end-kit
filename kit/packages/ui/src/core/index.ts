@@ -10,6 +10,7 @@ export { DatePicker, DateRangePicker, Calendar, type DatePickerProps, type DateR
 export { parseDate, formatDate, todayIso, addDays, addMonths, DEFAULT_DATE_FORMAT } from './date-picker/date';
 export { FileDropzone, FileList, FileItem, UploadToast, type FileDropzoneProps, type FileItemProps, type UploadToastItem } from './file-upload/file-upload';
 export { formatBytes, acceptsFile, type FileRejection } from './file-upload/file';
+export { Masonry, type MasonryProps } from './masonry/masonry';
 export { Timeline, type TimelineProps, type TimelineItem } from './timeline/timeline';
 export { Collapse, type CollapseProps, type CollapseItem } from './collapse/collapse';
 export { Carousel, type CarouselProps } from './carousel/carousel';
