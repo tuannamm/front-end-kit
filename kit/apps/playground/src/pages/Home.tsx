@@ -185,6 +185,7 @@ export function Home() {
       <TechBackdrop className="border-b border-border">
         <div className="mx-auto grid max-w-[1240px] items-center gap-14 px-4 pt-14 pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
           <Reveal>
+            <div className="mb-8"><Logo variant="horizontal-white" width={200} /></div>
             <Display>{t(<>DIGI-TEXX<br /><em>Frontend Kit</em></>, <>DIGI-TEXX<br /><em>Frontend Kit</em></>)}</Display>
             <div className="mt-6"><Lede>{t('Bộ component React, design token và mẫu giao diện AI dùng chung cho sản phẩm và POC của DIGI-TEXX. Đúng brand, đủ sáng tối, đạt WCAG 2.2 AA ngay từ dòng code đầu tiên.', 'React components, design tokens and AI interface patterns shared by every DIGI-TEXX product and POC. On brand, light and dark, WCAG 2.2 AA from the first line of code.')}</Lede></div>
             <div className="mt-8 flex flex-wrap gap-3">
