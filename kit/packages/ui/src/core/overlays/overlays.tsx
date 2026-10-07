@@ -2,9 +2,9 @@ import type { ReactNode } from 'react';
 import { Dialog as BDialog } from '@base-ui/react/dialog';
 import { Drawer as BDrawer } from '@base-ui/react/drawer';
 import { Toast } from '@base-ui/react/toast';
-import { AlertTriangle, CheckCircle2, CircleAlert, Info, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { cx } from '../../cx';
-import { Badge } from '../badge/badge';
+import { Badge, toneIcon, type StatusTone } from '../badge/badge';
 import { Button } from '../button/button';
 
 /** Modal dialog: backdrop fades, panel scales .94 → 1 with emphasis easing; exit is faster. */
@@ -103,7 +103,7 @@ function ToastList() {
   ));
 }
 
-export type ToastTone = 'ok' | 'warn' | 'err' | 'brand';
+export type ToastTone = StatusTone;
 export type ToastOptions = {
   title: string;
   description?: string;
@@ -114,7 +114,6 @@ export type ToastOptions = {
   /** ms; 0 keeps it until closed. Default 4000, or 0 for 'err' (an error must not vanish before it is read). */
   timeout?: number;
 };
-const toneIcon: Record<ToastTone, ReactNode> = { ok: <CheckCircle2 />, warn: <AlertTriangle />, err: <CircleAlert />, brand: <Info /> };
 
 /** const toast = useToast(); toast({ title, description, tone }). Returns the toast id. */
 export function useToast() {

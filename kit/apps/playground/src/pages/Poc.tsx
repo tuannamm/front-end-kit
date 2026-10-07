@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Badge, Button, Card, CardHeader, Field, OcrShowcase, SampleInvoice, Select, normalizeOcr, type OcrDocument, type OcrStage } from '@dtx/ui';
+import { Alert, Badge, Button, Card, CardHeader, Field, OcrShowcase, SampleInvoice, Select, normalizeOcr, type OcrDocument, type OcrStage } from '@dtx/ui';
 import { sampleOptions, useSampleIndex } from '../samples';
 import { useT } from '../i18n';
 
@@ -87,7 +87,7 @@ export function Poc() {
                 { value: 'fast', label: t('Không tiền xử lý', 'No preprocessing'), description: PRESETS.fast.join(' → ') },
               ]} />
             </Field>
-            {error && <p className="m-0 text-sm text-[var(--dtx-tone-err)]" role="alert">{error}</p>}
+            {error && <Alert tone="err">{error}</Alert>}
             <div className="flex gap-2"><Button onClick={run}>{t('Chạy', 'Run')}</Button><Button variant="secondary" onClick={() => { setShown(null); setError(null); }}>{t('Xem ví dụ mẫu', 'Show the example')}</Button></div>
           </div>
         </Card>

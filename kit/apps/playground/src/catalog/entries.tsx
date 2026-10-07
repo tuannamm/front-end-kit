@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, Layers, ScanText, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  AppShell, Avatar, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Avatar, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -12,7 +12,7 @@ import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
-import { CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { AlertDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -378,6 +378,25 @@ export const entries: Entry[] = [
       { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
   { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>. tone picks the icon; an error (tone \'err\') stays until closed, is announced at once, and has a red-tinted edge.', importLine: imp('ToastProvider, useToast, type ToastOptions'),
     demos: [{ title: 'Success · error · warning · in progress', note: 'The error toast stays until you close it.', code: "const toast = useToast();\ntoast({ title: 'Đã lưu lô BH-2210', tone: 'ok' });\ntoast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi…', tone: 'err' });", render: () => <ToastDemo /> }] },
+  { id: 'alert', name: 'Alert', category: 'Core', status: 'ready', summary: 'A message that stays in the page until its cause is gone: a form that failed as a whole, a locked batch, planned maintenance. Four tones, each with its own icon and a tinted hairline; an error is announced at once. Optional action and close button. Field errors stay in Field; news of a moment ago goes to a toast.',
+    importLine: imp('Alert'),
+    demos: [
+      { title: '1 · Tones', render: () => <div className="grid w-full gap-3">
+        <Alert title="Bảo trì hệ thống lúc 22:00 tối nay">Máy chủ OCR tạm dừng khoảng 30 phút. Các lô đang chạy sẽ tiếp tục sau đó.</Alert>
+        <Alert tone="ok" title="Đã bàn giao lô NS-0418">2.105 trang, độ chính xác 99,83%. Khách hàng đã nhận thông báo.</Alert>
+        <Alert tone="warn" title="3 lô có nguy cơ trễ SLA">Lô gần hạn nhất là HD-5517, hạn 16:15.</Alert>
+        <Alert tone="err" title="Không lưu được hồ sơ HS-0142">Mất kết nối máy chủ. Dữ liệu vẫn còn trên máy này; kiểm tra mạng rồi lưu lại.</Alert>
+      </div> },
+      { title: '2 · Action and close', note: 'The close button only hides the alert; the app decides when it may come back.', code: '<Alert tone="err" title="Không lưu được hồ sơ HS-0142" action={<Button size="sm" onClick={save}>Lưu lại</Button>}>\n  Mất kết nối máy chủ. Dữ liệu vẫn còn trên máy này.\n</Alert>', render: () => <div className="grid w-full gap-3">
+        <Alert tone="err" title="Không lưu được hồ sơ HS-0142" action={<><Button size="sm">Lưu lại</Button><Button size="sm" variant="ghost">Tải bản nháp về máy</Button></>}>Mất kết nối máy chủ. Dữ liệu vẫn còn trên máy này.</Alert>
+        <AlertDemo />
+      </div> },
+      { title: '3 · Title only · text only · no icon · long text', render: () => <div className="grid w-full gap-3">
+        <Alert tone="ok" title="Đã lưu mẫu trích xuất “Hoá đơn VAT 2026”" />
+        <Alert tone="warn">Bạn đang xem dữ liệu của ca trước. Số liệu ca sáng cập nhật lúc 08:00.</Alert>
+        <Alert icon={false} title="Lô này chỉ đọc">Lô đã bàn giao cho khách hàng nên không sửa được kết quả. Liên hệ trưởng ca nếu cần mở lại.</Alert>
+        <Alert tone="err" title="Không nhận dạng được 12 trang trong lô TD-0931_phu-luc-hop-dong-tin-dung-ngan-hang-dong-a-moi-ban-scan-mau.tiff">Ảnh quá mờ hoặc bị che khuất. Quét lại các trang 4, 9, 15, 16, 22, 31, 40, 41, 42, 57, 58 và 63 ở độ phân giải tối thiểu 300 dpi rồi tải lên lại.</Alert>
+      </div> }] },
   { id: 'command-palette', name: 'Command palette', category: 'Core', status: 'ready', summary: 'Ctrl/⌘+K search over pages, records and actions. Typing filters without caring about accents or word order (“lo 5517” finds “Lô HD-5517”), ↑/↓ move, Enter runs the item and closes the palette. Groups, icons, a second line, key hints and disabled items with a reason.',
     importLine: imp('CommandPalette, CommandList, CommandButton, type CommandItem'),
     demos: [

@@ -1,5 +1,5 @@
 export { Button } from './button/button';
-export { Badge, Counter, ProgressRing, Kbd, IconTile, type Tone, type BadgeProps } from './badge/badge';
+export { Badge, Counter, ProgressRing, Kbd, IconTile, type Tone, type StatusTone, type BadgeProps } from './badge/badge';
 export { Icon, type IconProps } from './icon/icon';
 export { Avatar, AvatarPicker, type AvatarProps, type AvatarPickerProps } from './avatar/avatar';
 export { initials } from './avatar/initials';
@@ -11,6 +11,7 @@ export { parseDate, formatDate, todayIso, addDays, addMonths, DEFAULT_DATE_FORMA
 export { FileDropzone, FileList, FileItem, UploadToast, type FileDropzoneProps, type FileItemProps, type UploadToastItem } from './file-upload/file-upload';
 export { formatBytes, acceptsFile, type FileRejection } from './file-upload/file';
 export { Switch, Tabs, Segmented, Tooltip, TooltipProvider, type TabItem } from './controls/controls';
+export { Alert, type AlertProps } from './alert/alert';
 export { Dialog, DialogClose, Drawer, DrawerClose, ToastProvider, useToast, type DrawerProps, type ToastOptions, type ToastTone } from './overlays/overlays';
 export { Notification, NotificationList, type NotificationItem, type NotificationProps, type NotificationListProps } from './notification/notification';
 export { CommandPalette, CommandList, type CommandItem, type CommandPaletteProps, type CommandListProps } from './command-palette/command-palette';

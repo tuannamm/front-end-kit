@@ -17,6 +17,7 @@
 @import "./core/controls/controls.css" layer(dtx);
 @import "./core/overlays/overlays.css" layer(dtx);
 @import "./core/command-palette/command-palette.css" layer(dtx);
+@import "./core/alert/alert.css" layer(dtx);
 @import "./core/file-upload/file-upload.css" layer(dtx);
 @import "./core/avatar/avatar.css" layer(dtx);
 @import "./core/notification/notification.css" layer(dtx);

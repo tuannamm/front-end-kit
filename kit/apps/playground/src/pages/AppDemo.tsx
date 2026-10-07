@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState, type ReactElement, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CalendarDays, CheckCircle2, CircleAlert, CircleCheck, Clock, FileStack, Languages, LayoutDashboard, ListFilter, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users, type LucideIcon } from 'lucide-react';
 import {
-  AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CommandPalette, type CommandItem, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
+  Alert, AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CommandPalette, type CommandItem, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
   KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
   StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, todayIso, useToast, type Column, type DateRange, type NotificationItem,
 } from '@dtx/ui';
@@ -87,7 +87,12 @@ function BatchDrawer({ batch: b, open, onOpenChange, t, label }: { batch: Batch 
   };
   // nothing to act on while processing
   const action: Partial<Record<Batch['status'], string>> = { qc: t('Mở hàng đợi QC', 'Open QC queue'), risk: t('Mở hàng đợi QC', 'Open QC queue'), done: t('Tải kết quả', 'Download results'), error: t('Sửa mẫu trích xuất', 'Fix extraction template') };
+  const alert: Partial<Record<Batch['status'], ReactNode>> = {
+    risk: <Alert tone="warn" title={t(`Có thể trễ hạn SLA ${b.sla}`, `May miss the ${b.sla} SLA`)}>{t('Chuyển lô sang mức Khẩn hoặc giao thêm người kiểm tra.', 'Raise the batch to Urgent or add a reviewer.')}</Alert>,
+    error: <Alert tone="err" title={t('Không khớp mẫu trích xuất', 'Does not match the extraction template')}>{t('Cập nhật mẫu rồi chạy lại trích xuất cho lô này. Các trang đã quét vẫn được giữ.', 'Update the template, then run extraction again. The scanned pages are kept.')}</Alert>,
+  };
   const info = <>
+    {alert[b.status] && <div className="mb-5">{alert[b.status]}</div>}
     <dl className="m-0 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-6 gap-y-3 text-sm">
       {rows.map(([k, v]) => <Fragment key={k}><dt className="text-fg-muted">{k}</dt><dd className="m-0 font-medium dtx-num">{v}</dd></Fragment>)}
     </dl>

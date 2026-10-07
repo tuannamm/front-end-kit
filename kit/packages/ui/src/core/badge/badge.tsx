@@ -1,8 +1,11 @@
 import type { ComponentProps, ReactNode } from 'react';
-import { X } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, CircleAlert, Info, X } from 'lucide-react';
 import { cx } from '../../cx';
 
 export type Tone = 'brand' | 'ok' | 'warn' | 'err' | 'neutral' | 'violet';
+/** The tones that report a state; each has one icon, shared by Toast and Alert. */
+export type StatusTone = 'brand' | 'ok' | 'warn' | 'err';
+export const toneIcon: Record<StatusTone, ReactNode> = { brand: <Info />, ok: <CheckCircle2 />, warn: <AlertTriangle />, err: <CircleAlert /> };
 
 export type BadgeProps = ComponentProps<'span'> & {
   tone?: Tone;

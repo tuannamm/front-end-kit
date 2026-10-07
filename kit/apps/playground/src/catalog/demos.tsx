@@ -1,7 +1,7 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, CircleCheck, FileDown, FileStack, LayoutDashboard, Plus, Trash2 } from 'lucide-react';
-import { Badge, Button, Card, CommandButton, CommandList, CommandPalette, Loadable, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
+import { Alert, Badge, Button, Card, CommandButton, CommandList, CommandPalette, Loadable, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -225,4 +225,16 @@ export function CommandPaletteDemo() {
 
 export function CommandListDemo() {
   return <CommandList items={useCommandItems()} className="h-[420px] w-full max-w-[640px]" />;
+}
+
+/** Closable warning with its one action; closing it leaves a way back so the demo can be replayed. */
+export function AlertDemo() {
+  const [shown, setShown] = useState(true);
+  if (!shown) return <Button variant="secondary" onClick={() => setShown(true)}>Hiện lại cảnh báo</Button>;
+  return (
+    <Alert tone="warn" title="Lô HD-5517 có thể trễ hạn SLA 16:15" onClose={() => setShown(false)} className="w-full"
+      action={<Button size="sm" variant="secondary">Mở hàng đợi QC</Button>}>
+      Còn 1.120 trang chưa QC. Chuyển lô sang mức Khẩn hoặc giao thêm người kiểm tra.
+    </Alert>
+  );
 }
