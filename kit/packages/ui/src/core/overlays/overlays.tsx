@@ -2,8 +2,9 @@ import type { ReactNode } from 'react';
 import { Dialog as BDialog } from '@base-ui/react/dialog';
 import { Drawer as BDrawer } from '@base-ui/react/drawer';
 import { Toast } from '@base-ui/react/toast';
-import { X } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, CircleAlert, Info, X } from 'lucide-react';
 import { cx } from '../../cx';
+import { Badge } from '../badge/badge';
 import { Button } from '../button/button';
 
 /** Modal dialog: backdrop fades, panel scales .94 → 1 with emphasis easing; exit is faster. */
@@ -88,12 +89,14 @@ type ToastData = { icon?: ReactNode; body?: ReactNode };
 function ToastList() {
   const { toasts } = Toast.useToastManager();
   return toasts.map(t => (
-    <Toast.Root key={t.id} toast={t} className="dtx-toast" swipeDirection={['right', 'down']}>
+    <Toast.Root key={t.id} toast={t} className="dtx-toast" data-tone={t.type} swipeDirection={['right', 'down']}>
       <Toast.Content className="dtx-toast__content">
         {(t.data as ToastData | undefined)?.icon}
         <div className="dtx-toast__text">
           <Toast.Title className="dtx-toast__title" />
           <Toast.Description className="dtx-toast__desc" />
+          {/* renders only when the toast has an action */}
+          <Toast.Action render={<Button variant="secondary" size="sm" className="dtx-toast__action" />} />
         </div>
         <Toast.Close className="dtx-toast__close" aria-label="Đóng"><X size={14} /></Toast.Close>
         {(t.data as ToastData | undefined)?.body}
@@ -102,9 +105,31 @@ function ToastList() {
   ));
 }
 
-/** const toast = useToast(); toast({ title, description, icon }) */
+export type ToastTone = 'ok' | 'warn' | 'err' | 'brand';
+export type ToastOptions = {
+  title: string;
+  description?: string;
+  /** Picks the icon. 'err' also stays until closed and is announced at once. */
+  tone?: ToastTone;
+  /** Replaces the tone's icon. */
+  icon?: ReactNode;
+  /** One recovery step, e.g. { label: 'Thử lại', onClick: retry }. Clicking it also closes the toast. */
+  action?: { label: string; onClick: () => void };
+  /** ms; 0 keeps it until closed. Default 4000, or 0 for 'err' (an error must not vanish before it is read). */
+  timeout?: number;
+};
+const toneIcon: Record<ToastTone, ReactNode> = { ok: <CheckCircle2 />, warn: <AlertTriangle />, err: <CircleAlert />, brand: <Info /> };
+
+/** const toast = useToast(); toast({ title, description, tone }). Returns the toast id. */
 export function useToast() {
   const m = Toast.useToastManager();
-  return ({ title, description, icon, timeout = 4000 }: { title: string; description?: string; icon?: ReactNode; timeout?: number }) =>
-    m.add({ title, description, timeout, data: { icon } });
+  return ({ title, description, tone, icon, action, timeout = tone === 'err' ? 0 : 4000 }: ToastOptions) => {
+    let id = '';
+    id = m.add({
+      title, description, timeout, type: tone, priority: tone === 'err' ? 'high' : 'low',
+      data: { icon: icon ?? (tone && <Badge tone={tone} size="sm" icon={toneIcon[tone]} aria-hidden />) },
+      actionProps: action && { children: action.label, onClick: () => { action.onClick(); m.close(id); } },
+    });
+    return id;
+  };
 }

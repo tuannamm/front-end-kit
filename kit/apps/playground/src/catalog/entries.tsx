@@ -32,7 +32,7 @@ export const categories: { id: Category; folder: string; blurb: string }[] = [
 ];
 
 export type Demo = { title: string; note?: string; replay?: boolean; /** theme-fixed demo, e.g. a logo variant made for one background */ only?: 'light' | 'dark'; plain?: boolean; code?: string; render: (run: number) => ReactNode };
-export type Entry = { id: string; name: string; category: Category; status: 'ready' | 'planned'; summary: string; importLine?: string; props?: [string, string, string][]; demos: Demo[] };
+export type Entry = { id: string; name: string; category: Category; status: 'ready' | 'planned'; summary: string; importLine?: string; demos: Demo[] };
 
 const imp = (names: string) => `import { ${names} } from '@dtx/ui';`;
 const tones: Tone[] = ['brand', 'ok', 'warn', 'err', 'neutral', 'violet'];
@@ -319,14 +319,12 @@ export const entries: Entry[] = [
 
   // ───────────── Core ─────────────
   { id: 'button', name: 'Button', category: 'Core', status: 'ready', summary: 'Primary fills use Blue strong for small labels (AA). Large (19px bold) may use DIGI-TEXX Blue. Press scales to .97.',
-    importLine: imp('Button'), props: [['variant', "'primary' | 'secondary' | 'ghost' | 'danger'", 'Default primary'], ['size', "'sm' | 'md' | 'lg'", 'lg = 19px bold'], ['icon', 'boolean', 'Square icon-only; needs aria-label'], ['href', 'string', 'Renders an <a>']],
-    demos: [
+    importLine: imp('Button'), demos: [
       { title: 'Variants', code: '<Button>Lưu</Button>\n<Button variant="secondary">Huỷ</Button>', render: () => <><Button>Lưu thay đổi</Button><Button variant="secondary">Huỷ</Button><Button variant="ghost">Xem chi tiết</Button><Button variant="danger">Xoá lô</Button></> },
       { title: 'Sizes', render: () => <><Button size="sm">Small</Button><Button>Medium</Button><Button size="lg">Discover our Demo</Button></> },
       { title: 'Icon & disabled', render: () => <><Button icon variant="secondary" aria-label="Cài đặt"><Settings /></Button><Button><Sparkles />Trích xuất bằng AI</Button><Button disabled>Đang khoá</Button></> }] },
   { id: 'badge', name: 'Badge', category: 'Core', status: 'ready', summary: 'Alpha-based tones (Radix soft/surface model): one rule works in both themes. Violet is AI-only and sits next to blue.',
-    importLine: imp('Badge'), props: [['tone', "'brand' | 'ok' | 'warn' | 'err' | 'neutral' | 'violet'", ''], ['variant', "'soft' | 'surface' | 'outline' | 'solid'", 'Default soft'], ['size', "'sm' | 'md' | 'lg'", ''], ['dot / live', 'boolean', 'live = pulsing, only while running'], ['pill', 'boolean', 'Trend deltas only'], ['icon', 'ReactNode', ''], ['onRemove', '() => void', 'Removable filter chip']],
-    demos: [
+    importLine: imp('Badge'), demos: [
       { title: 'Tone × variant', plain: true, render: () => (
         <div className="dtx-card overflow-x-auto"><table className="dtx-table"><thead><tr><th>Variant</th>{tones.map(t => <th key={t}>{t}</th>)}</tr></thead><tbody>
           {(['soft', 'surface', 'outline', 'solid'] as const).map(v => <tr key={v}><td className="text-xs text-fg-muted">{v}</td>{tones.map(t => <td key={t}><Badge tone={t} variant={v}>{toneLabel[t]}</Badge></td>)}</tr>)}
@@ -341,8 +339,7 @@ export const entries: Entry[] = [
     importLine: imp('Field, Input'),
     demos: [{ title: 'States', render: () => <div className="grid w-full max-w-sm gap-4"><Field label="Tên lô tài liệu" description="Tối đa 60 ký tự."><Input defaultValue="Hồ sơ bồi thường tháng 10" /></Field><Field label="Email nhận báo cáo" error="Email chưa đúng định dạng."><Input defaultValue="qc@digi-texx" /></Field><Field label="Ghi chú"><Input placeholder="Nhập ghi chú…" /></Field></div> }] },
   { id: 'select', name: 'Select', category: 'Core', status: 'ready', summary: 'One API for every dropdown. Icon, description and group are optional per option, so any mix works. `searchable` adds an accent-insensitive search (“bao hiem” finds “Bảo hiểm”).',
-    importLine: imp('Select, type SelectOption, type SelectGroup'), props: [['items', 'SelectOption[] | SelectGroup[]', 'Flat or grouped'], ['searchable', 'boolean', 'Search box inside the popup'], ['value / defaultValue / onValueChange', 'string | null', ''], ['size', "'sm' | 'md'", ''], ['placeholder, emptyText, searchPlaceholder', 'string', '']],
-    demos: [
+    importLine: imp('Select, type SelectOption, type SelectGroup'), demos: [
       { title: '1 · Plain list', note: 'No icon, no group, no description.', code: "<Select items={[{ value: 'am', label: 'Ca sáng' }, …]} />", render: () => <SelectDemo label="Ca làm việc" items={shiftOptions} defaultValue="am" /> },
       { title: '2 · With icons', render: () => <SelectDemo label="Loại tài liệu" items={docTypeGroups.flatMap(g => g.items).map(({ description: _d, ...o }) => o)} defaultValue="vat" /> },
       { title: '3 · With descriptions', render: () => <SelectDemo label="Loại tài liệu" items={docTypeGroups.flatMap(g => g.items).map(({ icon: _i, ...o }) => o)} defaultValue="claim" /> },
@@ -362,14 +359,12 @@ export const entries: Entry[] = [
     demos: [{ title: 'Confirm', render: () => <Dialog trigger={<Button variant="danger">Xoá lô</Button>} title="Xoá lô HD-5517?" description="3.860 trang sẽ bị xoá vĩnh viễn." footer={<><DialogClose><Button variant="ghost">Huỷ</Button></DialogClose><DialogClose><Button variant="danger">Xoá</Button></DialogClose></>} /> }] },
   { id: 'drawer', name: 'Drawer', category: 'Core', status: 'ready', summary: 'Side panel for record detail or filters, or a bottom sheet on phones. Slides in from its edge (page · emphasis), exits faster; swipe toward the edge to dismiss. Header and footer stay put, the body scrolls. Popups inside (Select, DatePicker) sit above it.',
     importLine: imp('Drawer, DrawerClose'),
-    props: [['title, description', 'ReactNode', ''], ['trigger', 'ReactElement', 'Opens the drawer; or control with open / onOpenChange'], ['side', "'right' | 'left' | 'bottom'", "Default 'right'"], ['size', "'sm' | 'md' | 'lg'", 'Width 360 / 480 / 720px for left/right (default md)'], ['footer', 'ReactNode', 'Buttons; wrap closing ones in <DrawerClose>'], ['open / defaultOpen / onOpenChange', 'boolean', '']],
     demos: [
       { title: '1 · Record detail (right)', note: 'Long body scrolls under a fixed header and footer.', render: () => <DrawerRecord /> },
       { title: '2 · Filters (left, sm)', note: 'Select and DateRangePicker popups open above the drawer.', render: () => <DrawerFilters /> },
       { title: '3 · Bottom sheet', note: 'Drag the handle or swipe down to close.', render: () => <Drawer side="bottom" trigger={<Button variant="secondary">Thao tác với lô</Button>} title="Lô HD-5517" description="3.860 trang · Nguy cơ trễ SLA"><div className="grid gap-2"><Button variant="secondary">Chuyển ưu tiên Khẩn</Button><Button variant="secondary">Giao cho người khác</Button><DrawerClose><Button variant="danger">Huỷ lô</Button></DrawerClose></div></Drawer> }] },
   { id: 'upload', name: 'File upload / dropzone', category: 'Core', status: 'ready', summary: 'FileDropzone picks files (drop, click or Enter), checks type and size, and lists rejections with the reason; it never uploads. Upload progress goes to UploadToast: count, overall bar and a collapsible list with retry / remove, still visible after a drawer or dialog closes. FileList + FileItem show the same rows inline when a toast does not fit. The hint defaults to the accepted formats and size limit.',
     importLine: imp('FileDropzone, UploadToast, FileList, FileItem, formatBytes'),
-    props: [['onFiles', '(files: File[]) => void', 'Accepted files of one pick or drop'], ['onReject', '(r: { file, reason }[]) => void', 'Also listed under the dropzone until the next pick'], ['accept', 'string', 'Same as <input accept>: ".pdf,image/*"'], ['maxSize', 'number', 'Bytes'], ['multiple', 'boolean', 'Default true'], ['label, hint, description, error', 'ReactNode', 'hint defaults to "PDF, JPG · tối đa 20 MB"'], ['compact', 'boolean', 'One row, for forms'], ['disabled', 'boolean', ''], ['UploadToast.items', '(FileItemProps & { id })[]', 'Current files; stays while uploading or failed, closes 5s after all are done'], ['FileItem', '{ name, size, status, progress, error, thumb, onRemove, onRetry }', "status: 'queued' | 'uploading' | 'done' | 'error'"]],
     demos: [
       { title: '1 · Drop or pick, progress in a toast', note: 'Progress shows bottom-right. Try a file over 20 MB or a .docx to see rejections. Every 3rd file fails once; retry it from the toast.', render: () => <UploadDemo /> },
       { title: '2 · File states (inline FileList)', note: 'Static: queued, uploading, done, error. The same rows UploadToast lists.', render: () => (
@@ -381,11 +376,10 @@ export const entries: Entry[] = [
         </FileList>) },
       { title: '3 · Compact, one file, in a form', render: () => <div className="grid w-full max-w-md gap-4"><Field label="Tên mẫu"><Input defaultValue="Hoá đơn VAT" /></Field><FileDropzone compact multiple={false} label="Tệp mẫu" description="Một trang PDF đã điền đủ các trường." accept=".pdf" maxSize={10 * 1024 * 1024} onFiles={() => {}} /></div> },
       { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
-  { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>.', importLine: imp('ToastProvider, useToast'),
-    demos: [{ title: 'Trigger', code: "const toast = useToast();\ntoast({ title: 'Đã lưu', description: '…', icon })", render: () => <ToastDemo /> }] },
+  { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>. tone picks the icon; an error (tone \'err\') stays until closed, is announced at once, has a red-tinted edge and can carry one recovery action such as “Thử lại”.', importLine: imp('ToastProvider, useToast, type ToastOptions'),
+    demos: [{ title: 'Success · error · warning · in progress', note: 'The error toast stays until you close it or press “Thử lại”.', code: "const toast = useToast();\ntoast({ title: 'Đã lưu lô BH-2210', tone: 'ok' });\ntoast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi…', tone: 'err',\n  action: { label: 'Thử lại', onClick: resend } });", render: () => <ToastDemo /> }] },
   { id: 'notification', name: 'Notification', category: 'Core', status: 'ready', summary: 'Bell button with the unread count; clicking it opens the notifications in a popover. Unread rows have a blue tint, a heavier title and a square dot. Picking a row closes the panel; marking it read and loading the list are the app\'s job. NotificationList is the same panel on its own, for a full page. Times read “5 phút trước”, then calendar days, then the date.',
     importLine: imp('Notification, NotificationList, type NotificationItem'),
-    props: [['items', 'NotificationItem[]', '{ id, title, description?, time?, read?, icon?, tone?, href? }, in display order'], ['onSelect', '(item) => void', 'A row was picked; Notification closes the popover'], ['onMarkAllRead', '() => void', 'Shows “Đánh dấu đã đọc” while something is unread'], ['loading · error · onRetry', 'boolean · ReactNode · () => void', 'Skeleton rows, or the error in place of the list with a “Thử lại” button'], ['footer', 'ReactNode', 'E.g. a “Xem tất cả” link'], ['open / defaultOpen / onOpenChange', 'boolean', 'Notification only']],
     demos: [
       { title: '1 · Bell in a topbar', note: 'Click the bell, pick a row to mark it read, or add one to see the count pop.', code: '<Notification items={items} onSelect={n => markRead(n.id)} onMarkAllRead={markAllRead}\n  footer={<Button variant="ghost" size="sm" href="/notifications">Xem tất cả thông báo</Button>} />', render: () => <NotificationDemo /> },
       { title: '2 · The open panel (NotificationList)', note: 'Static: 2 unread, 3 read, one long description clamped to two lines.', render: () => <div className="w-full max-w-[380px] rounded-lg border border-border bg-surface"><NotificationList items={notifications} onSelect={() => {}} onMarkAllRead={() => {}} footer={<Button variant="ghost" size="sm">Xem tất cả thông báo</Button>} /></div> },
@@ -393,20 +387,17 @@ export const entries: Entry[] = [
       { title: '4 · Count: none, a few, more than 99', render: () => <><Notification items={[]} /><Notification items={manyUnread(3)} /><Notification items={manyUnread(120)} /></> }] },
   { id: 'pdf-viewer', name: 'PDF Viewer', category: 'Core', status: 'ready', summary: 'Scrolling column of PDF pages with page and zoom controls and a download button. Takes a URL, a File/Blob or the bytes. pdf.js loads with the first viewer and parses in a worker; only pages near the view are drawn, so long files stay light. Zoom keeps your place; “Vừa chiều rộng” follows the container width. Loading (with progress for URLs), empty, error (password, not a PDF, HTTP) and per-page failure states are built in. No text layer yet: pages are images to assistive tech.',
     importLine: imp('PdfViewer'),
-    props: [['src', 'string | Blob | ArrayBuffer | Uint8Array', 'URL, File or bytes; nothing = empty state. Keep it stable: a new value reopens the file'], ['fileName', 'string', 'Toolbar title, region name, download file name'], ['defaultZoom', "number | 'fit'", "Default 'fit' (every page fills the width); 1 = 100%"], ['download', 'boolean', 'Download button, default true'], ['className', 'string', 'Size it here: height 640px by default']],
     demos: [
       { title: '1 · Multi-page file from a URL', note: 'Synthetic 4-page contract: 3 portrait A4 pages and a landscape one. Scroll, type a page number, zoom with − / +.', code: '<PdfViewer src="/demo/hop-dong-mau.pdf" fileName="hop-dong-mau.pdf" />', render: () => <PdfViewer src={demoPdf} fileName="hop-dong-mau.pdf" className="w-full" /> },
       { title: '2 · Open a file from the computer', note: 'The File goes straight to the viewer; nothing is uploaded.', code: 'const [file, setFile] = useState<File | null>(null);\n<FileDropzone compact multiple={false} accept=".pdf" onFiles={fs => setFile(fs[0])} />\n<PdfViewer src={file} fileName={file?.name} />', render: () => <PdfOpenDemo /> },
       { title: '3 · Empty · loading · error', render: () => <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3"><PdfViewer className="h-[300px]" /><PdfViewer src={stalled} className="h-[300px]" /><PdfViewer src={notPdf} fileName="khong-phai-pdf.pdf" className="h-[300px]" /></div> }] },
   { id: 'avatar', name: 'Avatar', category: 'Core', status: 'ready', summary: 'Photo when src loads; otherwise initials of the first + last word (Vietnamese diacritics kept), or a person icon when the name has no letter. Square or circle, navy tile. The name is the accessible label. AvatarPicker makes it a button that opens a dialog to pick, preview, remove and save a photo (it hands back the File; uploading is the app\'s job).', importLine: imp('Avatar, AvatarPicker'),
-    props: [['name', 'string', 'Accessible label, tooltip and initials source'], ['src', 'string', 'Photo URL; initials show while it loads and if it fails'], ['shape', "'square' | 'circle'", "Default 'square'"], ['size', "'sm' | 'md' | 'lg'", "28 / 32 / 64px (lg for a profile preview), default 'md'"], ['AvatarPicker.onChange', '(file: File | null) => void', 'On save; null = photo removed'], ['AvatarPicker.accept / maxSize', 'string · number', 'Default PNG, JPEG, WEBP · 5 MB']],
     demos: [
       { title: '1 · Square and circle', render: () => <><Avatar name="Nguyễn Thị Thuận" /><Avatar name="Nguyễn Thị Thuận" shape="circle" /><Avatar name="Trần Minh" size="sm" /><Avatar name="Trần Minh" size="sm" shape="circle" /><Avatar name="Nguyễn Thị Thuận" size="lg" shape="circle" /></> },
       { title: '2 · Photo, broken photo, fallbacks', code: '<Avatar name="Phạm Hồng Nhung" src={user.photoUrl} shape="circle" />\n<Avatar name="Lê Văn An" src="/khong-ton-tai.jpg" />  // falls back to "LA"\n<Avatar name="" />  // no letter: person icon', render: () => <><Avatar name="Phạm Hồng Nhung" src={demoPhoto} shape="circle" /><Avatar name="Phạm Hồng Nhung" src={demoPhoto} /><Avatar name="Lê Văn An" src="/khong-ton-tai.jpg" shape="circle" /><Avatar name="Đặng" shape="circle" /><Avatar name="" shape="circle" /></> },
       { title: '3 · Click to change the photo (AvatarPicker)', code: 'const [src, setSrc] = useState<string>();\n<AvatarPicker name="Nguyễn Thị Thuận" src={src}\n  onChange={file => setSrc(file ? URL.createObjectURL(file) : undefined)} />', render: () => <AvatarPickerDemo /> }] },
   { id: 'icon', name: 'Icon', category: 'Core', status: 'ready', summary: 'Any lucide-react icon on the kit size scale (12 · 14 · 16 · 20 · 24px) and tones. Decorative by default (hidden from assistive tech); give it a label when no text next to it says what it means, and a Tooltip so sighted users get the same words. Inside Button, Badge and other kit parts the part sets the size, so a bare lucide icon works there too.',
     importLine: imp('Icon'),
-    props: [['icon', 'LucideIcon', 'From lucide-react, e.g. Upload; browse at lucide.dev/icons'], ['size', "'xs' | 'sm' | 'md' | 'lg' | 'xl'", "12 / 14 / 16 / 20 / 24px, default 'md'"], ['tone', "Tone | 'muted'", 'Default: colour of the surrounding text'], ['label', 'string', 'Makes it role="img" with this name; leave out when text beside it says the same']],
     demos: [
       { title: '1 · Sizes', render: () => <>{(['xs', 'sm', 'md', 'lg', 'xl'] as const).map(s => <span key={s} className="grid grid-rows-[24px_auto] place-items-center gap-2 text-xs text-fg-muted"><Icon icon={FileStack} size={s} /><span>{s}</span></span>)}</> },
       { title: '2 · Tones', render: () => <>{(['brand', 'ok', 'warn', 'err', 'neutral', 'violet', 'muted'] as const).map(t => <span key={t} className="grid justify-items-center gap-2 text-xs text-fg-muted"><Icon icon={t === 'ok' ? CircleCheck : t === 'warn' ? AlertTriangle : t === 'err' ? CircleAlert : Sparkles} size="lg" tone={t} /><span>{t}</span></span>)}</> },
@@ -414,7 +405,6 @@ export const entries: Entry[] = [
         render: () => <><Button variant="secondary"><ScanText />Chạy OCR</Button><p className="m-0 text-sm"><Icon icon={FileStack} size="sm" tone="muted" /> HD-5517 · 3.860 trang</p><Tooltip content="Đã duyệt"><span tabIndex={0} className="inline-grid rounded-sm"><Icon icon={CircleCheck} tone="ok" size="lg" label="Đã duyệt" /></span></Tooltip><Tooltip content="Cần kiểm tra lại"><span tabIndex={0} className="inline-grid rounded-sm"><Icon icon={AlertTriangle} tone="warn" size="lg" label="Cần kiểm tra lại" /></span></Tooltip></> }] },
   { id: 'checkbox', name: 'Checkbox & Radio', category: 'Core', status: 'ready', summary: 'Checkbox for one on/off choice, CheckboxGroup for several, RadioGroup for exactly one from a short visible list (more than ~6 options: use Select). Whole row is clickable; arrow keys move inside a RadioGroup.',
     importLine: imp('Checkbox, CheckboxGroup, RadioGroup, type ChoiceOption'),
-    props: [['label', 'ReactNode', 'Checkbox label, or group legend'], ['options', 'ChoiceOption[]', '{ value, label, description?, disabled? }'], ['value / defaultValue / onValueChange', 'string[] (CheckboxGroup) · string (RadioGroup)', ''], ['checked / defaultChecked / onCheckedChange', 'boolean', 'Checkbox'], ['indeterminate', 'boolean', 'Checkbox mixed state'], ['selectAll', 'ReactNode', 'CheckboxGroup parent checkbox label'], ['row', 'boolean', 'Options side by side'], ['description, error', 'ReactNode', ''], ['disabled, required, name', '', '']],
     demos: [
       { title: '1 · Checkbox states', note: 'Static: unchecked, checked, mixed, disabled.', render: () => <div className="grid gap-1"><Checkbox label="Tự động gửi email" /><Checkbox label="Bỏ qua trang trắng" defaultChecked /><Checkbox label="Một phần lô đã chọn" indeterminate /><Checkbox label="Khoá cấu hình" disabled /><Checkbox label="Bắt buộc QC lần 2" disabled defaultChecked /></div> },
       { title: '2 · Description and error', render: () => <div className="grid max-w-sm gap-3"><Checkbox label="Lưu ảnh gốc 90 ngày" description="Dung lượng tăng khoảng 2 lần." defaultChecked /><Checkbox label="Tôi đồng ý với điều khoản xử lý dữ liệu" required error="Cần đồng ý điều khoản trước khi tạo lô." /></div> },
@@ -424,8 +414,7 @@ export const entries: Entry[] = [
       { title: '6 · RadioGroup in a row, disabled option', render: () => <RadioGroup label="Ca làm việc" row defaultValue="am" options={[{ value: 'am', label: 'Ca sáng' }, { value: 'pm', label: 'Ca chiều' }, { value: 'night', label: 'Ca đêm', disabled: true }]} /> },
       { title: '7 · Group error', render: () => <RadioGroup label="Ngôn ngữ tài liệu" row options={[{ value: 'vi', label: 'Tiếng Việt' }, { value: 'en', label: 'English' }, { value: 'mixed', label: 'Song ngữ' }]} error="Chọn ngôn ngữ để chọn đúng mô hình OCR." /> }] },
   { id: 'multiselect', name: 'MultiSelect', category: 'Core', status: 'ready', summary: 'Several values as removable chips. Same items as Select (flat, grouped, icon, description). Typing filters accent-insensitively; Backspace removes the last chip, ← / → move between chips.',
-    importLine: imp('MultiSelect, type SelectOption, type SelectGroup'), props: [['items', 'SelectOption[] | SelectGroup[]', 'Same as Select'], ['value / defaultValue / onValueChange', 'string[]', ''], ['size', "'sm' | 'md'", ''], ['placeholder, emptyText', 'string', ''], ['disabled', 'boolean', '']],
-    demos: [
+    importLine: imp('MultiSelect, type SelectOption, type SelectGroup'), demos: [
       { title: '1 · Plain list', code: "<MultiSelect items={shiftOptions} defaultValue={['am', 'pm']} />", render: () => <MultiSelectDemo label="Ca làm việc" items={shiftOptions} defaultValue={['am', 'pm']} /> },
       { title: '2 · Empty', note: 'Placeholder until the first chip.', render: () => <MultiSelectDemo label="Ca làm việc" items={shiftOptions} placeholder="Chọn ca…" /> },
       { title: '3 · Grouped + icon + description', note: 'Type “nhan su” or “ngan hang”.', render: () => <MultiSelectDemo label="Loại tài liệu" items={docTypeGroups} defaultValue={['vat', 'claim']} /> },
@@ -435,7 +424,6 @@ export const entries: Entry[] = [
       { title: '7 · Disabled', render: () => <MultiSelectDemo label="Ca làm việc" items={shiftOptions} defaultValue={['night']} disabled /> }] },
   { id: 'daterange', name: 'DateRangePicker', category: 'Core', status: 'ready', summary: 'One bar showing “from – to”. In the calendar the first click sets the start, the second the end, in either order; the band previews the range under the pointer or keyboard focus. No limits unless you pass `min` / `max`. Value { from, to } in ISO; a half-picked range is never emitted (Escape keeps the old one).',
     importLine: imp('DateRangePicker, type DateRange'),
-    props: [['value / defaultValue / onValueChange', '{ from: string | null; to: string | null }', 'ISO'], ['min / max', 'string', 'Optional ISO bounds, inclusive. Default: none'], ['format', 'string', "As DatePicker, default 'dd/MM/yyyy'"], ['label / aria-label', 'ReactNode / string', 'Visible label, or a name when there is none'], ['description, error', 'ReactNode', ''], ['size, placeholder, disabled', '', ''], ['name', 'string', 'Submits nameFrom / nameTo']],
     demos: [
       { title: '1 · Controlled, no limits', code: '<DateRangePicker label="Kỳ báo cáo" value={range} onValueChange={setRange} />', render: () => <DateRangeControlled /> },
       { title: '2 · Empty', render: () => <div className="w-72"><DateRangePicker label="Ngày nhận hồ sơ" /></div> },
@@ -445,7 +433,6 @@ export const entries: Entry[] = [
       { title: '6 · Calendar in range mode (the open state)', note: 'Ends filled, days between on a tinted band.', render: () => <div className="w-[296px] rounded-md border border-border bg-surface p-2"><Calendar range={{ from: addDays(todayIso(), -4), to: addDays(todayIso(), 5) }} /></div> }] },
   { id: 'datepicker', name: 'DatePicker · Calendar', category: 'Core', status: 'ready', summary: 'Type dd/MM/yyyy (also 5-10-2026 or 05102026), or any `format`, or pick from a Monday-first calendar. Value is an ISO string (“2026-10-05”): no timezone shifts. Invalid or out-of-range typing reverts on blur. Calendar keys: arrows, Home/End, PageUp/PageDown (+Shift = year); Alt+↓ opens it from the input.',
     importLine: imp('DatePicker, Calendar, parseDate, formatDate'),
-    props: [['value / defaultValue / onValueChange', 'string | null', "ISO 'yyyy-MM-dd'"], ['min / max', 'string', 'ISO, inclusive'], ['format', 'string', "dd / d, MM / M, yyyy, any separator. Default 'dd/MM/yyyy'"], ['size', "'sm' | 'md'", ''], ['placeholder', 'string', 'Default: format in lower case'], ['name', 'string', 'Submits the ISO value'], ['disabled', 'boolean', '']],
     demos: [
       { title: '1 · Controlled', note: 'Type “5/10/2026” or “05102026”.', code: '<DatePicker value={value} onValueChange={setValue} />', render: () => <DatePickerControlled /> },
       { title: '2 · Custom format', note: 'Same ISO value, different display. Typing follows the format order.', code: '<DatePicker format="yyyy-MM-dd" value={value} onValueChange={setValue} />', render: () => <DatePickerFormats /> },
@@ -460,15 +447,13 @@ export const entries: Entry[] = [
     demos: [{ title: 'Card', render: () => <Card className="w-full max-w-md"><CardHeader title="Hàng đợi QC" action={<Badge variant="surface">14 lô</Badge>} /><div className="p-4 text-sm text-fg-muted">Nội dung</div></Card> }] },
   { id: 'app-shell', name: 'AppShell & Sidebar', category: 'Layout', status: 'ready', summary: 'Workspace header, collapsible groups (height animates), active bar, counts, attention counters, shortcut hints on hover, 60px rail mode.',
     importLine: imp('AppShell, Sidebar, SidebarWorkspace, SidebarGroup, SidebarItem, SidebarFooter, Topbar, CommandButton'),
-    props: [['AppShell.rail', 'boolean', 'Icon strip; labels become tooltips'], ['AppShell.fill', 'boolean', 'Edge to edge in a parent with a set height; sidebar stays, main scrolls (see App page)'], ['SidebarItem.count', 'number', 'Muted; swaps to kbd on hover'], ['SidebarItem.badge', 'ReactNode', 'For items needing attention'], ['SidebarItem.alert', 'boolean', 'Amber dot in rail mode']],
     demos: [{ title: 'Interactive', plain: true, render: () => <RailDemo /> }] },
   planned('command-palette', 'Command palette', 'Layout', 'Ctrl/⌘+K: jump to batches, clients, actions.'),
   planned('empty-state', 'Empty state', 'Layout', 'Mascot (64–160px), one sentence, one action.'),
 
   // ───────────── Data ─────────────
   { id: 'kpi', name: 'KpiCard', category: 'Data', status: 'ready', summary: 'One structure for every KPI: label + badge, value, 28px viz row, caption with icon. Attention is shown by badge, viz and icon, never by card chrome.',
-    importLine: imp('KpiCard'), props: [['label, value, unit', '', ''], ['badge', 'ReactNode', 'Top-right status'], ['viz', 'ReactNode', 'Sparkline / TargetBar / CategoryBar'], ['caption, captionIcon, tone', '', 'tone colours the icon']],
-    demos: [{ title: 'Four variants', plain: true, render: () => (
+    importLine: imp('KpiCard'), demos: [{ title: 'Four variants', plain: true, render: () => (
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label="Tài liệu xử lý hôm nay" badge={<Badge size="sm" tone="ok" variant="surface">▲ 12.4%</Badge>} value={<CountUp value={48210} />} viz={<Sparkline data={[4, 7, 6, 11, 10, 15, 14, 20, 19, 23]} />} tone="ok" captionIcon={<TrendingUp />} caption={<><b>+5,320</b> so với hôm qua</>} />
         <KpiCard label="Tự động hoàn toàn (STP)" badge={<Badge size="sm" tone="ok" variant="surface">▲ 2.1 pt</Badge>} value="87.3" unit="%" viz={<Sparkline data={[8, 9, 7, 10, 12, 11, 14, 16, 15, 18]} />} tone="ok" captionIcon={<TrendingUp />} caption={<><b>Tăng 4 tuần</b> liên tiếp</>} />
@@ -522,14 +507,12 @@ export const entries: Entry[] = [
   // ───────────── OCR ─────────────
   { id: 'ocr-showcase', name: 'OcrShowcase (POC player)', category: 'AI · OCR', status: 'ready', summary: 'Give it an image + engine JSON (OcrDocument) and it plays the pipeline: raw → unwarp → binarize → OCR_det → OCR_rec → extraction. Try your own data on the POC page.',
     importLine: imp('OcrShowcase, normalizeOcr, type OcrDocument') + "\n<OcrShowcase data={json} stages={['unwarp','binarize','detect','recognize','extract']} />",
-    props: [['data', 'OcrDocument | NormalizedOcr', 'image + lines(box,text,confidence) + regions? + fields?'], ['stages', "OcrStage[]", "crop | unwarp | deskew | denoise | binarize | grayscale | detect | recognize | layout | extract"], ['stage / onStageChange', 'number', 'Controlled; 0 = raw'], ['autoPlay, loop, interval', '', 'Built-in player'], ['scan', 'boolean', 'Beam during detection'], ['page', 'ReactNode', 'Used when data.image is absent']],
     demos: [
       { title: 'Real document · project 1266', note: 'seg → rec v2 → LiLT v11 output from the test split, played through the same component.', plain: true, render: () => <RealShowcase /> },
       { title: 'Default pipeline (sample invoice)', replay: true, plain: true, render: run => <SampleShowcase run={run} /> },
       { title: 'With layout analysis', replay: true, plain: true, render: run => <SampleShowcase run={run} stages={['crop', 'deskew', 'detect', 'recognize', 'layout', 'extract']} /> }] },
   { id: 'box-overlay', name: 'BoxOverlay', category: 'AI · Shared', status: 'ready', summary: 'Bounding boxes over any page (0–1 coordinates), built to check the AI reading against the original. lens (default): the region magnified with the AI text directly beneath, same scale and left edge. blink: the box flips original ↔ AI in place. Boxes are keyboard-reachable buttons.',
-    importLine: imp('BoxOverlay, type OcrBox'), props: [['boxes', 'OcrBox[]', '{ id, x, y, w, h, text?, confidence?, kind? }'], ['colorBy', "'confidence' | 'kind' | 'plain'", ''], ['showLabels', 'boolean', 'Region tags'], ['selectedId / onSelect', '', ''], ['hideText', 'boolean', 'Detection stage'], ['hover', "'lens' | 'blink'", 'Compare mode (default lens)'], ['pinnedId', 'string | null', 'Render a box in its hover state without a pointer']],
-    demos: [
+    importLine: imp('BoxOverlay, type OcrBox'), demos: [
       { title: 'Real scan · project 1266 (lens)', note: 'Real civil-registry pages with real seg → rec v2 output. Confidence = recognition score.', plain: true, render: () => <RealBoxes /> },
       { title: 'Real scan · blink', plain: true, render: () => <RealBoxes hover="blink" /> },
       { title: 'Real scan · boxes appear under the scan', note: '<ScanBeam> around <BoxOverlay>: the beam reveals the boxes.', replay: true, plain: true, render: run => <RealBoxes key={run} scan /> },
@@ -542,8 +525,7 @@ export const entries: Entry[] = [
   { id: 'confidence', name: 'Confidence', category: 'AI · Shared', status: 'ready', summary: 'ConfidenceBadge, ConfidenceBar and ConfidenceDots (five square dots, the logo motif) share thresholds (default high 95, low 80). confidenceLevel() for your own logic.', importLine: imp('ConfidenceBadge, ConfidenceBar, ConfidenceDots, confidenceLevel'),
     demos: [{ title: 'Levels', render: () => <div className="grid w-full max-w-md gap-3">{[99.7, 95.2, 91.3, 86.4, 72.5].map(v => <div key={v} className="grid grid-cols-[auto_auto_1fr] items-center gap-3"><ConfidenceDots value={v} /><ConfidenceBadge value={v} showLabel /><ConfidenceBar value={v} /></div>)}</div> }] },
   { id: 'document-scan', name: 'DocumentScan', category: 'AI · Extraction', status: 'ready', summary: 'Hero extraction visual composed from ScanBeam (vertical) + row highlights + field reveal: each linked row highlights as the beam passes and its field appears with a confidence score. Auto-plays and loops, or control `phase`.',
-    importLine: imp('DocumentScan, type ScanRow, type ScanField'), props: [['rows', 'ScanRow[]', '{ label, value, field? } | { rule: true }'], ['fields', 'ScanField[]', '{ key, value, confidence }'], ['phase', "'idle' | 'scanning' | 'done'", 'Leave undefined to auto-play'], ['loop, scanMs, lowConfidence', '', '']],
-    demos: [
+    importLine: imp('DocumentScan, type ScanRow, type ScanField'), demos: [
       { title: 'Full loop', replay: true, plain: true, render: run => <ScanPhaseDemo run={run} /> },
       { title: 'Phase 1 · idle', plain: true, render: run => <ScanPhaseDemo run={run} phase="idle" /> },
       { title: 'Phase 2 · scanning (beam + highlight + field reveal)', replay: true, plain: true, render: run => <ScanPhaseDemo run={run} phase="scanning" /> },
@@ -563,7 +545,6 @@ export const entries: Entry[] = [
   { id: 'pixel-steps', name: 'Pixel steps · before/after', category: 'AI · Preprocess', status: 'ready',
     summary: 'Binarize, denoise and grayscale are a before/after PAIR of pages: the service\'s two images. The kit has no component and no step type for them. Show any pair with CompareSlider (by hand) or ScanBeam (by scan), same before/after props. The synthetic demos below fake the pair with a playground-only helper.',
     importLine: imp('CompareSlider, ScanBeam') + '\n<CompareSlider before={<img src={raw} />} after={<img src={clean} />} />\n<ScanBeam before={<img src={raw} />} after={<img src={clean} />} />',
-    props: [['before', 'ReactNode', 'Raw page (real image)'], ['after', 'ReactNode', 'Processed page (real image)']],
     demos: [
       { title: 'Real pair · stengg /preprocess', note: 'Raw page and the service\'s cleaned page, shown both ways with the same before/after props.', plain: true, replay: true, render: run => <RealEnhance key={run} /> },
       ...(['binarize', 'denoise', 'grayscale'] as const).map(step => ({ title: `${step} (synthetic) · slider and scan`, replay: true, plain: true,
@@ -574,12 +555,6 @@ export const entries: Entry[] = [
     demos: [{ title: 'Raw vs binarized', render: () => <div className="w-full max-w-sm"><CompareSlider {...demoPair('binarize', <SampleInvoice />)} /></div> }] },
   { id: 'scan-beam', name: 'ScanBeam', category: 'AI · Shared', status: 'ready', summary: 'The one scanning effect in the kit. It owns the reveal: everything inside (BoxOverlay boxes, a `before` → children wipe, any <ScanReveal>) appears in sync with the beam. reveal sets how: progressive (line by line under the beam), whole (pops in when touched) or none.',
     importLine: imp('ScanBeam, ScanReveal') + '\n<ScanBeam direction="vertical" duration={2000} reveal="progressive">\n  <BoxOverlay boxes={lines}>{page}</BoxOverlay>\n</ScanBeam>',
-    props: [['direction', "'vertical' | 'horizontal'", 'Default vertical'], ['duration', 'number', 'ms per pass, default 2400'],
-      ['reveal', "'progressive' | 'whole' | 'none'", 'How content inside appears. Default progressive'],
-      ['before', 'ReactNode', 'Page shown ahead of the beam; children is revealed behind it (wipe)'],
-      ['beam', 'boolean', 'false hides the beam line, keeps the reveal (pure wipe)'],
-      ['repeat', "number | 'infinite'", 'Default 1; content reveals on the first pass'], ['active', 'boolean', 'Show and play; change key to replay'],
-      ['band', 'number', 'Glow thickness px, default 48'], ['onEnd', '() => void', 'After the last pass']],
     demos: [
       { title: 'Beam only (reveal="none")', replay: true, render: run => <div className="w-full max-w-xs"><ScanBeam key={run} reveal="none" duration={2000}><SampleInvoice /></ScanBeam></div> },
       { title: 'Horizontal, looping', render: () => <div className="w-full max-w-xs"><ScanBeam reveal="none" direction="horizontal" repeat="infinite" duration={1800}><SampleInvoice /></ScanBeam></div> },

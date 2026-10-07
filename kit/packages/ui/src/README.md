@@ -19,6 +19,8 @@ Same for core: one folder per component, `core/<component>/` holding its `.tsx`,
 (e.g. `core/date-picker/`: `date-picker.tsx`, `date-picker.css`, `date.ts`, `date.check.ts`). Shared base rules live in `base.css`.
 Import order in `styles.css` is cascade order: base, then components in dependency order (select before date-picker, which restyles its popup).
 `npm test` runs every `src/**/*.check.ts`, so a new check needs no registration.
+Every folder that exports a component has a `README.md` whose `## Props` tables are the single source for props: the
+catalog renders them, and `docs.check.ts` fails when one is missing or no longer matches the source (parser: `props-doc.ts`).
 
 Before/after rule: a pixel step (binarize, denoise, grayscale, enhance) is a pair of pages (the service's two images),
 never a component or a step name. Pick the presentation: `<CompareSlider before after>` (by hand) or

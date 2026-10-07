@@ -23,8 +23,11 @@ Guidance for AI coding agents working in this repo. Read `README.md` first for s
   (`shared, preprocess, ocr, extraction`; later `try-on, enhance, remove-bg`). Used by ≥ 2 tasks → `ai/shared/`.
   Never flatten new files into `src/`. Each task folder owns its CSS; `styles.css` imports it into `@layer dtx`.
 - Core components: one folder each, `core/<component>/<component>.tsx` + `<component>.css` + `README.md` (+ helpers,
-  `*.check.ts`). The README's `## Props` has a `### Name` table per export; `core/structure.check.ts` fails `npm test`
-  when a file, a component table or a prop row is missing, or a documented prop no longer exists.
+  `*.check.ts`). Every other folder that exports a component has a `README.md` too.
+- Props are documented once, in the README's `## Props` (`### Name` + `| Prop | Type | Default | Description |`). The
+  catalog renders those tables for the names in an entry's `importLine`; never hand-write props in `entries.tsx`.
+  `src/docs.check.ts` fails `npm test` when a README, a component block or a prop row is missing, or a documented prop
+  no longer exists.
   Import its CSS in `styles.css` after `base.css` and after any component it overrides (import order = cascade order).
 - **One job per component; compose.** Examples already in the kit:
   - `ScanBeam` is the only scan/wipe effect. It owns the reveal (`reveal="progressive" | "whole" | "none"`); anything

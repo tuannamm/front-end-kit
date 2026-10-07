@@ -4,6 +4,16 @@ import { Badge, Button, Card, DataTable, Input, Reveal, Segmented } from '@dtx/u
 import { categories, entries, type Entry } from './entries';
 import { Stage } from './demos';
 import { useT } from '../i18n';
+import { readPropsDocs } from '../../../../packages/ui/src/props-doc';
+
+// Props come from the components' READMEs, the same tables `npm test` checks against the source (docs.check.ts)
+const readmes = import.meta.glob<string>('../../../../packages/ui/src/**/README.md', { query: '?raw', import: 'default', eager: true });
+const propsDocs = new Map(Object.values(readmes).flatMap(readPropsDocs).map(d => [d.name, d]));
+/** README blocks for the names in an entry's import line, e.g. "Notification, type NotificationItem". */
+const docsFor = (importLine?: string) => (/\{([^}]*)\}/.exec(importLine ?? '')?.[1].split(',') ?? []).map(n => n.trim().replace(/^type /, '')).flatMap(n => propsDocs.get(n) ?? []);
+/** `code` and **bold** of a README cell. */
+const inline = (s: string) => s.split(/(`[^`]+`|\*\*[^*]+\*\*)/).map((p, i) =>
+  p.startsWith('`') && p.endsWith('`') && p.length > 1 ? <code key={i}>{p.slice(1, -1)}</code> : p.startsWith('**') && p.endsWith('**') && p.length > 4 ? <b key={i} className="font-medium text-fg">{p.slice(2, -2)}</b> : p);
 
 const fold = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
 
@@ -57,6 +67,7 @@ function DemoBlock({ d, theme }: { d: Entry['demos'][number]; theme: DemoTheme }
 function EntryView({ e, theme, setTheme }: { e: Entry; theme: DemoTheme; setTheme: (t: DemoTheme) => void }) {
   const t = useT();
   const cat = categories.find(c => c.id === e.category)!;
+  const docs = docsFor(e.importLine);
   return (
     <Reveal key={e.id} className="grid gap-6">
       <header className="grid gap-2">
@@ -76,13 +87,20 @@ function EntryView({ e, theme, setTheme }: { e: Entry; theme: DemoTheme; setThem
       )}
       {e.status === 'planned' && <Card className="p-6 text-sm text-fg-muted">{t('Chưa có. Mục này nằm trong lộ trình, để FE biết cái gì sắp có và tránh tự viết trùng.', 'Not built yet. It is on the roadmap so FE knows what is coming and does not write a duplicate.')}</Card>}
       {e.demos.map(d => <DemoBlock key={d.title} d={d} theme={theme} />)}
-      {e.props && (
+      {docs.length > 0 && (
         <Card>
           <div className="border-b border-border px-4 py-2.5"><h3 className="m-0 text-sm font-medium">Props</h3></div>
-          <DataTable rowKey={r => r[0]} rows={e.props} columns={[
-            { key: 'n', header: 'Prop', render: r => <code className="text-xs text-link">{r[0]}</code> },
-            { key: 't', header: 'Type', render: r => <code className="text-xs whitespace-normal">{r[1]}</code> },
-            { key: 'd', header: 'Note', render: r => <span className="text-xs whitespace-normal text-fg-muted">{r[2]}</span> }]} />
+          {docs.map(d => (
+            <section key={d.name} className="border-b border-border last:border-b-0">
+              {docs.length > 1 && <h4 className="m-0 px-4 pt-3 text-sm font-medium"><code>{d.name}</code></h4>}
+              {d.rows.length > 0 && <DataTable caption={`${d.name} props`} rowKey={r => r[0]} rows={d.rows} columns={[
+                { key: 'n', header: 'Prop', render: r => <span className="text-xs text-link">{inline(r[0])}</span> },
+                { key: 't', header: 'Type', render: r => <span className="text-xs whitespace-normal">{inline(r[1])}</span> },
+                { key: 'v', header: 'Default', render: r => <span className="text-xs whitespace-normal">{inline(r[2])}</span> },
+                { key: 'd', header: 'Description', render: r => <span className="text-xs whitespace-normal text-fg-muted">{inline(r[3])}</span> }]} />}
+              {d.note && <p className="m-0 max-w-[80ch] px-4 py-3 text-xs text-fg-muted">{inline(d.note)}</p>}
+            </section>
+          ))}
         </Card>
       )}
     </Reveal>

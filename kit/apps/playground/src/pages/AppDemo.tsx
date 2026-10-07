@@ -192,7 +192,7 @@ export function AppDemo() {
   const savePhoto = (file: File | null) => {
     if (photo) URL.revokeObjectURL(photo);
     setPhoto(file ? URL.createObjectURL(file) : undefined);
-    toast({ title: file ? t('Đã cập nhật ảnh đại diện', 'Profile photo updated') : t('Đã xoá ảnh đại diện', 'Profile photo removed'), icon: <Badge tone="ok" size="sm" icon={<CheckCircle2 />} /> });
+    toast({ title: file ? t('Đã cập nhật ảnh đại diện', 'Profile photo updated') : t('Đã xoá ảnh đại diện', 'Profile photo removed'), tone: 'ok' });
   };
   const [created, setCreated] = useState<Batch[]>([]);
   const [announce, setAnnounce] = useState('');
