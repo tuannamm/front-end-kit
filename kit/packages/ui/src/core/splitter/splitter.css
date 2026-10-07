@@ -1,0 +1,28 @@
+/* ---------- splitter ---------- */
+/* fills a sized parent; when the panels' mins add up to more than the space, it scrolls instead of widening the page */
+.dtx-splitter { display: flex; block-size: 100%; min-width: 0; min-height: 0; overflow: auto; }
+.dtx-splitter[data-orientation="vertical"] { flex-direction: column; }
+/* it divides the width it is given and never sizes to its panels: their mins would otherwise widen a grid or flex
+   parent (and the page) instead of scrolling inside */
+.dtx-splitter[data-orientation="horizontal"] { contain: inline-size; }
+.dtx-splitter__panel { min-width: 0; min-height: 0; overflow: auto; }
+.dtx-splitter__panel[data-collapsed] { visibility: hidden; }
+/* while dragging: no text selection, and iframes or canvases in the panels cannot swallow the pointer */
+.dtx-splitter[data-dragging] { user-select: none; }
+.dtx-splitter[data-dragging] > .dtx-splitter__panel { pointer-events: none; }
+
+/* a hairline in the layout; the grab area (::before) is wider than the line and sits over the panel edges */
+.dtx-splitter__handle { position: relative; z-index: 1; flex: none; background: var(--dtx-border-strong); touch-action: none; }
+.dtx-splitter[data-orientation="horizontal"] > .dtx-splitter__handle { width: 1px; cursor: col-resize; }
+.dtx-splitter[data-orientation="vertical"] > .dtx-splitter__handle { height: 1px; cursor: row-resize; }
+.dtx-splitter__handle::before, .dtx-splitter__handle::after { content: ""; position: absolute; }
+.dtx-splitter[data-orientation="horizontal"] > .dtx-splitter__handle::before { inset: 0 -6px; }
+.dtx-splitter[data-orientation="vertical"] > .dtx-splitter__handle::before { inset: -6px 0; }
+/* hover, drag and focus thicken the line to 3px in the action colour */
+.dtx-splitter[data-orientation="horizontal"] > .dtx-splitter__handle::after { inset: 0 -1px; }
+.dtx-splitter[data-orientation="vertical"] > .dtx-splitter__handle::after { inset: -1px 0; }
+.dtx-splitter__handle::after { background: var(--dtx-primary); opacity: 0; transition: opacity var(--dtx-dur-fast); }
+.dtx-splitter__handle:hover::after, .dtx-splitter__handle[data-dragging]::after, .dtx-splitter__handle:focus-visible::after { opacity: 1; }
+/* focus is the same 3px bar in the focus colour; an outline round the grab area read as three lines */
+.dtx-splitter__handle:focus-visible { outline: none; }
+.dtx-splitter__handle:focus-visible::after { background: var(--dtx-focus); }

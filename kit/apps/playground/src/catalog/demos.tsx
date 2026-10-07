@@ -1,7 +1,7 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
-import { Alert, Badge, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Pagination, Slider, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
+import { Alert, Badge, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Pagination, Slider, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -340,6 +340,35 @@ export function MasonryLiveDemo() {
           );
         })}
       </Masonry>
+    </div>
+  );
+}
+
+/** List and detail; the saved sizes show what onResizeEnd hands over. */
+export function SplitterListDemo() {
+  const [saved, setSaved] = useState<number[] | null>(null);
+  const [pick, setPick] = useState(batches[0]);
+  return (
+    <div className="grid w-full gap-2">
+      <div className="h-80 overflow-hidden rounded-lg border border-border">
+        <Splitter onResizeEnd={setSaved} panels={[
+          { label: 'Danh sách lô', defaultSize: 280, min: 200, max: '60%', collapsible: true, content: (
+            <ul className="m-0 grid list-none gap-px p-2">
+              {batches.map(b => (
+                <li key={b.id}><button type="button" onClick={() => setPick(b)} aria-current={pick.id === b.id || undefined}
+                  className={`grid w-full gap-0.5 rounded-md border-0 bg-transparent px-3 py-2 text-left font-[inherit] text-fg hover:bg-surface-2 ${pick.id === b.id ? 'bg-surface-2' : ''}`}>
+                  <span className="text-sm font-medium">{b.id}</span><span className="truncate text-xs text-fg-muted">{b.client}</span>
+                </button></li>))}
+            </ul>) },
+          { label: 'Chi tiết lô', min: 240, content: (
+            <div className="grid content-start gap-2 p-5">
+              <h3 className="m-0 text-lg font-bold italic">{pick.id}</h3>
+              <p className="m-0 text-sm text-fg-muted">{pick.client} · {pick.type[0]}</p>
+              <p className="m-0 text-sm">{pick.pages?.toLocaleString('vi-VN') ?? '–'} trang · nhận {pick.received}</p>
+            </div>) },
+        ]} />
+      </div>
+      <p className="m-0 text-xs text-fg-muted" aria-live="polite">{saved ? `Đã lưu: ${saved.map(s => `${Math.round(s)}%`).join(' / ')}` : 'Kéo, hoặc Tab tới đường chia rồi dùng ←/→. Enter thu gọn danh sách.'}</p>
     </div>
   );
 }

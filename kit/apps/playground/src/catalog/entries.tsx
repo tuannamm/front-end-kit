@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, House, Inbox, Layers, LayoutDashboard, ListFilter, Lock, MessageSquare, ScanText, SearchX, Send, Settings, Sparkles, TrendingUp, Upload, Users } from 'lucide-react';
 import {
-  Alert, AppShell, Breadcrumb, Carousel, Collapse, Masonry, Timeline, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Breadcrumb, Carousel, Collapse, Masonry, Splitter, Timeline, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -12,7 +12,7 @@ import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
-import { AlertDemo, MasonryLiveDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { AlertDemo, MasonryLiveDemo, SplitterListDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -370,6 +370,22 @@ export const entries: Entry[] = [
       { title: '5 · Searchable', note: 'Type “bao hiem” or “vat”.', render: () => <SelectDemo label="Loại tài liệu" items={docTypeGroups} defaultValue="vat" searchable searchPlaceholder="Tìm loại tài liệu…" /> },
       { title: '6 · Mixed options', note: 'Some options have a description, some an icon, some neither.', render: () => <SelectDemo label="Trạng thái" items={statusOptions} defaultValue="all" /> },
       { title: '7 · Small, no visible label', render: () => <div className="w-52"><Select size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} defaultValue="all" /></div> }] },
+  { id: 'splitter', name: 'Splitter', category: 'Core', status: 'ready', summary: 'Panels with draggable handles: list and detail, document and fields, editor and log. Sizes in px or %, min/max per panel held while dragging and on resize. Collapsible panels fold under half their min, or with Enter / double-click on the handle. Handles are keyboard separators. Nest for a grid of panes.',
+    importLine: imp('Splitter, type SplitterPanel'),
+    demos: [
+      { title: '1 · List and detail', note: 'defaultSize 280px, min 200px, max 60%, collapsible. Drag the list under 100px and it folds; double-click the line to open it again. The line under the box shows what onResizeEnd saves.', code: "<Splitter onResizeEnd={save} panels={[\n  { label: 'Danh sách lô', defaultSize: 280, min: 200, max: '60%', collapsible: true, content: <BatchList /> },\n  { label: 'Chi tiết lô', min: 240, content: <BatchDetail /> },\n]} />", render: () => <SplitterListDemo /> },
+      { title: '2 · Three panes: pages, document, fields', note: 'Each handle moves only its two neighbours. The fields pane is collapsible: focus the second line and press Enter.', code: "<Splitter panels={[\n  { label: 'Trang', defaultSize: 160, min: 120, content: <PageList /> },\n  { label: 'Tài liệu', min: 280, content: <Document /> },\n  { label: 'Trường dữ liệu', defaultSize: '30%', min: 220, collapsible: true, content: <Fields /> },\n]} />", render: () => <div className="h-96 w-full overflow-hidden rounded-lg border border-border"><Splitter panels={[
+        { label: 'Trang', defaultSize: 160, min: 120, content: <ol className="m-0 grid list-none gap-1 p-2">{[1, 2, 3, 4, 5, 6].map(n => <li key={n} className={`rounded-md px-3 py-2 text-sm ${n === 1 ? 'bg-surface-2 font-medium' : 'text-fg-muted'}`}>Trang {n}</li>)}</ol> },
+        { label: 'Tài liệu', min: 280, content: <div className="p-4"><SampleInvoice /></div> },
+        { label: 'Trường dữ liệu', defaultSize: '30%', min: 220, collapsible: true, content: <dl className="m-0 grid gap-3 p-4">{invoiceFields.map(f => <div key={f.key} className="grid gap-0.5"><dt className="text-xs text-fg-muted">{f.key}</dt><dd className="m-0 text-sm font-medium">{f.value}</dd></div>)}</dl> },
+      ]} /></div> },
+      { title: '3 · Stacked, nested', note: 'A vertical Splitter inside the right pane: editor above, log below (min 80px). The outer one needs no height of its own; the vertical one fills the pane.', code: "<Splitter panels={[\n  { label: 'Tệp', defaultSize: 200, min: 140, content: <Files /> },\n  { content: <Splitter orientation=\"vertical\" panels={[{ label: 'Trình soạn', min: 120, content: <Editor /> }, { label: 'Nhật ký', defaultSize: '35%', min: 80, content: <Log /> }]} /> },\n]} />", render: () => <div className="h-96 w-full overflow-hidden rounded-lg border border-border"><Splitter panels={[
+        { label: 'Tệp', defaultSize: 200, min: 140, content: <ul className="m-0 grid list-none gap-1 p-3 text-sm">{['schema-hoa-don.json', 'quy-tac-qc.yaml', 'mau-xuat.csv'].map(f => <li key={f} className="truncate">{f}</li>)}</ul> },
+        { content: <Splitter orientation="vertical" className="h-full" panels={[
+          { label: 'Trình soạn', min: 120, content: <pre className="m-0 p-4 text-xs leading-relaxed">{'{\n  "invoice_no": { "required": true },\n  "vat_amount": { "min_confidence": 95 }\n}'}</pre> },
+          { label: 'Nhật ký', defaultSize: '35%', min: 80, content: <div className="grid gap-1 p-4 text-xs text-fg-muted"><span>09:12 Kiểm tra schema: hợp lệ</span><span>09:12 3 trường, 1 quy tắc độ tin cậy</span></div> },
+        ]} /> },
+      ]} /></div> }] },
   { id: 'masonry', name: 'Masonry', category: 'Core', status: 'ready', summary: 'Columns of tiles of different heights: notes, document thumbnails, uneven widgets. Each tile goes to the shortest column; the column count follows the container width, not the viewport. Re-flows when a tile changes size (an image loads, a panel opens). Tab order is the children\'s order.',
     importLine: imp('Masonry'),
     demos: [
