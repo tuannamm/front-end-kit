@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Check, ChevronLeft, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
-import { Badge } from '../../core/badge';
-import { Button } from '../../core/button';
+import { Badge } from '../../core/badge/badge';
+import { Button } from '../../core/button/button';
 import { Reveal, useReducedMotion } from '../../motion/primitives';
 import { BoxOverlay } from '../shared/box-overlay';
 import { ScanBeam } from '../shared/scan-beam';

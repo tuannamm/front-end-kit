@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Monitor, Moon, Sun } from 'lucide-react';
-import { Button } from '../core/button';
+import { Button } from '../core/button/button';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 /** Stores the choice per browser and applies data-theme on <html>. */

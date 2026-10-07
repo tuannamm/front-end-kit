@@ -4,8 +4,8 @@ import { Tabs as BTabs } from '@base-ui/react/tabs';
 import { ToggleGroup } from '@base-ui/react/toggle-group';
 import { Toggle } from '@base-ui/react/toggle';
 import { Tooltip as BTooltip } from '@base-ui/react/tooltip';
-import { cx } from '../cx';
-import { Kbd } from './badge';
+import { cx } from '../../cx';
+import { Kbd } from '../badge/badge';
 
 export function Switch({ label, checked, defaultChecked, onCheckedChange, disabled }: { label: ReactNode; checked?: boolean; defaultChecked?: boolean; onCheckedChange?: (v: boolean) => void; disabled?: boolean }) {
   return (

@@ -2,8 +2,8 @@ import { Fragment, useMemo, type ReactNode } from 'react';
 import { Select as BSelect } from '@base-ui/react/select';
 import { Combobox } from '@base-ui/react/combobox';
 import { Check, ChevronDown, Search, X } from 'lucide-react';
-import { cx } from '../cx';
-import { IconTile, type Tone } from './badge';
+import { cx } from '../../cx';
+import { IconTile, type Tone } from '../badge/badge';
 
 export type SelectOption = {
   value: string;

@@ -22,6 +22,9 @@ Guidance for AI coding agents working in this repo. Read `README.md` first for s
 - `kit/packages/ui/src`: generic UI in `core/ layout/ data/ motion/ brand/`; AI work in `ai/<task>/`
   (`shared, preprocess, ocr, extraction`; later `try-on, enhance, remove-bg`). Used by ≥ 2 tasks → `ai/shared/`.
   Never flatten new files into `src/`. Each task folder owns its CSS; `styles.css` imports it into `@layer dtx`.
+- Core components: one folder each, `core/<component>/<component>.tsx` + `<component>.css` + `README.md` (+ helpers,
+  `*.check.ts`). `core/structure.check.ts` fails `npm test` when one is missing. Update the README with the component.
+  Import its CSS in `styles.css` after `base.css` and after any component it overrides (import order = cascade order).
 - **One job per component; compose.** Examples already in the kit:
   - `ScanBeam` is the only scan/wipe effect. It owns the reveal (`reveal="progressive" | "whole" | "none"`); anything
     inside reveals with it (BoxOverlay boxes, `before`/`after` wipe, `<ScanReveal>`). `beam={false}` = wipe without line.

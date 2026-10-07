@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react';
 import { Field as BField } from '@base-ui/react/field';
 import { Input as BInput } from '@base-ui/react/input';
-import { cx } from '../cx';
+import { cx } from '../../cx';
 
 /** Label + control + description + error, wired for a11y by Base UI Field. */
 export function Field({ label, description, error, children, className }: { label: ReactNode; description?: ReactNode; error?: ReactNode; children: ReactNode; className?: string }) {

@@ -1,5 +1,5 @@
 import type { ComponentProps, ReactNode } from 'react';
-import { cx } from '../cx';
+import { cx } from '../../cx';
 
 type Common = {
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';

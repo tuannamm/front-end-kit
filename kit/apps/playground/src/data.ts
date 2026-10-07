@@ -21,7 +21,7 @@ export const invoiceFields: ScanField[] = [
   { key: 'total', value: '15,552,000 VND', confidence: 99.7 },
 ];
 
-export type Batch = { id: string; type: [vi: string, en: string]; client: string; pages: number; accuracy: number; status: 'qc' | 'risk' | 'done' | 'error'; sla: string; /** ISO */ received: string };
+export type Batch = { id: string; type: [vi: string, en: string]; client: string; /** unknown until processed */ pages?: number; accuracy?: number; status: 'processing' | 'qc' | 'risk' | 'done' | 'error'; /** uploaded files, for a batch still processing */ files?: number; sla: string; /** ISO */ received: string };
 export const batches: Batch[] = [
   { id: 'BH-2210', type: ['Hồ sơ bồi thường', 'Claim file'], client: 'Bảo hiểm Sao Việt', pages: 1240, accuracy: 99.71, status: 'qc', sla: '14:30', received: '2026-10-05' },
   { id: 'HD-5517', type: ['Hoá đơn VAT', 'VAT invoice'], client: 'Chuỗi bán lẻ Phương Nam', pages: 3860, accuracy: 99.48, status: 'risk', sla: '16:15', received: '2026-10-03' },

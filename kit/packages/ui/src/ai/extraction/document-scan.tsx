@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Badge } from '../../core/badge';
+import { Badge } from '../../core/badge/badge';
 import { useReducedMotion } from '../../motion/primitives';
 import { ScanBeam } from '../shared/scan-beam';
 

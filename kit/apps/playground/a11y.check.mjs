@@ -21,11 +21,16 @@ const page = await context.newPage();
 await page.goto(`${BASE}/#/catalog`);
 const ids = await page.$$eval('aside a[href^="#/catalog/"]', as => as.map(a => a.getAttribute('href').replace('#/', '')));
 ids.push('website', 'app', 'poc'); // the demo pages too
+let bothThemes = 0; // guards against the switcher's label changing and the dark copies silently going unchecked
 const found = new Map(); // `${entry} | ${message}` → { themes, count, example }
 for (const theme of ['light', 'dark']) {
   for (const id of ids) {
     await page.goto(`${BASE}/#/${id}`);
     await page.evaluate(t => document.documentElement.setAttribute('data-theme', t), theme);
+    // catalog demos default to light only: show both so the dark copy of every demo is checked too
+    // (entries without demos, e.g. planned ones, have no switcher)
+    const demoTheme = page.getByRole('group', { name: 'Giao diện của ví dụ' });
+    if (await demoTheme.count()) { await demoTheme.getByText('Sáng + Tối').click(); bothThemes++; }
     await page.waitForTimeout(400); // fonts, measured boxes, reveal
     const { violations } = await new AxeBuilder({ page }).withRules(['color-contrast']).exclude('[data-a11y-demo]').analyze();
     for (const v of violations) for (const n of v.nodes) {
@@ -37,6 +42,7 @@ for (const theme of ['light', 'dark']) {
   }
 }
 await browser.close();
+if (!bothThemes) throw new Error('Demo theme switcher not found: dark copies of the demos were not checked');
 for (const [key, f] of found) console.error(`✗ ${key}  [${[...f.themes].join('+')}, ${f.count}×]  e.g. ${f.example}`);
 console.log(`${ids.length} entries × 2 themes checked, ${found.size} distinct contrast problem(s)`);
 process.exit(found.size ? 1 : 0);

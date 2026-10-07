@@ -28,6 +28,6 @@
     "react-dom": "^19.3.0"
   },
   "scripts": {
-    "test": "node theme.check.mjs && node --experimental-strip-types --no-warnings src/ai/ocr/types.check.ts && node --experimental-strip-types --no-warnings src/core/date.check.ts"
+    "test": "node theme.check.mjs && node --experimental-strip-types --no-warnings --test \"src/**/*.check.ts\""
   }
 }

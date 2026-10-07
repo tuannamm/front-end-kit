@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { cx } from '../cx';
-import type { Tone } from '../core/badge';
+import type { Tone } from '../core/badge/badge';
 
 export type KpiCardProps = {
   label: string;

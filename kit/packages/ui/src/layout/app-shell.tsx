@@ -2,7 +2,7 @@ import { createContext, useContext, type ComponentProps, type ReactNode } from '
 import { Collapsible } from '@base-ui/react/collapsible';
 import { ChevronRight, ChevronsUpDown, Search } from 'lucide-react';
 import { cx } from '../cx';
-import { Kbd } from '../core/badge';
+import { Kbd } from '../core/badge/badge';
 
 const RailCtx = createContext(false);
 

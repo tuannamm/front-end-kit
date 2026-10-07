@@ -6,7 +6,7 @@ import { RadioGroup as BRadioGroup } from '@base-ui/react/radio-group';
 import { Field as BField } from '@base-ui/react/field';
 import { Fieldset } from '@base-ui/react/fieldset';
 import { Check, Minus } from 'lucide-react';
-import { cx } from '../cx';
+import { cx } from '../../cx';
 
 export type ChoiceOption = { value: string; label: ReactNode; description?: ReactNode; disabled?: boolean };
 

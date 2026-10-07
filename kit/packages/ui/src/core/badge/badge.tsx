@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from 'react';
 import { X } from 'lucide-react';
-import { cx } from '../cx';
+import { cx } from '../../cx';
 
 export type Tone = 'brand' | 'ok' | 'warn' | 'err' | 'neutral' | 'violet';
 

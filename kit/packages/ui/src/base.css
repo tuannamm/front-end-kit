@@ -1,0 +1,13 @@
+/* ---------- base ---------- */
+.dtx-root, body.dtx-root {
+  margin: 0; background: var(--dtx-bg); color: var(--dtx-fg);
+  font: 400 var(--dtx-text-base)/1.5 var(--dtx-font); -webkit-font-smoothing: antialiased;
+}
+.dtx-root *, .dtx-root *::before, .dtx-root *::after { box-sizing: border-box; }
+/* A themed subtree must re-resolve inherited text colour: `color` inherits as a computed value,
+   so without this a data-theme="dark" section inside a light page keeps light-theme text. */
+[data-theme] { color: var(--dtx-fg); }
+.dtx-root :focus-visible { outline: 2px solid var(--dtx-focus); outline-offset: 2px; }
+.dtx-num { font-variant-numeric: tabular-nums; }
+.dtx-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+html { scroll-padding-top: 72px; }

@@ -1,4 +1,4 @@
-import { Badge } from '../../core/badge';
+import { Badge } from '../../core/badge/badge';
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 export type Thresholds = { high: number; low: number };
