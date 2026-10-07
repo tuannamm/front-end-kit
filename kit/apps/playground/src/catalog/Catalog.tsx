@@ -111,9 +111,8 @@ function EntryView({ e, theme, setTheme }: { e: Entry; theme: DemoTheme; setThem
 export function Catalog({ id, go }: { id?: string; go: (id?: string) => void }) {
   const t = useT();
   const [q, setQ] = useState('');
-  const [filter, setFilter] = useState('all');
   const [theme, setTheme] = useState<DemoTheme>('light');
-  const shown = useMemo(() => entries.filter(e => (filter === 'all' || e.status === filter) && (!q || fold(`${e.name} ${e.summary} ${e.category}`).includes(fold(q)))), [q, filter]);
+  const shown = useMemo(() => entries.filter(e => !q || fold(`${e.name} ${e.summary} ${e.category}`).includes(fold(q))), [q]);
   const entry = entries.find(e => e.id === id);
   const groups = [{ title: null, cats: categories.filter(c => !c.id.startsWith('AI')) }, { title: 'AI', cats: categories.filter(c => c.id.startsWith('AI')) }];
   return (
@@ -121,7 +120,6 @@ export function Catalog({ id, go }: { id?: string; go: (id?: string) => void }) 
       <aside className="lg:sticky lg:top-[72px] lg:max-h-[calc(100vh-88px)] lg:self-start lg:overflow-y-auto" aria-label={t('Mục lục', 'Contents')}>
         <div className="grid gap-2 pb-3">
           <Input placeholder={t('Tìm thành phần…', 'Search components…')} value={q} onChange={e => setQ(e.target.value)} aria-label={t('Tìm thành phần', 'Search components')} />
-          <Segmented aria-label={t('Lọc trạng thái', 'Filter by status')} value={filter} onValueChange={setFilter} options={[{ value: 'all', label: t('Tất cả', 'All') }, { value: 'ready', label: t('Đã có', 'Ready') }, { value: 'planned', label: t('Dự kiến', 'Planned') }]} />
         </div>
         <button type="button" onClick={() => go()} className={`dtx-sidebar__item w-full border-0 bg-transparent text-left ${!entry ? 'aria-[current]:' : ''}`} aria-current={!entry ? 'page' : undefined}>{t('Tổng quan', 'Overview')}</button>
         {groups.map(g => (

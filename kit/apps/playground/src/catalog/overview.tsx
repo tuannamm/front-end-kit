@@ -52,7 +52,7 @@ function Thumb({ e }: { e: Entry }) {
   );
 }
 
-/** Catalog home: every entry as a tile, grouped by category, filtered by the sidebar search and status. */
+/** Catalog home: every entry as a tile, grouped by category, filtered by the sidebar search. */
 export function Overview({ shown }: { shown: Entry[] }) {
   const t = useT();
   const ready = entries.filter(e => e.status === 'ready').length;
@@ -62,7 +62,7 @@ export function Overview({ shown }: { shown: Entry[] }) {
         <h1 className="m-0 text-3xl font-bold tracking-tight">{t('Danh mục Frontend Kit', 'Frontend Kit catalog')}</h1>
         <p className="m-0 max-w-[68ch] text-fg-muted">{t(<><b className="text-fg">{ready}</b> mục đã có, <b className="text-fg">{entries.length - ready}</b> dự kiến. Mỗi mục có ví dụ tương tác, dòng import và props. Chuyển động được tách theo từng pha.</>, <><b className="text-fg">{ready}</b> ready, <b className="text-fg">{entries.length - ready}</b> planned. Each entry has interactive examples, an import line and props. Motion is split by phase.</>)}</p>
       </header>
-      {!shown.length && <EmptyState size="sm" title={t('Không có mục nào khớp', 'No matching entries')}>{t('Thử từ khoá khác, hoặc chọn Tất cả ở bộ lọc trạng thái.', 'Try another word, or pick All in the status filter.')}</EmptyState>}
+      {!shown.length && <EmptyState size="sm" title={t('Không có mục nào khớp', 'No matching entries')}>{t('Thử từ khoá khác, ví dụ tên component hoặc nhóm.', 'Try another word, such as a component or category name.')}</EmptyState>}
       {categories.map(c => {
         const list = shown.filter(e => e.category === c.id);
         if (!list.length) return null;
