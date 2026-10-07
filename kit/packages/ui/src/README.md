@@ -2,7 +2,7 @@
 
 | Folder | What lives there |
 |---|---|
-| `core/` | Generic controls: Icon, Button, Badge, Field/Input, Select, MultiSelect, Checkbox/CheckboxGroup/RadioGroup, DatePicker/DateRangePicker/Calendar, FileDropzone/FileList/FileItem, Switch, Tabs, Segmented, Tooltip, Dialog, Drawer, Toast, Avatar/AvatarPicker, Notification/NotificationList, PdfViewer, CommandPalette, Alert, EmptyState |
+| `core/` | Generic controls: Icon, Button, Badge, Field/Input/Textarea, Select, MultiSelect, Checkbox/CheckboxGroup/RadioGroup, DatePicker/DateRangePicker/Calendar, FileDropzone/FileList/FileItem, Switch, Tabs, Segmented, Tooltip, Dialog, Drawer, Toast, Avatar/AvatarPicker, Notification/NotificationList, PdfViewer, CommandPalette, Alert, EmptyState |
 | `layout/` | Page structure: Card, AppShell, Sidebar, Topbar, CommandButton |
 | `data/` | Data display: KpiCard, DataTable, Sparkline, TargetBar, CategoryBar, Meter, StackedBarChart |
 | `motion/` | Generic motion: Reveal, Skeleton, Loadable, CountUp, useReducedMotion |

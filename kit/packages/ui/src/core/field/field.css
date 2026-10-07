@@ -13,3 +13,13 @@
 .dtx-input:focus-visible, .dtx-select-trigger:focus-visible { outline: none; border-color: var(--dtx-primary); box-shadow: 0 0 0 3px rgb(37 130 215 / .3), 0 0 18px rgb(37 130 215 / .25); }
 .dtx-input[data-invalid] { border-color: var(--dtx-tone-err); }
 .dtx-input:disabled { opacity: .5; cursor: not-allowed; }
+@media (any-pointer: coarse) { .dtx-input { font-size: 16px; } } /* iOS zooms into inputs under 16px */
+
+/* textarea: `rows` lines, grows with its text to --max-rows (field-sizing), then scrolls; drag to resize where unsupported */
+.dtx-textarea {
+  height: auto; padding: 8px 12px; line-height: 1.5; resize: vertical; field-sizing: content;
+  min-height: calc(var(--rows, 3) * 1.5em + 18px); max-height: calc(var(--max-rows, 12) * 1.5em + 18px);
+}
+.dtx-textarea-wrap { position: relative; display: grid; gap: 4px; min-width: 0; }
+.dtx-textarea__count { justify-self: end; font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
+.dtx-textarea__count[data-near] { color: var(--dtx-fg); font-weight: 500; }

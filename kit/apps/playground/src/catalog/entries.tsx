@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, Inbox, Layers, LayoutDashboard, ListFilter, Lock, ScanText, SearchX, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  Alert, AppShell, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -378,6 +378,17 @@ export const entries: Entry[] = [
       { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
   { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>. tone picks the icon; an error (tone \'err\') stays until closed, is announced at once, and has a red-tinted edge.', importLine: imp('ToastProvider, useToast, type ToastOptions'),
     demos: [{ title: 'Success · error · warning · in progress', note: 'The error toast stays until you close it.', code: "const toast = useToast();\ntoast({ title: 'Đã lưu lô BH-2210', tone: 'ok' });\ntoast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi…', tone: 'err' });", render: () => <ToastDemo /> }] },
+  { id: 'textarea', name: 'Textarea', category: 'Core', status: 'ready', summary: 'Multi-line Input for notes, rejection reasons and comments. Starts at `rows` lines and grows with its text up to `maxRows`, then scrolls. `maxLength` adds a counter; screen readers hear it only near the limit. Inside Field it gets the label, description and error like Input.',
+    importLine: imp('Field, Textarea'),
+    demos: [
+      { title: '1 · With a counter', note: 'Type or paste: the box grows to 6 lines, then scrolls. The counter darkens in the last 10%.', code: '<Field label="Lý do từ chối" description="Đội scan sẽ thấy ghi chú này.">\n  <Textarea name="reason" maxLength={200} maxRows={6} />\n</Field>', render: () => <div className="w-full max-w-lg">
+        <Field label="Lý do từ chối" description="Đội scan sẽ thấy ghi chú này."><Textarea name="reason" maxLength={200} maxRows={6} placeholder="Ví dụ: trang 4 bị mờ, cần quét lại ở 300 dpi" /></Field>
+      </div> },
+      { title: '2 · Filled · error · disabled', render: () => <div className="grid w-full max-w-lg gap-5">
+        <Field label="Ghi chú QC"><Textarea defaultValue={'Trang 4, 9 và 15 bị nghiêng hơn 5°, đã chỉnh tự động.\nTrường "Số hợp đồng" ở trang 2 bị che một phần bởi con dấu; đã nhập tay theo bản gốc.\nCần khách hàng xác nhận lại ngày ký ở trang cuối.'} /></Field>
+        <Field label="Lý do từ chối" error="Nhập lý do để đội scan biết cần làm gì."><Textarea maxLength={200} /></Field>
+        <Field label="Ghi chú của khách hàng" description="Chỉ đọc: lô đã bàn giao."><Textarea disabled defaultValue="Ưu tiên các hồ sơ năm 2024 trước." rows={2} /></Field>
+      </div> }] },
   { id: 'empty-state', name: 'Empty state', category: 'Core', status: 'ready', summary: 'What a list, table, panel or page shows when it has nothing to show: first use, no results, filtered to nothing, no permission, failed load. Says what happened and offers one way forward. DataTable, NotificationList, PdfViewer and CommandPalette all render it.',
     importLine: imp('EmptyState'),
     demos: [

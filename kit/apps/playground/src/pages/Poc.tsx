@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Alert, Badge, Button, Card, CardHeader, Field, OcrShowcase, SampleInvoice, Select, normalizeOcr, type OcrDocument, type OcrStage } from '@dtx/ui';
+import { Alert, Textarea, Badge, Button, Card, CardHeader, Field, OcrShowcase, SampleInvoice, Select, normalizeOcr, type OcrDocument, type OcrStage } from '@dtx/ui';
 import { sampleOptions, useSampleIndex } from '../samples';
 import { useT } from '../i18n';
 
@@ -78,7 +78,7 @@ export function Poc() {
               <input type="file" accept="image/*" onChange={e => onFile(e.target.files?.[0])} className="text-sm" />
             </Field>
             <Field label="JSON">
-              <textarea value={json} onChange={e => setJson(e.target.value)} spellCheck={false} rows={16} className="dtx-input h-auto py-2 font-mono text-xs leading-relaxed" />
+              <Textarea value={json} onChange={e => setJson(e.target.value)} spellCheck={false} rows={16} maxRows={16} className="font-mono text-xs" />
             </Field>
             <Field label={t('Các bước', 'Steps')}>
               <Select value={preset} onValueChange={setPreset} items={[

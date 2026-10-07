@@ -3,7 +3,7 @@ export { Badge, Counter, ProgressRing, Kbd, IconTile, type Tone, type StatusTone
 export { Icon, type IconProps } from './icon/icon';
 export { Avatar, AvatarPicker, type AvatarProps, type AvatarPickerProps } from './avatar/avatar';
 export { initials } from './avatar/initials';
-export { Field, Input } from './field/field';
+export { Field, Input, Textarea, type TextareaProps } from './field/field';
 export { Select, MultiSelect, type SelectOption, type SelectGroup, type SelectProps, type MultiSelectProps } from './select/select';
 export { Checkbox, CheckboxGroup, RadioGroup, type ChoiceOption, type CheckboxProps, type CheckboxGroupProps, type RadioGroupProps } from './choice/choice';
 export { DatePicker, DateRangePicker, Calendar, type DatePickerProps, type DateRangePickerProps, type DateRange, type CalendarProps } from './date-picker/date-picker';
