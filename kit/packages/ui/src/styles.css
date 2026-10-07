@@ -21,6 +21,7 @@
 @import "./core/timeline/timeline.css" layer(dtx);
 @import "./core/masonry/masonry.css" layer(dtx);
 @import "./core/splitter/splitter.css" layer(dtx);
+@import "./core/watermark/watermark.css" layer(dtx);
 @import "./core/overlays/overlays.css" layer(dtx);
 @import "./core/command-palette/command-palette.css" layer(dtx);
 @import "./core/menu/menu.css" layer(dtx);

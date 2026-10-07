@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, House, Inbox, Layers, LayoutDashboard, ListFilter, Lock, MessageSquare, ScanText, SearchX, Send, Settings, Sparkles, TrendingUp, Upload, Users } from 'lucide-react';
 import {
-  Alert, AppShell, Breadcrumb, Carousel, Collapse, Masonry, Splitter, Timeline, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Breadcrumb, Carousel, Collapse, Masonry, Splitter, Timeline, Watermark, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -370,6 +370,24 @@ export const entries: Entry[] = [
       { title: '5 · Searchable', note: 'Type “bao hiem” or “vat”.', render: () => <SelectDemo label="Loại tài liệu" items={docTypeGroups} defaultValue="vat" searchable searchPlaceholder="Tìm loại tài liệu…" /> },
       { title: '6 · Mixed options', note: 'Some options have a description, some an icon, some neither.', render: () => <SelectDemo label="Trạng thái" items={statusOptions} defaultValue="all" /> },
       { title: '7 · Small, no visible label', render: () => <div className="w-52"><Select size="sm" aria-label="Lọc theo trạng thái" items={statusOptions} defaultValue="all" /></div> }] },
+  { id: 'watermark', name: 'Watermark', category: 'Core', status: 'ready', summary: 'Repeated, rotated text over a document, record or page: marks it confidential and names who viewed it and when, so a screenshot can be traced. One canvas tiled as a CSS mask; follows the theme, stays in print, never blocks the pointer. A deterrent, not protection.',
+    importLine: imp('Watermark'),
+    demos: [
+      { title: '1 · Confidential record', note: 'Two lines: a label, then who and when. Select the text or press the button under it: the watermark never catches the pointer.', code: "<Watermark content={['DIGI-TEXX · Tài liệu mật', 'Nguyễn Minh Anh · 14:32 · 07/10/2026']}>\n  <RecordDetail />\n</Watermark>", render: () => <div className="w-full max-w-3xl [contain:inline-size]"><Watermark content={['DIGI-TEXX · Tài liệu mật', 'Nguyễn Minh Anh · 14:32 · 07/10/2026']}>
+        <div className="overflow-hidden rounded-lg border border-border">
+          <div className="dtx-table-wrap"><table className="dtx-table"><thead><tr><th>Lô</th><th>Khách hàng</th><th>Loại</th><th style={{ textAlign: 'right' }}>Trang</th></tr></thead>
+            <tbody>{batches.map(b => <tr key={b.id}><td>{b.id}</td><td>{b.client}</td><td>{b.type[0]}</td><td style={{ textAlign: 'right' }}>{b.pages?.toLocaleString('vi-VN') ?? '–'}</td></tr>)}</tbody></table></div>
+          <div className="flex justify-end border-t border-border p-3"><Button variant="secondary" size="sm">Xuất danh sách</Button></div>
+        </div>
+      </Watermark></div> },
+      { title: '2 · Draft', note: 'One big word, wider apart: fontSize={28} rotate={-30} gap={[160, 120]}.', code: '<Watermark content="BẢN NHÁP" fontSize={28} rotate={-30} gap={[160, 120]}>…</Watermark>', render: () => <div className="w-full max-w-3xl"><Watermark content="BẢN NHÁP" fontSize={28} rotate={-30} gap={[160, 120]}>
+        <article className="grid gap-3 rounded-lg border border-border p-6"><h3 className="m-0 text-xl font-bold italic">Quy trình kiểm tra chất lượng lô số hoá</h3>
+          <p className="m-0 text-sm leading-relaxed text-fg-muted">Mỗi lô được kiểm tra mẫu ngẫu nhiên 5% số trang. Trường có độ tin cậy dưới ngưỡng được chuyển sang người duyệt; lô đạt khi độ chính xác sau QC từ 99,5% trở lên.</p>
+          <p className="m-0 text-sm leading-relaxed text-fg-muted">Lô không đạt được xử lý lại miễn phí trong 5 ngày làm việc và kiểm tra lại toàn bộ các trường đã sửa.</p></article>
+      </Watermark></div> },
+      { title: '3 · On white paper', note: 'The paper stays white in the dark theme, so the watermark colour is set for it: --dtx-watermark-color: rgb(0 0 0 / .12).', code: "<Watermark className=\"[--dtx-watermark-color:rgb(0_0_0/.12)]\" content={['Bản sao kiểm tra', 'Không có giá trị pháp lý']}>\n  <InvoicePage />\n</Watermark>", render: () => <div className="w-full max-w-md"><Watermark className="[--dtx-watermark-color:rgb(0_0_0/.12)]" content={['Bản sao kiểm tra', 'Không có giá trị pháp lý']} gap={[60, 60]}>
+        <div className="overflow-hidden rounded-md border border-border"><SampleInvoice /></div>
+      </Watermark></div> }] },
   { id: 'splitter', name: 'Splitter', category: 'Core', status: 'ready', summary: 'Panels with draggable handles: list and detail, document and fields, editor and log. Sizes in px or %, min/max per panel held while dragging and on resize. Collapsible panels fold under half their min, or with Enter / double-click on the handle. Handles are keyboard separators. Nest for a grid of panes.',
     importLine: imp('Splitter, type SplitterPanel'),
     demos: [
