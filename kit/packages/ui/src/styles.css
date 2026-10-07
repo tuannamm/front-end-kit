@@ -18,6 +18,7 @@
 @import "./core/overlays/overlays.css" layer(dtx);
 @import "./core/command-palette/command-palette.css" layer(dtx);
 @import "./core/alert/alert.css" layer(dtx);
+@import "./core/empty-state/empty-state.css" layer(dtx);
 @import "./core/file-upload/file-upload.css" layer(dtx);
 @import "./core/avatar/avatar.css" layer(dtx);
 @import "./core/notification/notification.css" layer(dtx);
@@ -29,7 +30,6 @@
   .dtx-card__head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 16px; border-bottom: 1px solid var(--dtx-border); }
   .dtx-card__title { margin: 0; font-size: var(--dtx-text-base); font-weight: 700; }
   .dtx-card__action { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; max-width: 100%; }
-  .dtx-table__empty { padding: 32px 16px; text-align: center; font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted); }
   .dtx-card__body { padding: 16px; }
   .dtx-kpi { display: grid; grid-template-rows: auto auto 28px auto; gap: 8px; padding: 16px; }
   .dtx-kpi__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 22px; }

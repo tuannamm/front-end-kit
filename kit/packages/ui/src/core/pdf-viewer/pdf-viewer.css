@@ -33,8 +33,4 @@
 .dtx-pdf__page-err { position: absolute; inset: auto 0 50%; padding: 0 16px; text-align: center; font-size: var(--dtx-text-sm); color: #A12424; /* theme-fixed: on paper, the light --dtx-tone-err */ }
 
 .dtx-pdf__state { display: grid; justify-items: center; align-content: start; gap: 6px; padding: 48px 24px; text-align: center; text-wrap: balance; font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted); }
-.dtx-pdf__state > svg { width: 24px; height: 24px; margin-bottom: 4px; }
-.dtx-pdf__state[role="alert"] > svg { color: var(--dtx-tone-err); }
-.dtx-pdf__state b { color: var(--dtx-fg); font-weight: 500; }
-.dtx-pdf__state .dtx-btn { margin-top: 6px; }
 .dtx-pdf__state .dtx-skeleton { margin-top: 12px; }

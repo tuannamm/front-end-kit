@@ -1,0 +1,16 @@
+/* ---------- empty state ---------- */
+/* the one empty / failed-load look: tables, lists, panels and pages all render EmptyState */
+.dtx-empty { display: grid; justify-items: center; align-content: center; gap: 4px; padding: 48px 24px; text-align: center; text-wrap: balance; color: var(--dtx-fg-muted); font-size: var(--dtx-text-sm); line-height: 1.5; }
+.dtx-empty--sm { padding: 32px 16px; }
+.dtx-empty__icon { display: grid; place-items: center; margin-bottom: 8px; color: var(--dtx-fg-muted); }
+.dtx-empty__icon svg { width: 32px; height: 32px; stroke-width: 1.5; }
+.dtx-empty--sm .dtx-empty__icon { margin-bottom: 4px; }
+.dtx-empty--sm .dtx-empty__icon svg { width: 24px; height: 24px; stroke-width: 2; }
+.dtx-empty--err .dtx-empty__icon { color: var(--dtx-tone-err); }
+.dtx-empty__mascot { height: auto; margin-bottom: 12px; }
+.dtx-empty__title { margin: 0; max-width: 48ch; color: var(--dtx-fg); font-size: var(--dtx-text-base); font-weight: 500; overflow-wrap: anywhere; }
+.dtx-empty--sm .dtx-empty__title { font-size: var(--dtx-text-sm); }
+.dtx-empty__desc { max-width: 52ch; }
+.dtx-empty__desc > p { margin: 0; }
+.dtx-empty__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 12px; }
+.dtx-empty--sm .dtx-empty__actions { margin-top: 8px; }

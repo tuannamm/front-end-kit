@@ -1,9 +1,10 @@
-import type { ReactNode } from 'react';
+import { isValidElement, type ReactNode } from 'react';
+import { EmptyState } from '../core/empty-state/empty-state';
 
 export type Column<T> = { key: string; header: ReactNode; align?: 'left' | 'right'; render: (row: T) => ReactNode };
 /** Styled table: tabular numbers, hairline rows, hover. Scrolls horizontally inside its own box. */
-/** `empty` shows when there are no rows: say what happened and how to recover (e.g. a reset-filters button). */
-export function DataTable<T>({ columns, rows, rowKey, caption, empty = 'Không có dữ liệu.' }: { columns: Column<T>[]; rows: T[]; rowKey: (r: T) => string; caption?: string; empty?: ReactNode }) {
+/** `empty` shows when there are no rows: text becomes an EmptyState title; pass an <EmptyState> for an icon or a way out (e.g. a reset-filters button). */
+export function DataTable<T>({ columns, rows, rowKey, caption, empty = 'Chưa có dữ liệu' }: { columns: Column<T>[]; rows: T[]; rowKey: (r: T) => string; caption?: string; empty?: ReactNode }) {
   return (
     <>
       <div className="dtx-table-wrap">
@@ -16,7 +17,7 @@ export function DataTable<T>({ columns, rows, rowKey, caption, empty = 'Không c
         </table>
       </div>
       {/* outside the scroll box, so it stays in view when the columns are wider than the screen */}
-      {!rows.length && <div className="dtx-table__empty" role="status">{empty}</div>}
+      {!rows.length && (isValidElement(empty) ? empty : <EmptyState size="sm" title={empty} />)}
     </>
   );
 }

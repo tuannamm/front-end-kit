@@ -1,10 +1,11 @@
 import { useId, useRef, useState, type ReactNode } from 'react';
 import { Popover } from '@base-ui/react/popover';
-import { Bell, CircleAlert } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { cx } from '../../cx';
 import { Skeleton } from '../../motion/primitives';
 import { Counter, IconTile, type Tone } from '../badge/badge';
 import { Button } from '../button/button';
+import { EmptyState } from '../empty-state/empty-state';
 import { fullTime, relativeTime } from './time';
 
 export type NotificationItem = {
@@ -41,25 +42,21 @@ export type NotificationListProps = {
   className?: string;
 };
 
-const EMPTY = <><b>Chưa có thông báo nào</b><span>Thông báo mới sẽ hiện ở đây.</span></>;
 
 /** Header, rows (unread first is the app's ordering), and the empty, loading and error states. The panel of <Notification>, or a page on its own. */
-export function NotificationList({ items, onSelect, onMarkAllRead, loading, error, onRetry, emptyText = EMPTY, footer, title = 'Thông báo', className }: NotificationListProps) {
+export function NotificationList({ items, onSelect, onMarkAllRead, loading, error, onRetry, emptyText, footer, title = 'Thông báo', className }: NotificationListProps) {
   const id = useId();
   const unread = items.filter(i => !i.read).length;
   let body: ReactNode;
   if (error) body = (
-    <div className="dtx-notif__state" role="alert">
-      <CircleAlert aria-hidden /><span>{error}</span>
-      {onRetry && <Button variant="secondary" size="sm" onClick={onRetry}>Thử lại</Button>}
-    </div>
+    <EmptyState size="sm" tone="err" title={error} action={onRetry && <Button variant="secondary" size="sm" onClick={onRetry}>Thử lại</Button>} />
   );
   else if (loading && !items.length) body = (
     <div className="dtx-notif__loading" role="status" aria-label="Đang tải thông báo">
       {[0, 1, 2].map(i => <div key={i} className="dtx-notif__skeleton"><Skeleton width={28} height={28} radius={4} /><div><Skeleton width="70%" height={12} /><Skeleton width="90%" /><Skeleton width="30%" /></div></div>)}
     </div>
   );
-  else if (!items.length) body = <div className="dtx-notif__state" role="status"><Bell aria-hidden />{emptyText}</div>;
+  else if (!items.length) body = <EmptyState size="sm" icon={<Bell />} title={emptyText ?? 'Chưa có thông báo nào'}>{!emptyText && 'Thông báo mới sẽ hiện ở đây.'}</EmptyState>;
   else body = <ul className="dtx-notif__list">{items.map(item => <li key={item.id}><Row item={item} onSelect={onSelect} /></li>)}</ul>;
   return (
     <section className={cx('dtx-notif', className)} aria-labelledby={`${id}t`}>

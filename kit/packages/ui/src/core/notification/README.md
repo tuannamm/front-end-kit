@@ -57,7 +57,7 @@ Plus every NotificationList prop.
 | `loading` | `boolean` |  | Skeleton rows while there are no items yet |
 | `error` | `ReactNode` |  | Replaces the list: what failed and how to recover |
 | `onRetry` | `() => void` |  | Shows "Thử lại" under the error |
-| `emptyText` | `ReactNode` | "Chưa có thông báo nào" | Empty state |
+| `emptyText` | `ReactNode` | "Chưa có thông báo nào" | Empty-state title; the default also says new ones will show here |
 | `footer` | `ReactNode` |  | Under the list, e.g. a "Xem tất cả" link |
 | `title` | `ReactNode` | `'Thông báo'` | Header text |
 | `className` | `string` |  | Extra classes |

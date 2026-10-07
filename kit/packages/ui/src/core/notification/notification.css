@@ -36,11 +36,6 @@
 .dtx-notif__time { font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); font-variant-numeric: tabular-nums; }
 .dtx-notif__dot { position: absolute; top: 16px; right: 12px; width: 8px; height: 8px; border-radius: 2px; background: var(--dtx-primary); }
 
-.dtx-notif__state { display: grid; justify-items: center; gap: 6px; padding: 32px 24px; text-align: center; text-wrap: balance; font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted); }
-.dtx-notif__state > svg { width: 24px; height: 24px; margin-bottom: 4px; }
-.dtx-notif__state[role="alert"] > svg { color: var(--dtx-tone-err); }
-.dtx-notif__state b { color: var(--dtx-fg); font-weight: 500; }
-.dtx-notif__state .dtx-btn { margin-top: 6px; }
 .dtx-notif__loading { display: grid; padding: 4px; }
 .dtx-notif__skeleton { display: flex; gap: 12px; padding: 10px 12px; }
 .dtx-notif__skeleton > div { flex: 1; display: grid; gap: 6px; }

@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState, type ReactElement, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CalendarDays, CheckCircle2, CircleAlert, CircleCheck, Clock, FileStack, Languages, LayoutDashboard, ListFilter, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users, type LucideIcon } from 'lucide-react';
 import {
-  Alert, AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CommandPalette, type CommandItem, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
+  Alert, AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CommandPalette, type CommandItem, CountUp, EmptyState, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
   KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
   StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, todayIso, useToast, type Column, type DateRange, type NotificationItem,
 } from '@dtx/ui';
@@ -321,7 +321,8 @@ export function AppDemo() {
               <div className="w-72 max-w-full"><MultiSelect size="sm" aria-label={t('Lọc theo trạng thái', 'Filter by status')} placeholder={t('Tất cả trạng thái', 'All statuses')} items={statusFilter} value={status} onValueChange={setStatus} /></div>
             </>} />
             <DataTable caption={t('Lô tài liệu gần đây', 'Recent batches')} columns={columns(t, label, openDetail)} rows={rows} rowKey={b => b.id}
-              empty={<div className="grid justify-items-center gap-2"><span>{t('Không có lô nào khớp bộ lọc.', 'No batches match the filters.')}</span><Button variant="secondary" size="sm" onClick={resetFilters}>{t('Xoá bộ lọc', 'Clear filters')}</Button></div>} />
+              empty={<EmptyState size="sm" icon={<ListFilter />} title={t('Không có lô nào khớp bộ lọc', 'No batches match the filters')}
+                action={<Button variant="secondary" size="sm" onClick={resetFilters}>{t('Xoá bộ lọc', 'Clear filters')}</Button>}>{t('Bỏ bớt trạng thái hoặc khoảng ngày đang chọn.', 'Remove a status or the date range.')}</EmptyState>} />
           </Card>
         </div>
         <p role="status" className="dtx-sr">{announce}</p>

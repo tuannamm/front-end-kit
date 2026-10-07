@@ -5,6 +5,7 @@ import { Search, X } from 'lucide-react';
 import { cx } from '../../cx';
 import { Kbd } from '../badge/badge';
 import { Button } from '../button/button';
+import { EmptyState } from '../empty-state/empty-state';
 import { groupCommands, matchCommand } from './command';
 
 export type CommandItem = {
@@ -41,7 +42,9 @@ function Panel({ items, placeholder, onPick, close }: { items: CommandItem[]; pl
         {close}
       </div>
       <Autocomplete.Empty className="dtx-cmdp__empty">
-        {q ? <><b>Không tìm thấy “{q}”</b><span>Thử từ khoá khác hoặc ngắn hơn.</span></> : <b>Chưa có mục nào</b>}
+        {/* role: Autocomplete.Empty is the live region already */}
+        {q ? <EmptyState size="sm" role={undefined} icon={<Search />} title={`Không tìm thấy “${q}”`}>Thử từ khoá khác hoặc ngắn hơn.</EmptyState>
+          : <EmptyState size="sm" role={undefined} title="Chưa có mục nào" />}
       </Autocomplete.Empty>
       <Autocomplete.List className="dtx-cmdp__list">
         {(g: Group) => (

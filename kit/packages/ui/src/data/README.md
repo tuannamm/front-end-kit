@@ -32,7 +32,7 @@ import { KpiCard, Sparkline, DataTable, type Column } from '@dtx/ui';
 | `rows` | `T[]` | **required** | Data, in display order |
 | `rowKey` | `(row: T) => string` | **required** | Stable key per row |
 | `caption` | `string` |  | Table name for screen readers |
-| `empty` | `ReactNode` | `'Không có dữ liệu.'` | Shown when there are no rows: say what happened and how to recover |
+| `empty` | `ReactNode` | `'Chưa có dữ liệu'` | No rows: text becomes an EmptyState title; pass `<EmptyState size="sm" …>` for an icon or a way out |
 
 ### Column
 

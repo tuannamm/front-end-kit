@@ -26,9 +26,7 @@
 .dtx-cmdp__icon svg { width: 16px; height: 16px; }
 .dtx-cmdp .dtx-select-item[data-highlighted] .dtx-cmdp__icon { color: var(--dtx-fg); }
 .dtx-cmdp .dtx-select-item .dtx-kbd { flex: none; }
-.dtx-cmdp__empty { display: grid; gap: 4px; padding: 32px 16px; text-align: center; font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted); }
 .dtx-cmdp__empty:empty { display: none; }
-.dtx-cmdp__empty b { font-weight: 500; color: var(--dtx-fg); overflow-wrap: anywhere; }
 .dtx-cmdp__foot { flex: none; display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 8px 14px; border-top: 1px solid var(--dtx-border); font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
 .dtx-cmdp__foot > span { display: inline-flex; align-items: center; gap: 4px; }
 /* no keyboard on touch screens: the key hints would only be noise */

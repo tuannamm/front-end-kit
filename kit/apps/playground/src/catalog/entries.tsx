@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
-import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, Layers, ScanText, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
+import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, Inbox, Layers, LayoutDashboard, ListFilter, Lock, ScanText, SearchX, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  Alert, AppShell, Avatar, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  Alert, AppShell, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -378,6 +378,22 @@ export const entries: Entry[] = [
       { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
   { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>. tone picks the icon; an error (tone \'err\') stays until closed, is announced at once, and has a red-tinted edge.', importLine: imp('ToastProvider, useToast, type ToastOptions'),
     demos: [{ title: 'Success · error · warning · in progress', note: 'The error toast stays until you close it.', code: "const toast = useToast();\ntoast({ title: 'Đã lưu lô BH-2210', tone: 'ok' });\ntoast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi…', tone: 'err' });", render: () => <ToastDemo /> }] },
+  { id: 'empty-state', name: 'Empty state', category: 'Core', status: 'ready', summary: 'What a list, table, panel or page shows when it has nothing to show: first use, no results, filtered to nothing, no permission, failed load. Says what happened and offers one way forward. DataTable, NotificationList, PdfViewer and CommandPalette all render it.',
+    importLine: imp('EmptyState'),
+    demos: [
+      { title: '1 · First use', note: 'The mascot belongs here (and in onboarding and 404), never next to an error.', code: '<EmptyState mascot title="Chưa có lô tài liệu nào" action={<Button>Tạo lô đầu tiên</Button>}>\n  Tải hồ sơ lên để bắt đầu số hoá. Hệ thống nhận PDF, TIFF và ảnh chụp.\n</EmptyState>', plain: true, render: () => <Card className="w-full">
+        <EmptyState mascot title="Chưa có lô tài liệu nào" action={<><Button>Tạo lô đầu tiên</Button><Button variant="ghost">Xem hướng dẫn</Button></>}>Tải hồ sơ lên để bắt đầu số hoá. Hệ thống nhận PDF, TIFF và ảnh chụp.</EmptyState>
+      </Card> },
+      { title: '2 · No results · filtered to nothing · no permission · failed load', plain: true, render: () => <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-3">
+        <Card><EmptyState icon={<SearchX />} title="Không tìm thấy “HD-99”">Kiểm tra lại mã lô, hoặc tìm theo tên khách hàng.</EmptyState></Card>
+        <Card><EmptyState icon={<ListFilter />} title="Không có lô nào khớp bộ lọc" action={<Button variant="secondary">Xoá bộ lọc</Button>}>Đang lọc: Đang QC, nhận từ 01/10 đến 05/10.</EmptyState></Card>
+        <Card><EmptyState icon={<Lock />} title="Bạn chưa có quyền xem báo cáo này" action={<Button variant="secondary">Gửi yêu cầu cho trưởng ca</Button>}>Trưởng ca hoặc quản trị viên có thể cấp quyền.</EmptyState></Card>
+        <Card><EmptyState tone="err" title="Không tải được danh sách lô" action={<Button variant="secondary">Thử lại</Button>}>Máy chủ không phản hồi. Kiểm tra kết nối mạng rồi thử lại.</EmptyState></Card>
+      </div> },
+      { title: '3 · Small, inside a table and a panel', note: 'size="sm": 24px icon, less padding. DataTable turns plain text into the same look.', plain: true, render: () => <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-3">
+        <Card><DataTable rowKey={(b: { id: string }) => b.id} rows={[]} columns={[{ key: 'id', header: 'Mã lô', render: b => b.id }, { key: 'c', header: 'Khách hàng', render: () => '' }]} empty="Chưa có lô nào trong ca này" /></Card>
+        <Card><EmptyState size="sm" icon={<Inbox />} title="Hàng đợi QC trống">Lô mới cần kiểm tra sẽ hiện ở đây.</EmptyState></Card>
+      </div> }] },
   { id: 'alert', name: 'Alert', category: 'Core', status: 'ready', summary: 'A message that stays in the page until its cause is gone: a form that failed as a whole, a locked batch, planned maintenance. Four tones, each with its own icon and a tinted hairline; an error is announced at once. Optional action and close button. Field errors stay in Field; news of a moment ago goes to a toast.',
     importLine: imp('Alert'),
     demos: [
@@ -472,7 +488,6 @@ export const entries: Entry[] = [
   { id: 'app-shell', name: 'AppShell & Sidebar', category: 'Layout', status: 'ready', summary: 'Workspace header, collapsible groups (height animates), active bar, counts, attention counters, shortcut hints on hover, 60px rail mode.',
     importLine: imp('AppShell, Sidebar, SidebarWorkspace, SidebarGroup, SidebarItem, SidebarFooter, Topbar, CommandButton'),
     demos: [{ title: 'Interactive', plain: true, render: () => <RailDemo /> }] },
-  planned('empty-state', 'Empty state', 'Layout', 'Mascot (64–160px), one sentence, one action.'),
 
   // ───────────── Data ─────────────
   { id: 'kpi', name: 'KpiCard', category: 'Data', status: 'ready', summary: 'One structure for every KPI: label + badge, value, 28px viz row, caption with icon. Attention is shown by badge, viz and icon, never by card chrome.',
@@ -485,7 +500,7 @@ export const entries: Entry[] = [
       </div>) }] },
   { id: 'table', name: 'DataTable', category: 'Data', status: 'ready', summary: 'Tabular numbers, hairline rows, hover, right-aligned numeric columns, own horizontal scroll.', importLine: imp('DataTable, type Column'),
     demos: [{ title: 'Batches', plain: true, render: () => <Card><DataTable rowKey={b => b.id} rows={batches.slice(0, 3)} columns={[{ key: 'id', header: 'Mã lô', render: b => <span className="dtx-id">{b.id}</span> }, { key: 't', header: 'Loại', render: b => b.type[0] }, { key: 'p', header: 'Trang', align: 'right', render: b => b.pages?.toLocaleString('en-US') ?? '—' }, { key: 'a', header: 'Độ chính xác', align: 'right', render: b => `${b.accuracy}%` }]} /></Card> },
-      { title: 'Empty', note: '`empty` says what happened and how to recover.', plain: true, render: () => <Card><DataTable rowKey={(b: { id: string }) => b.id} rows={[]} columns={[{ key: 'id', header: 'Mã lô', render: b => b.id }, { key: 't', header: 'Loại', render: () => '' }]} empty={<div className="grid justify-items-center gap-2"><span>Không có lô nào khớp bộ lọc.</span><Button variant="secondary" size="sm">Xoá bộ lọc</Button></div>} /></Card> }] },
+      { title: 'Empty', note: '`empty` says what happened and how to recover.', plain: true, render: () => <Card><DataTable rowKey={(b: { id: string }) => b.id} rows={[]} columns={[{ key: 'id', header: 'Mã lô', render: b => b.id }, { key: 't', header: 'Loại', render: () => '' }]} empty={<EmptyState size="sm" icon={<ListFilter />} title="Không có lô nào khớp bộ lọc" action={<Button variant="secondary" size="sm">Xoá bộ lọc</Button>} />} /></Card> }] },
   { id: 'charts', name: 'Sparkline · TargetBar · CategoryBar · Meter', category: 'Data', status: 'ready', summary: 'Small, honest charts: each one draws to its own stated scale.', importLine: imp('Sparkline, TargetBar, CategoryBar, Meter'),
     demos: [{ title: 'Inline charts', replay: true, render: run => <div key={run} className="grid w-full max-w-sm gap-5"><Sparkline data={[3, 5, 4, 8, 7, 11, 10, 14]} label="Xu hướng" /><TargetBar value={99.62} target={99.5} min={98} max={100} label="Độ chính xác" /><CategoryBar legend segments={[{ value: 125, color: 'var(--dtx-primary)', label: 'Đúng hạn' }, { value: 2, color: 'var(--dtx-amber)', label: 'Sắp trễ' }, { value: 1, color: 'var(--dtx-red)', label: 'Đã trễ' }]} /><Meter value={62} label="Tiến độ" /></div> }] },
   { id: 'bar-chart', name: 'StackedBarChart', category: 'Data', status: 'ready', summary: 'One scale for bars, gridlines and labels. Bars grow in with a small stagger.', importLine: imp('StackedBarChart'),

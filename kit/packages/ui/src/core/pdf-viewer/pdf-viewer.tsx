@@ -1,10 +1,11 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ComponentProps, type RefObject } from 'react';
-import { ChevronLeft, ChevronRight, CircleAlert, Download, FileText, Minus, MoveHorizontal, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, FileText, Minus, MoveHorizontal, Plus } from 'lucide-react';
 import type { PDFDocumentLoadingTask, PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
 import { cx } from '../../cx';
 import { Skeleton } from '../../motion/primitives';
 import { Button } from '../button/button';
 import { Tooltip } from '../controls/controls';
+import { EmptyState } from '../empty-state/empty-state';
 import { PT_TO_PX, ZOOM_MAX, ZOOM_MIN, clampZoom, describeError, pageAt, parsePage, stepZoom, type PdfError } from './view';
 
 export type PdfSource = string | Blob | ArrayBuffer | Uint8Array;
@@ -210,12 +211,10 @@ export function PdfViewer({ src, fileName, defaultZoom = 'fit', download = true,
             <Skeleton width={Math.max(0, Math.min(width - 2 * PAD, 480))} height={Math.max(0, Math.min(width - 2 * PAD, 480)) * 1.414} radius={2} />
           </div>
         ) : state.status === 'error' ? (
-          <div className="dtx-pdf__state" role="alert">
-            <CircleAlert aria-hidden /><b>{state.error.title}</b><span>{state.error.hint}</span>
-            {state.error.retry && <Button variant="secondary" size="sm" onClick={() => setAttempt(a => a + 1)}>Thử lại</Button>}
-          </div>
+          <EmptyState size="sm" tone="err" title={state.error.title}
+            action={state.error.retry && <Button variant="secondary" size="sm" onClick={() => setAttempt(a => a + 1)}>Thử lại</Button>}>{state.error.hint}</EmptyState>
         ) : (
-          <div className="dtx-pdf__state" role="status"><FileText aria-hidden /><b>Chưa có tài liệu</b><span>Chọn một file PDF để xem tại đây.</span></div>
+          <EmptyState size="sm" icon={<FileText />} title="Chưa có tài liệu">Chọn một file PDF để xem tại đây.</EmptyState>
         )}
       </div>
     </div>
