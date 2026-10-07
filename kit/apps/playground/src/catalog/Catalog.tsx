@@ -3,6 +3,7 @@ import { Check, Copy, RotateCcw } from 'lucide-react';
 import { Badge, Button, Card, DataTable, Input, Reveal, Segmented } from '@dtx/ui';
 import { categories, entries, type Entry } from './entries';
 import { Stage } from './demos';
+import { OverviewGrid } from './overview-grid';
 import { useT } from '../i18n';
 import { readPropsDocs } from '../../../../packages/ui/src/props-doc';
 
@@ -178,7 +179,7 @@ export function Catalog({ id, go }: { id?: string; go: (id?: string) => void }) 
         ))}
         {!shown.length && <p className="px-2.5 text-xs text-fg-muted">{t('Không có mục nào khớp.', 'No matching entries.')}</p>}
       </aside>
-      <div className="min-w-0">{entry ? <EntryView e={entry} theme={theme} setTheme={setTheme} /> : <Overview go={go} />}</div>
+      <div className="min-w-0">{entry ? <EntryView e={entry} theme={theme} setTheme={setTheme} /> : id === 'grid-preview' ? <OverviewGrid shown={shown} /> : <Overview go={go} />}</div>
     </div>
   );
 }
