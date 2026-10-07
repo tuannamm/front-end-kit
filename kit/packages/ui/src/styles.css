@@ -173,6 +173,10 @@
   .dtx-select-item[data-selected] .dtx-select-check { visibility: visible; animation: dtx-pop var(--dtx-dur-base) var(--dtx-ease-emphasis); }
   .dtx-select-empty { padding: 16px 8px; text-align: center; font-size: var(--dtx-text-xs); color: var(--dtx-fg-muted); }
   .dtx-select-empty:empty { display: none; }
+  /* inline with text (Tailwind preflight makes every svg a block): sits on the x-height, not the baseline */
+  .dtx-icon { display: inline-block; flex: none; vertical-align: -.125em; }
+  .dtx-icon[class*="dtx-tone-"] { color: var(--t); }
+  .dtx-icon--muted { color: var(--dtx-fg-muted); }
   .dtx-icon-tile { width: 22px; height: 22px; flex: none; display: grid; place-items: center; border-radius: var(--dtx-radius-sm); background: rgb(var(--c) / .14); color: var(--t); }
   .dtx-icon-tile svg { width: 13px; height: 13px; }
   .dtx-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; flex: 1; min-width: 0; }
@@ -451,9 +455,24 @@
   .dtx-table button.dtx-id:hover { text-decoration: underline; text-underline-offset: 3px; }
 
   /* ---------- avatar ---------- */
-  .dtx-avatar { width: 32px; height: 32px; flex: none; display: grid; place-items: center; overflow: hidden; border-radius: var(--dtx-radius-md); background: var(--dtx-navy); color: var(--dtx-on-primary); font-size: var(--dtx-text-xs); font-weight: 700; } /* theme-fixed: navy tile with white initials is a fixed pair */
+  .dtx-avatar { position: relative; width: 32px; height: 32px; flex: none; display: grid; place-items: center; overflow: hidden; border-radius: var(--dtx-radius-md); background: var(--dtx-navy); color: var(--dtx-on-primary); font-size: var(--dtx-text-xs); font-weight: 700; } /* theme-fixed: navy tile with white initials is a fixed pair */
   .dtx-avatar--sm { width: 28px; height: 28px; }
-  .dtx-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .dtx-avatar--lg { width: 64px; height: 64px; font-size: var(--dtx-text-lg); }
+  .dtx-avatar--circle { border-radius: 50%; }
+  .dtx-avatar-btn { position: relative; flex: none; display: inline-grid; padding: 0; border: 0; border-radius: var(--dtx-radius-md); background: none; cursor: pointer; }
+  .dtx-avatar-btn--circle { border-radius: 50%; }
+  .dtx-avatar-btn > .dtx-avatar { border-radius: inherit; }
+  /* camera over the photo on hover / focus: says "change it" where a bare avatar says nothing */
+  .dtx-avatar-btn__cam { position: absolute; inset: 0; display: grid; place-items: center; border-radius: inherit; background: rgb(0 0 0 / .5); color: #fff; opacity: 0; transition: opacity var(--dtx-dur-fast) var(--dtx-ease-standard); } /* theme-fixed: white icon on a dark scrim over the photo */
+  .dtx-avatar-btn__cam svg { width: 50%; height: 50%; }
+  .dtx-avatar-btn:hover .dtx-avatar-btn__cam, .dtx-avatar-btn:focus-visible .dtx-avatar-btn__cam { opacity: 1; }
+  .dtx-avatar-picker__preview { display: flex; align-items: center; gap: 16px; }
+  .dtx-avatar-picker__preview p { display: grid; gap: 2px; min-width: 0; margin: 0; font-size: var(--dtx-text-sm); }
+  .dtx-avatar-picker__preview span { color: var(--dtx-fg-muted); }
+  .dtx-avatar-picker__remove { margin-right: auto; }
+  .dtx-avatar svg { width: 55%; height: 55%; }
+  /* over the initials, which show while the photo loads */
+  .dtx-avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
   /* ---------- section header ---------- */
   .dtx-section-head { display: grid; gap: 12px; max-width: 40rem; }

@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState, type ReactElement, type ReactNode } from 'react';
-import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users } from 'lucide-react';
+import { AlertTriangle, BarChart3, CalendarDays, CheckCircle2, CircleAlert, CircleCheck, Clock, FileStack, LayoutDashboard, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users, type LucideIcon } from 'lucide-react';
 import {
-  AppShell, Avatar, Badge, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Select, UploadToast,
+  AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Select, UploadToast,
   KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
   StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, todayIso, useToast, type Column, type DateRange,
 } from '@dtx/ui';
@@ -72,6 +72,10 @@ function BatchDrawer({ batch: b, open, onOpenChange, t, label }: { batch: Batch 
       t(`OCR và trích xuất xong · ${b.accuracy.toFixed(2)}%`, `OCR and extraction done · ${b.accuracy.toFixed(2)}%`),
       last[b.status],
     ];
+  // finished steps are checked; the last one carries the batch status (its text says the same, so the icon is decorative)
+  const lastIcon: Record<Batch['status'], [LucideIcon, IconProps['tone']]> = {
+    processing: [Clock, 'brand'], qc: [Clock, 'muted'], risk: [AlertTriangle, 'warn'], done: [CircleCheck, 'ok'], error: [CircleAlert, 'err'],
+  };
   // nothing to act on while processing
   const action: Partial<Record<Batch['status'], string>> = { qc: t('Mở hàng đợi QC', 'Open QC queue'), risk: t('Mở hàng đợi QC', 'Open QC queue'), done: t('Tải kết quả', 'Download results'), error: t('Sửa mẫu trích xuất', 'Fix extraction template') };
   return (
@@ -82,7 +86,10 @@ function BatchDrawer({ batch: b, open, onOpenChange, t, label }: { batch: Batch 
         {rows.map(([k, v]) => <Fragment key={k}><dt className="text-fg-muted">{k}</dt><dd className="m-0 font-medium dtx-num">{v}</dd></Fragment>)}
       </dl>
       <h3 className="mb-2 mt-6 text-sm font-bold">{t('Lịch sử xử lý', 'Processing history')}</h3>
-      <ol className="m-0 list-none p-0 text-sm">{log.map(l => <li key={l} className="border-b border-border py-2 dtx-num last:border-b-0">{l}</li>)}</ol>
+      <ol className="m-0 list-none p-0 text-sm">{log.map((l, i) => {
+        const [icon, tone] = i === log.length - 1 ? lastIcon[b.status] : [CircleCheck, 'ok' as const];
+        return <li key={l} className="flex items-start gap-2 border-b border-border py-2 dtx-num last:border-b-0"><Icon icon={icon} tone={tone} className="mt-0.5" />{l}</li>;
+      })}</ol>
     </Drawer>
   );
 }
@@ -154,6 +161,14 @@ export function AppDemo() {
     const onKey = (e: KeyboardEvent) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') { e.preventDefault(); setRail(r => !r); } };
     addEventListener('keydown', onKey); return () => removeEventListener('keydown', onKey);
   }, []);
+  const [photo, setPhoto] = useState<string>();
+  const me = 'Nguyễn Thị Thuận';
+  // no backend: the photo lives in this tab as an object URL
+  const savePhoto = (file: File | null) => {
+    if (photo) URL.revokeObjectURL(photo);
+    setPhoto(file ? URL.createObjectURL(file) : undefined);
+    toast({ title: file ? t('Đã cập nhật ảnh đại diện', 'Profile photo updated') : t('Đã xoá ảnh đại diện', 'Profile photo removed'), icon: <Badge tone="ok" size="sm" icon={<CheckCircle2 />} /> });
+  };
   const [created, setCreated] = useState<Batch[]>([]);
   const [announce, setAnnounce] = useState('');
   // the new batch must be visible: widen filters that would hide it (the chip / range change shows why)
@@ -182,7 +197,7 @@ export function AppDemo() {
         <SidebarItem href="#/app" icon={<Settings />} label={t('Cài đặt', 'Settings')} />
       </SidebarGroup>
       <SidebarFooter>
-        <Avatar name="Nguyễn Thị Thuận" size="sm" />
+        <AvatarPicker name={me} src={photo} size="sm" onChange={savePhoto} />
         <span className="dtx-rail-hide min-w-0"><b>Nguyễn Thị Thuận</b><small>{t('QC Lead · Ca sáng', 'QC Lead · Morning shift')}</small></span>
         <Button variant="ghost" size="sm" icon aria-label={t('Tài khoản', 'Account')} className="dtx-rail-hide ml-auto"><MoreHorizontal /></Button>
       </SidebarFooter>
@@ -198,14 +213,14 @@ export function AppDemo() {
           </Tooltip>
           <span className="text-sm text-fg-muted">{t('Vận hành', 'Operations')} / <b className="font-medium text-fg">{t('Tổng quan', 'Overview')}</b></span>
           <CommandButton placeholder={t('Tìm lô, khách hàng, lệnh…', 'Search batches, clients, commands…')} />
-          <Avatar name="Nguyễn Thị Thuận" />
+          <AvatarPicker name={me} src={photo} onChange={savePhoto} />
         </Topbar>
 
         <div className="grid gap-6 px-5 pt-6 pb-8">
           <div className="flex flex-wrap items-end gap-4">
             <div>
               <h1 className="m-0 text-2xl font-bold tracking-tight">{t('Tổng quan vận hành', 'Operations overview')}</h1>
-              <p className="mt-1 mb-0 text-sm text-fg-muted">{t('Thứ Hai, 05/10/2026 · Ca sáng', 'Monday, 05/10/2026 · Morning shift')} <Badge tone="neutral" variant="outline" size="sm">{t('Dữ liệu mẫu', 'Sample data')}</Badge></p>
+              <p className="mt-1 mb-0 text-sm text-fg-muted"><Icon icon={CalendarDays} size="sm" /> {t('Thứ Hai, 05/10/2026 · Ca sáng', 'Monday, 05/10/2026 · Morning shift')} <Badge tone="neutral" variant="outline" size="sm">{t('Dữ liệu mẫu', 'Sample data')}</Badge></p>
             </div>
             <div className="ml-auto flex flex-wrap gap-2">
               <Dialog
@@ -249,7 +264,7 @@ export function AppDemo() {
               {queue(t).map(q => (
                 <div key={q.name} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 border-b border-border px-4 py-3 text-sm last:border-b-0 dtx-num">
                   <b className="truncate font-medium">{q.name}</b><small className="text-xs text-fg-muted">{q.pct}%</small>
-                  <small className="text-xs text-fg-muted">{q.meta}</small><small className="text-xs text-fg-muted">{q.left}</small>
+                  <small className="text-xs text-fg-muted">{q.meta}</small><small className="text-xs text-fg-muted"><Icon icon={Clock} size="xs" /> {q.left}</small>
                   <div className="col-span-2"><Meter value={q.pct} label={`${q.name}: ${q.pct}%`} /></div>
                 </div>
               ))}

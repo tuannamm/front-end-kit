@@ -1,6 +1,8 @@
 export { Button } from './button';
 export { Badge, Counter, ProgressRing, Kbd, IconTile, type Tone, type BadgeProps } from './badge';
-export { Avatar } from './avatar';
+export { Icon, type IconProps } from './icon';
+export { Avatar, AvatarPicker, type AvatarProps, type AvatarPickerProps } from './avatar';
+export { initials } from './initials';
 export { Field, Input } from './field';
 export { Select, MultiSelect, type SelectOption, type SelectGroup, type SelectProps, type MultiSelectProps } from './select';
 export { Checkbox, CheckboxGroup, RadioGroup, type ChoiceOption, type CheckboxProps, type CheckboxGroupProps, type RadioGroupProps } from './choice';

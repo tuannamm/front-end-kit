@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useState, type ReactNode } from 'react';
 import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileStack, LayoutDashboard, Layers, ScanText, Settings, Sparkles, TrendingUp, Users } from 'lucide-react';
 import {
-  AppShell, Avatar, Badge, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
+  AppShell, Avatar, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
   Logo, Meter, MultiSelect, OcrShowcase, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
@@ -229,6 +229,15 @@ function RailDemo() {
 
 const planned = (id: string, name: string, category: Category, summary: string): Entry => ({ id, name, category, status: 'planned', summary, demos: [] });
 
+function AvatarPickerDemo() {
+  const [src, setSrc] = useState<string>();
+  const change = (file: File | null) => { if (src) URL.revokeObjectURL(src); setSrc(file ? URL.createObjectURL(file) : undefined); };
+  return <><AvatarPicker name="Nguyễn Thị Thuận" src={src} onChange={change} /><AvatarPicker name="Nguyễn Thị Thuận" src={src} size="lg" onChange={change} /><AvatarPicker name="Trần Minh" shape="square" onChange={() => {}} /></>;
+}
+
+// Stand-in for a user photo (the mascot is reserved for empty states / onboarding / 404, never an avatar)
+const demoPhoto = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#B9D7EE"/><circle cx="32" cy="26" r="12" fill="#5B6F8F"/><path d="M8 64c2-14 12-21 24-21s22 7 24 21z" fill="#5B6F8F"/></svg>');
+
 export const entries: Entry[] = [
   // ───────────── Foundations ─────────────
   { id: 'color', name: 'Colour', category: 'Foundations', status: 'ready', summary: 'Every colour is tagged by source: rule (stated in the Guidelines PDF), sampled (in PDF artwork, pixel-sampled), kit (our UI decision).',
@@ -329,8 +338,20 @@ export const entries: Entry[] = [
       { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
   { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>.', importLine: imp('ToastProvider, useToast'),
     demos: [{ title: 'Trigger', code: "const toast = useToast();\ntoast({ title: 'Đã lưu', description: '…', icon })", render: () => <ToastDemo /> }] },
-  { id: 'avatar', name: 'Avatar', category: 'Core', status: 'ready', summary: 'Initials from first + last word, navy tile.', importLine: imp('Avatar'),
-    demos: [{ title: 'Sizes', render: () => <><Avatar name="Nguyễn Thị Thuận" /><Avatar name="Trần Minh" size="sm" /></> }] },
+  { id: 'avatar', name: 'Avatar', category: 'Core', status: 'ready', summary: 'Photo when src loads; otherwise initials of the first + last word (Vietnamese diacritics kept), or a person icon when the name has no letter. Square or circle, navy tile. The name is the accessible label. AvatarPicker makes it a button that opens a dialog to pick, preview, remove and save a photo (it hands back the File; uploading is the app\'s job).', importLine: imp('Avatar, AvatarPicker'),
+    props: [['name', 'string', 'Accessible label, tooltip and initials source'], ['src', 'string', 'Photo URL; initials show while it loads and if it fails'], ['shape', "'square' | 'circle'", "Default 'square'"], ['size', "'sm' | 'md' | 'lg'", "28 / 32 / 64px (lg for a profile preview), default 'md'"], ['AvatarPicker.onChange', '(file: File | null) => void', 'On save; null = photo removed'], ['AvatarPicker.accept / maxSize', 'string · number', 'Default PNG, JPEG, WEBP · 5 MB']],
+    demos: [
+      { title: '1 · Square and circle', render: () => <><Avatar name="Nguyễn Thị Thuận" /><Avatar name="Nguyễn Thị Thuận" shape="circle" /><Avatar name="Trần Minh" size="sm" /><Avatar name="Trần Minh" size="sm" shape="circle" /><Avatar name="Nguyễn Thị Thuận" size="lg" shape="circle" /></> },
+      { title: '2 · Photo, broken photo, fallbacks', code: '<Avatar name="Phạm Hồng Nhung" src={user.photoUrl} shape="circle" />\n<Avatar name="Lê Văn An" src="/khong-ton-tai.jpg" />  // falls back to "LA"\n<Avatar name="" />  // no letter: person icon', render: () => <><Avatar name="Phạm Hồng Nhung" src={demoPhoto} shape="circle" /><Avatar name="Phạm Hồng Nhung" src={demoPhoto} /><Avatar name="Lê Văn An" src="/khong-ton-tai.jpg" shape="circle" /><Avatar name="Đặng" shape="circle" /><Avatar name="" shape="circle" /></> },
+      { title: '3 · Click to change the photo (AvatarPicker)', code: 'const [src, setSrc] = useState<string>();\n<AvatarPicker name="Nguyễn Thị Thuận" src={src}\n  onChange={file => setSrc(file ? URL.createObjectURL(file) : undefined)} />', render: () => <AvatarPickerDemo /> }] },
+  { id: 'icon', name: 'Icon', category: 'Core', status: 'ready', summary: 'Any lucide-react icon on the kit size scale (12 · 14 · 16 · 20 · 24px) and tones. Decorative by default (hidden from assistive tech); give it a label when no text next to it says what it means, and a Tooltip so sighted users get the same words. Inside Button, Badge and other kit parts the part sets the size, so a bare lucide icon works there too.',
+    importLine: imp('Icon'),
+    props: [['icon', 'LucideIcon', 'From lucide-react, e.g. Upload; browse at lucide.dev/icons'], ['size', "'xs' | 'sm' | 'md' | 'lg' | 'xl'", "12 / 14 / 16 / 20 / 24px, default 'md'"], ['tone', "Tone | 'muted'", 'Default: colour of the surrounding text'], ['label', 'string', 'Makes it role="img" with this name; leave out when text beside it says the same']],
+    demos: [
+      { title: '1 · Sizes', render: () => <>{(['xs', 'sm', 'md', 'lg', 'xl'] as const).map(s => <span key={s} className="grid grid-rows-[24px_auto] place-items-center gap-2 text-xs text-fg-muted"><Icon icon={FileStack} size={s} /><span>{s}</span></span>)}</> },
+      { title: '2 · Tones', render: () => <>{(['brand', 'ok', 'warn', 'err', 'neutral', 'violet', 'muted'] as const).map(t => <span key={t} className="grid justify-items-center gap-2 text-xs text-fg-muted"><Icon icon={t === 'ok' ? CircleCheck : t === 'warn' ? AlertTriangle : t === 'err' ? CircleAlert : Sparkles} size="lg" tone={t} /><span>{t}</span></span>)}</> },
+      { title: '3 · Decorative or meaningful', code: '<Button><ScanText />Chạy OCR</Button>            // the text says it: decorative\n<Tooltip content="Đã duyệt">\n  <span tabIndex={0}><Icon icon={CircleCheck} tone="ok" label="Đã duyệt" /></span>\n</Tooltip>                                        // alone: label + tooltip',
+        render: () => <><Button variant="secondary"><ScanText />Chạy OCR</Button><p className="m-0 text-sm"><Icon icon={FileStack} size="sm" tone="muted" /> HD-5517 · 3.860 trang</p><Tooltip content="Đã duyệt"><span tabIndex={0} className="inline-grid rounded-sm"><Icon icon={CircleCheck} tone="ok" size="lg" label="Đã duyệt" /></span></Tooltip><Tooltip content="Cần kiểm tra lại"><span tabIndex={0} className="inline-grid rounded-sm"><Icon icon={AlertTriangle} tone="warn" size="lg" label="Cần kiểm tra lại" /></span></Tooltip></> }] },
   { id: 'checkbox', name: 'Checkbox & Radio', category: 'Core', status: 'ready', summary: 'Checkbox for one on/off choice, CheckboxGroup for several, RadioGroup for exactly one from a short visible list (more than ~6 options: use Select). Whole row is clickable; arrow keys move inside a RadioGroup.',
     importLine: imp('Checkbox, CheckboxGroup, RadioGroup, type ChoiceOption'),
     props: [['label', 'ReactNode', 'Checkbox label, or group legend'], ['options', 'ChoiceOption[]', '{ value, label, description?, disabled? }'], ['value / defaultValue / onValueChange', 'string[] (CheckboxGroup) · string (RadioGroup)', ''], ['checked / defaultChecked / onCheckedChange', 'boolean', 'Checkbox'], ['indeterminate', 'boolean', 'Checkbox mixed state'], ['selectAll', 'ReactNode', 'CheckboxGroup parent checkbox label'], ['row', 'boolean', 'Options side by side'], ['description, error', 'ReactNode', ''], ['disabled, required, name', '', '']],
