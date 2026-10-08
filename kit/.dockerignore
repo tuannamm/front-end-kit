@@ -1,0 +1,4 @@
+**/node_modules
+**/dist
+# real customer pages — must never end up in an image
+apps/playground/public/samples

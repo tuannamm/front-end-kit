@@ -1,0 +1,11 @@
+# On the deploy machine: git pull && docker compose up -d --build
+services:
+  web:
+    build: .
+    image: dtx-frek
+    ports:
+      - "${PORT:-8080}:80"
+    restart: unless-stopped
+    # Real customer samples are excluded from the image. Uncomment only if this machine may serve them.
+    # volumes:
+    #   - ./apps/playground/public/samples:/usr/share/nginx/html/samples:ro
