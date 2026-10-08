@@ -1,0 +1,27 @@
+/* ---------- pagination ---------- */
+.dtx-pager {
+  container-type: inline-size; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px;
+  width: 100%; font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted);
+}
+.dtx-pager__info { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-width: 0; }
+.dtx-pager__size { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.dtx-pager__size .dtx-select-trigger { width: 76px; }
+.dtx-pager__nav { display: flex; align-items: center; gap: 2px; }
+.dtx-pager__pages { display: flex; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.dtx-pager__btn {
+  display: inline-grid; place-items: center; min-width: 32px; height: 32px; padding: 0 6px; border: 0; border-radius: var(--dtx-radius-sm);
+  background: none; font: 500 var(--dtx-text-sm) var(--dtx-font); color: var(--dtx-fg); cursor: pointer;
+  transition: background var(--dtx-dur-fast), color var(--dtx-dur-fast);
+}
+.dtx-pager__btn svg { width: 16px; height: 16px; }
+.dtx-pager__btn:hover:not([aria-disabled]):not([aria-current]) { background: var(--dtx-hover); }
+/* current page: tint plus weight, so it does not rely on colour alone */
+.dtx-pager__btn[aria-current="page"] { background: rgb(37 130 215 / .13); color: var(--dtx-tone-brand); font-weight: 700; cursor: default; }
+.dtx-pager__btn[aria-disabled] { opacity: .4; cursor: not-allowed; }
+.dtx-pager__gap { display: inline-grid; place-items: center; min-width: 24px; height: 32px; }
+.dtx-pager__compact { display: none; padding: 0 8px; color: var(--dtx-fg); white-space: nowrap; }
+/* a narrow container (card, phone) keeps only the arrows and "Trang 3 / 62" */
+@container (max-width: 360px) {
+  .dtx-pager__pages { display: none; }
+  .dtx-pager__compact { display: inline; }
+}

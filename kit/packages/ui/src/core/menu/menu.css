@@ -1,0 +1,15 @@
+/* ---------- menu ---------- */
+/* reuses the select popup, items, separator and group label; this file only adds what a menu has on top */
+.dtx-menu { min-width: max(var(--anchor-width), 200px); max-width: min(320px, var(--available-width)); }
+.dtx-menu__icon { display: grid; place-items: center; width: 20px; flex: none; color: var(--dtx-fg-muted); }
+.dtx-menu__icon svg { width: 16px; height: 16px; }
+.dtx-menu .dtx-select-item[data-highlighted] .dtx-menu__icon { color: var(--dtx-fg); }
+.dtx-menu .dtx-select-item .dtx-kbd { flex: none; }
+.dtx-menu a.dtx-select-item { color: inherit; text-decoration: none; }
+/* the slot keeps its width when unchecked, so checked and unchecked labels line up */
+.dtx-menu__mark { display: grid; place-items: center; width: 16px; height: 16px; flex: none; color: var(--dtx-primary); }
+.dtx-menu__mark svg { width: 16px; height: 16px; animation: dtx-pop var(--dtx-dur-base) var(--dtx-ease-emphasis); }
+.dtx-menu__mark .dtx-menu__dot { width: 8px; height: 8px; fill: currentColor; }
+.dtx-menu__danger, .dtx-menu__danger .dtx-menu__icon { color: var(--dtx-tone-err); }
+.dtx-menu__danger[data-highlighted] { background: color-mix(in srgb, var(--dtx-tone-err) 12%, transparent); }
+.dtx-menu__danger[data-highlighted] .dtx-menu__icon { color: var(--dtx-tone-err); }

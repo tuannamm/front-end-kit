@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Badge, Button, Card, CardHeader, Field, OcrShowcase, SampleInvoice, Select, normalizeOcr, type OcrDocument, type OcrStage } from '@dtx/ui';
+import { Alert, Textarea, Badge, Button, Card, CardHeader, Field, OcrShowcase, SampleInvoice, Select, normalizeOcr, type OcrDocument, type OcrStage } from '@dtx/ui';
 import { sampleOptions, useSampleIndex } from '../samples';
 import { useT } from '../i18n';
 
@@ -78,7 +78,7 @@ export function Poc() {
               <input type="file" accept="image/*" onChange={e => onFile(e.target.files?.[0])} className="text-sm" />
             </Field>
             <Field label="JSON">
-              <textarea value={json} onChange={e => setJson(e.target.value)} spellCheck={false} rows={16} className="dtx-input h-auto py-2 font-mono text-xs leading-relaxed" />
+              <Textarea value={json} onChange={e => setJson(e.target.value)} spellCheck={false} rows={16} maxRows={16} className="font-mono text-xs" />
             </Field>
             <Field label={t('Các bước', 'Steps')}>
               <Select value={preset} onValueChange={setPreset} items={[
@@ -87,7 +87,7 @@ export function Poc() {
                 { value: 'fast', label: t('Không tiền xử lý', 'No preprocessing'), description: PRESETS.fast.join(' → ') },
               ]} />
             </Field>
-            {error && <p className="m-0 text-sm text-[var(--dtx-tone-err)]" role="alert">{error}</p>}
+            {error && <Alert tone="err">{error}</Alert>}
             <div className="flex gap-2"><Button onClick={run}>{t('Chạy', 'Run')}</Button><Button variant="secondary" onClick={() => { setShown(null); setError(null); }}>{t('Xem ví dụ mẫu', 'Show the example')}</Button></div>
           </div>
         </Card>

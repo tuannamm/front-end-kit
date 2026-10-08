@@ -14,7 +14,8 @@ import { Dialog, DialogClose, Drawer, DrawerClose, ToastProvider, useToast, Butt
 
 <ToastProvider><App /></ToastProvider>              // once, at the app root
 const toast = useToast();
-toast({ title: 'Đã lưu', description: 'Hồ sơ HS-0142', icon: <Badge tone="ok" size="sm" dot /> });
+toast({ title: 'Đã lưu', description: 'Hồ sơ HS-0142', tone: 'ok' });
+toast({ title: 'Không lưu được hồ sơ HS-0142', description: 'Mất kết nối máy chủ.', tone: 'err' });
 ```
 
 ## Notes
@@ -26,6 +27,9 @@ toast({ title: 'Đã lưu', description: 'Hồ sơ HS-0142', icon: <Badge tone="
   and a fast swipe closes faster.
 - **Layers:** backdrop 60, drawer/dialog 61, popups 65, toasts 70.
 - **Toast:** toasts stack and expand on hover. Swipe right or down to dismiss. Default timeout is 4s.
+  `tone` picks the icon (ok, warn, err, brand). An `err` toast stays until it is closed, is announced at once
+  (`priority: 'high'`) and has a red-tinted edge. Its text should say what failed and how to recover. Screen readers hear an error through a
+  `role="alert"` copy.
   While a right drawer is open, toasts move to the left corner so they do not cover its footer.
   On phones they move above the drawer footer instead.
 - Toast `data.body` holds extra content under the text. UploadToast (in `file-upload/`) uses it.
@@ -84,10 +88,11 @@ toast({ title: 'Đã lưu', description: 'Hồ sơ HS-0142', icon: <Badge tone="
 |---|---|---|---|
 | `title` | `string` | **required** |  |
 | `description` | `string` |  | Line under the title |
-| `icon` | `ReactNode` |  | Leading icon, e.g. a small Badge |
-| `timeout` | `number` | `4000` | Milliseconds; `0` keeps it until closed |
+| `tone` | `'ok' \| 'warn' \| 'err' \| 'brand'` |  | Picks the icon; `'err'` also stays until closed and is announced at once |
+| `icon` | `ReactNode` |  | Replaces the tone's icon, e.g. `<Badge size="sm" live />` for work in progress |
+| `timeout` | `number` | `4000` (`'err'`: `0`) | Milliseconds; `0` keeps it until closed |
 
-Options of the `toast(options)` function that `useToast()` returns.
+Options (`ToastOptions`) of the `toast(options)` function that `useToast()` returns; it returns the toast id.
 
 ## Files
 

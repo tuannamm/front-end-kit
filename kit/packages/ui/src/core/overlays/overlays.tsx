@@ -4,6 +4,7 @@ import { Drawer as BDrawer } from '@base-ui/react/drawer';
 import { Toast } from '@base-ui/react/toast';
 import { X } from 'lucide-react';
 import { cx } from '../../cx';
+import { Badge, toneIcon, type StatusTone } from '../badge/badge';
 import { Button } from '../button/button';
 
 /** Modal dialog: backdrop fades, panel scales .94 → 1 with emphasis easing; exit is faster. */
@@ -88,7 +89,7 @@ type ToastData = { icon?: ReactNode; body?: ReactNode };
 function ToastList() {
   const { toasts } = Toast.useToastManager();
   return toasts.map(t => (
-    <Toast.Root key={t.id} toast={t} className="dtx-toast" swipeDirection={['right', 'down']}>
+    <Toast.Root key={t.id} toast={t} className="dtx-toast" data-tone={t.type} swipeDirection={['right', 'down']}>
       <Toast.Content className="dtx-toast__content">
         {(t.data as ToastData | undefined)?.icon}
         <div className="dtx-toast__text">
@@ -102,9 +103,24 @@ function ToastList() {
   ));
 }
 
-/** const toast = useToast(); toast({ title, description, icon }) */
+export type ToastTone = StatusTone;
+export type ToastOptions = {
+  title: string;
+  description?: string;
+  /** Picks the icon. 'err' also stays until closed and is announced at once. */
+  tone?: ToastTone;
+  /** Replaces the tone's icon. */
+  icon?: ReactNode;
+  /** ms; 0 keeps it until closed. Default 4000, or 0 for 'err' (an error must not vanish before it is read). */
+  timeout?: number;
+};
+
+/** const toast = useToast(); toast({ title, description, tone }). Returns the toast id. */
 export function useToast() {
   const m = Toast.useToastManager();
-  return ({ title, description, icon, timeout = 4000 }: { title: string; description?: string; icon?: ReactNode; timeout?: number }) =>
-    m.add({ title, description, timeout, data: { icon } });
+  return ({ title, description, tone, icon, timeout = tone === 'err' ? 0 : 4000 }: ToastOptions) =>
+    m.add({
+      title, description, timeout, type: tone, priority: tone === 'err' ? 'high' : 'low',
+      data: { icon: icon ?? (tone && <Badge tone={tone} size="sm" icon={toneIcon[tone]} aria-hidden />) },
+    });
 }

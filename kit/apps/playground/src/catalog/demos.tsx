@@ -1,7 +1,8 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
-import { Badge, Button, Card, Loadable, Reveal, SkeletonText, useToast } from '@dtx/ui';
-import { CheckCircle2 } from 'lucide-react';
+import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
+import { Alert, Badge, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
+import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
 export const swatches: Swatch[] = [
@@ -183,7 +184,9 @@ export function ToastDemo() {
   const toast = useToast();
   return (
     <div className="flex flex-wrap gap-2">
-      <Button onClick={() => toast({ title: 'Đã lưu lô BH-2210', description: '1.240 trang · 09:42', icon: <Badge tone="ok" size="sm" icon={<CheckCircle2 />} /> })}>Toast thành công</Button>
+      <Button onClick={() => toast({ title: 'Đã lưu lô BH-2210', description: '1.240 trang · 09:42', tone: 'ok' })}>Toast thành công</Button>
+      <Button variant="danger" onClick={() => toast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi. Tệp vẫn được giữ, thử lại sau ít phút.', tone: 'err' })}>Toast lỗi</Button>
+      <Button variant="secondary" onClick={() => toast({ title: 'Lô HD-5517 có nguy cơ trễ SLA', description: 'Còn 1.120 trang chưa QC.', tone: 'warn' })}>Toast cảnh báo</Button>
       <Button variant="secondary" onClick={() => toast({ title: 'Đang xuất báo cáo', description: 'Bạn sẽ nhận email trong vài phút.', icon: <Badge size="sm" live /> })}>Toast đang xử lý</Button>
     </div>
   );
@@ -199,3 +202,197 @@ export function Stage({ children, theme, dots }: { children: ReactNode; theme?: 
 
 export const spacing = [4, 8, 12, 16, 24, 32, 48, 64, 96];
 export const radii = [{ n: 'sm', px: 4, use: 'Controls, badges' }, { n: 'md', px: 6, use: 'Buttons, inputs' }, { n: 'lg', px: 10, use: 'Cards, popovers' }, { n: 'full', px: 999, use: 'Trend pills only' }];
+
+/** Sample palette content: pages, batches (with client and a code keyword) and actions, one disabled with its reason. */
+function useCommandItems(): CommandItem[] {
+  const toast = useToast();
+  const run = (label: string) => () => toast({ title: label, description: 'Ví dụ: ứng dụng thật sẽ chuyển trang hoặc chạy lệnh.' });
+  return [
+    { id: 'go-overview', group: 'Đi tới', label: 'Tổng quan', icon: <LayoutDashboard />, keywords: ['overview', 'dashboard'], onSelect: run('Tổng quan') },
+    { id: 'go-qc', group: 'Đi tới', label: 'Hàng đợi QC', icon: <CircleCheck />, keywords: ['kiểm tra', 'quality'], onSelect: run('Hàng đợi QC') },
+    { id: 'go-reports', group: 'Đi tới', label: 'Báo cáo', icon: <BarChart3 />, keywords: ['reports'], onSelect: run('Báo cáo') },
+    ...batches.slice(0, 4).map(b => ({ id: b.id, group: 'Lô tài liệu', label: `${b.id} · ${b.type[0]}`, description: `${b.client} · ${b.pages?.toLocaleString('vi-VN')} trang`,
+      icon: <FileStack />, keywords: [b.type[1]], onSelect: run(`Mở lô ${b.id}`) })),
+    { id: 'new', group: 'Lệnh', label: 'Tạo lô mới', icon: <Plus />, keywords: ['new batch'], onSelect: run('Tạo lô mới') },
+    { id: 'export', group: 'Lệnh', label: 'Xuất báo cáo ca', icon: <FileDown />, shortcut: 'Ctrl E', keywords: ['export'], onSelect: run('Xuất báo cáo ca') },
+    { id: 'delete', group: 'Lệnh', label: 'Xoá lô đã chọn', icon: <Trash2 />, description: 'Chỉ trưởng ca được xoá lô', disabled: true, onSelect: run('Xoá lô') },
+  ];
+}
+
+export function CommandPaletteDemo() {
+  return <CommandPalette hotkey={false} items={useCommandItems()} trigger={<CommandButton placeholder="Tìm lô, khách hàng, lệnh…" />} />;
+}
+
+export function CommandListDemo() {
+  return <CommandList items={useCommandItems()} className="h-[420px] w-full max-w-[640px]" />;
+}
+
+/** Last picked action, announced, so the demo shows that onSelect ran. */
+function Picked({ text }: { text: string }) {
+  return <p className="m-0 text-xs text-fg-muted" aria-live="polite">{text ? `Vừa chọn: ${text}` : 'Chưa chọn mục nào'}</p>;
+}
+
+export function MenuRowDemo() {
+  const [picked, setPicked] = useState('');
+  return (
+    <div className="grid justify-items-center gap-3">
+      <Menu align="end" trigger={<Button variant="ghost" size="sm" icon aria-label="Thao tác cho HD-5517"><MoreHorizontal aria-hidden /></Button>} items={[
+        { label: 'Xem chi tiết', icon: <Eye />, onSelect: () => setPicked('Xem chi tiết') },
+        { label: 'Nhân bản', icon: <Copy />, shortcut: 'Ctrl D', onSelect: () => setPicked('Nhân bản') },
+        { label: 'Lịch sử thay đổi', icon: <History />, disabled: true },
+        'separator',
+        { label: 'Xoá lô HD-5517', icon: <Trash2 />, danger: true, onSelect: () => setPicked('Xoá lô HD-5517') },
+      ]} />
+      <Picked text={picked} />
+    </div>
+  );
+}
+
+export function MenuExportDemo() {
+  const [picked, setPicked] = useState('');
+  const pick = (s: string) => () => setPicked(s);
+  return (
+    <div className="grid justify-items-center gap-3">
+      <Menu trigger={<Button variant="secondary">Xuất file<ChevronDown aria-hidden /></Button>} items={[
+        { type: 'group', label: 'Định dạng', items: [
+          { label: 'Excel (.xlsx)', description: 'Giữ định dạng số và ngày', icon: <FileSpreadsheet />, onSelect: pick('Excel') },
+          { label: 'CSV', description: 'Cho công cụ khác đọc', icon: <FileText />, onSelect: pick('CSV') },
+          { label: 'PDF', description: 'Để in hoặc gửi khách hàng', icon: <FileDown />, onSelect: pick('PDF') },
+        ] },
+        'separator',
+        { label: 'Lịch sử xuất file', href: '#/catalog/menu', icon: <History /> },
+      ]} />
+      <Picked text={picked} />
+    </div>
+  );
+}
+
+const menuColumns = [{ id: 'code', label: 'Mã lô' }, { id: 'client', label: 'Khách hàng' }, { id: 'pages', label: 'Số trang' }, { id: 'status', label: 'Trạng thái' }, { id: 'due', label: 'Hạn SLA' }];
+
+export function MenuViewDemo() {
+  const [shown, setShown] = useState(['code', 'client', 'status']);
+  const [sort, setSort] = useState('due');
+  const sorts = [{ value: 'due', label: 'Hạn SLA gần nhất' }, { value: 'pages', label: 'Nhiều trang nhất' }, { value: 'new', label: 'Mới tạo' }];
+  const toggle = (id: string, on: boolean) => setShown(s => on ? menuColumns.map(c => c.id).filter(c => c === id || s.includes(c)) : s.filter(c => c !== id));
+  return (
+    <div className="grid justify-items-center gap-3">
+      <Menu trigger={<Button variant="secondary" size="sm"><SlidersHorizontal aria-hidden />Hiển thị</Button>} items={[
+        { type: 'group', label: 'Cột', items: menuColumns.map(c => ({ type: 'checkbox' as const, label: c.label, checked: shown.includes(c.id), disabled: c.id === 'code', onCheckedChange: (on: boolean) => toggle(c.id, on) })) },
+        'separator',
+        { type: 'group', label: 'Sắp xếp theo', items: [{ type: 'radio', value: sort, onValueChange: setSort, options: sorts }] },
+      ]} />
+      <p className="m-0 text-xs text-fg-muted">Cột: {menuColumns.filter(c => shown.includes(c.id)).map(c => c.label).join(', ')} · Sắp xếp: {sorts.find(o => o.value === sort)?.label}</p>
+    </div>
+  );
+}
+
+export function PaginationDemo({ total, start = 1, size: initial = 20, sizes, itemLabel }: { total: number; start?: number; size?: number; sizes?: boolean; itemLabel?: string }) {
+  const [page, setPage] = useState(start);
+  const [size, setSize] = useState(initial);
+  return <Pagination page={page} total={total} pageSize={size} onPageChange={setPage} onPageSizeChange={sizes ? setSize : undefined} itemLabel={itemLabel} />;
+}
+
+export function SliderThresholdDemo() {
+  const [value, setValue] = useState(85);
+  const [saved, setSaved] = useState(85);
+  return (
+    <div className="grid w-full max-w-md gap-2">
+      <Field label="Ngưỡng tin cậy tối thiểu" description="Trường dưới ngưỡng này được chuyển sang QC thủ công.">
+        <Slider value={value} onValueChange={setValue} onValueCommitted={setSaved} min={50} max={100} format={{ style: 'unit', unit: 'percent' }} />
+      </Field>
+      <p className="m-0 text-xs text-fg-muted" aria-live="polite">Đã lưu: {saved}%</p>
+    </div>
+  );
+}
+
+/** Closable warning with its one action; closing it leaves a way back so the demo can be replayed. */
+export function AlertDemo() {
+  const [shown, setShown] = useState(true);
+  if (!shown) return <Button variant="secondary" onClick={() => setShown(true)}>Hiện lại cảnh báo</Button>;
+  return (
+    <Alert tone="warn" title="Lô HD-5517 có thể trễ hạn SLA 16:15" onClose={() => setShown(false)} className="w-full"
+      action={<Button size="sm" variant="secondary">Mở hàng đợi QC</Button>}>
+      Còn 1.120 trang chưa QC. Chuyển lô sang mức Khẩn hoặc giao thêm người kiểm tra.
+    </Alert>
+  );
+}
+
+const qcNotes = [
+  { title: 'Trang 14 thiếu dấu giáp lai', text: 'Đề nghị bên A bổ sung bản gốc trước khi bàn giao lô 03.' },
+  { title: 'Ảnh mờ', text: '12 trang chụp bằng điện thoại, chữ nhoè ở mép phải. Đã chuyển nhập tay.' },
+  { title: 'Sai định dạng ngày', text: 'Trường “Ngày cấp” ghi theo tháng/ngày/năm ở 38 hồ sơ của chi nhánh Đà Nẵng. Chuẩn hoá về dd/mm/yyyy trước khi xuất.' },
+  { title: 'Trùng hồ sơ', text: 'HS-0412 và HS-0419 cùng số CCCD.' },
+];
+
+/** Tiles that change height (a Collapse opens) and a tile added at the end: the grid re-flows each time. */
+export function MasonryLiveDemo() {
+  const [count, setCount] = useState(5);
+  return (
+    <div className="grid w-full gap-3">
+      <div><Button variant="secondary" size="sm" onClick={() => setCount(c => c + 1)}><Plus aria-hidden />Thêm ghi chú</Button></div>
+      <Masonry aria-label="Ghi chú QC" minColumnWidth={220}>
+        {Array.from({ length: count }, (_, i) => {
+          const n = qcNotes[i % qcNotes.length];
+          return (
+            <div key={i} className="rounded-lg border border-border bg-surface px-3 py-1">
+              <Collapse headingLevel={4} items={[{ value: 'n', title: `${i + 1}. ${n.title}`, content: n.text }]} />
+            </div>
+          );
+        })}
+      </Masonry>
+    </div>
+  );
+}
+
+/** List and detail; the saved sizes show what onResizeEnd hands over. */
+export function SplitterListDemo() {
+  const [saved, setSaved] = useState<number[] | null>(null);
+  const [pick, setPick] = useState(batches[0]);
+  return (
+    <div className="grid w-full gap-2">
+      <div className="h-80 overflow-hidden rounded-lg border border-border">
+        <Splitter onResizeEnd={setSaved} panels={[
+          { label: 'Danh sách lô', defaultSize: 280, min: 200, max: '60%', collapsible: true, content: (
+            <ul className="m-0 grid list-none gap-px p-2">
+              {batches.map(b => (
+                <li key={b.id}><button type="button" onClick={() => setPick(b)} aria-current={pick.id === b.id || undefined}
+                  className={`grid w-full gap-0.5 rounded-md border-0 bg-transparent px-3 py-2 text-left font-[inherit] text-fg hover:bg-surface-2 ${pick.id === b.id ? 'bg-surface-2' : ''}`}>
+                  <span className="text-sm font-medium">{b.id}</span><span className="truncate text-xs text-fg-muted">{b.client}</span>
+                </button></li>))}
+            </ul>) },
+          { label: 'Chi tiết lô', min: 240, content: (
+            <div className="grid content-start gap-2 p-5">
+              <h3 className="m-0 text-lg font-bold italic">{pick.id}</h3>
+              <p className="m-0 text-sm text-fg-muted">{pick.client} · {pick.type[0]}</p>
+              <p className="m-0 text-sm">{pick.pages?.toLocaleString('vi-VN') ?? '–'} trang · nhận {pick.received}</p>
+            </div>) },
+        ]} />
+      </div>
+      <p className="m-0 text-xs text-fg-muted" aria-live="polite">{saved ? `Đã lưu: ${saved.map(s => `${Math.round(s)}%`).join(' / ')}` : 'Kéo, hoặc Tab tới đường chia rồi dùng ←/→. Enter thu gọn danh sách.'}</p>
+    </div>
+  );
+}
+
+const wizard = [
+  { title: 'Thông tin lô', description: 'Khách hàng, loại tài liệu' },
+  { title: 'Tải tệp lên', description: 'PDF, TIFF, JPG' },
+  { title: 'Cấu hình OCR', description: 'Ngôn ngữ, ngưỡng tin cậy' },
+  { title: 'Xác nhận' },
+];
+
+/** A wizard: Back/Next, or click any step to go there. */
+export function StepsWizardDemo() {
+  const [step, setStep] = useState(1);
+  return (
+    <div className="grid w-full gap-4">
+      <Steps aria-label="Tạo lô mới" current={step} onChange={setStep} items={wizard} />
+      <div className="flex items-center justify-between gap-3 border-t border-border pt-3">
+        <span className="text-sm text-fg-muted" aria-live="polite">Bước {step + 1} / {wizard.length}: {wizard[step].title}</span>
+        <div className="flex gap-2">
+          <Button variant="secondary" size="sm" disabled={step === 0} onClick={() => setStep(s => s - 1)}>Quay lại</Button>
+          <Button size="sm" disabled={step === wizard.length - 1} onClick={() => setStep(s => s + 1)}>Tiếp tục</Button>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -2,7 +2,7 @@
 
 | Folder | What lives there |
 |---|---|
-| `core/` | Generic controls: Icon, Button, Badge, Field/Input, Select, MultiSelect, Checkbox/CheckboxGroup/RadioGroup, DatePicker/DateRangePicker/Calendar, FileDropzone/FileList/FileItem, Switch, Tabs, Segmented, Tooltip, Dialog, Drawer, Toast, Avatar/AvatarPicker, Notification/NotificationList, PdfViewer |
+| `core/` | Generic controls: Icon, Button, Badge, Field/Input/Textarea, Select, MultiSelect, Checkbox/CheckboxGroup/RadioGroup, DatePicker/DateRangePicker/Calendar, FileDropzone/FileList/FileItem, Switch, Tabs, Segmented, Tooltip, Dialog, Drawer, Toast, Avatar/AvatarPicker, Notification/NotificationList, PdfViewer, CommandPalette, Alert, EmptyState, Breadcrumb, Menu, Pagination, Slider, Carousel, Collapse, Timeline, Masonry, Splitter, Watermark, Steps |
 | `layout/` | Page structure: Card, AppShell, Sidebar, Topbar, CommandButton |
 | `data/` | Data display: KpiCard, DataTable, Sparkline, TargetBar, CategoryBar, Meter, StackedBarChart |
 | `motion/` | Generic motion: Reveal, Skeleton, Loadable, CountUp, useReducedMotion |
@@ -19,6 +19,8 @@ Same for core: one folder per component, `core/<component>/` holding its `.tsx`,
 (e.g. `core/date-picker/`: `date-picker.tsx`, `date-picker.css`, `date.ts`, `date.check.ts`). Shared base rules live in `base.css`.
 Import order in `styles.css` is cascade order: base, then components in dependency order (select before date-picker, which restyles its popup).
 `npm test` runs every `src/**/*.check.ts`, so a new check needs no registration.
+Every folder that exports a component has a `README.md` whose `## Props` tables are the single source for props: the
+catalog renders them, and `docs.check.ts` fails when one is missing or no longer matches the source (parser: `props-doc.ts`).
 
 Before/after rule: a pixel step (binarize, denoise, grayscale, enhance) is a pair of pages (the service's two images),
 never a component or a step name. Pick the presentation: `<CompareSlider before after>` (by hand) or

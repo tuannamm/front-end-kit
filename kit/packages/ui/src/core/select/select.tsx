@@ -4,6 +4,7 @@ import { Combobox } from '@base-ui/react/combobox';
 import { Check, ChevronDown, Search, X } from 'lucide-react';
 import { cx } from '../../cx';
 import { IconTile, type Tone } from '../badge/badge';
+import { fold } from './fold';
 
 export type SelectOption = {
   value: string;
@@ -36,7 +37,6 @@ export type SelectProps = {
 };
 
 const isGroups = (x: SelectOption[] | SelectGroup[]): x is SelectGroup[] => x.length > 0 && 'items' in x[0];
-const fold = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
 const toLabel = (o: SelectOption | null) => o?.label ?? '';
 const sameOption = (a: SelectOption, b: SelectOption) => a?.value === b?.value;
 const matches = (o: SelectOption, q: string) => fold(`${o.label} ${o.description ?? ''}`).includes(fold(q));

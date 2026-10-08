@@ -1,0 +1,24 @@
+/* ---------- collapse ---------- */
+/* --pad: inline padding of a row; the body lines up with the title, past the chevron */
+.dtx-collapse { --pad: 4px; display: grid; min-width: 0; }
+.dtx-collapse--bordered { --pad: 16px; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-lg); }
+.dtx-collapse__item + .dtx-collapse__item { border-top: 1px solid var(--dtx-border); }
+/* top-aligned: when a title wraps, the chevron and the extra stay on its first line */
+.dtx-collapse__header { display: flex; align-items: flex-start; gap: 8px; margin: 0; font: inherit; }
+.dtx-collapse__trigger {
+  display: flex; align-items: flex-start; gap: 8px; flex: 1; min-width: 0; padding: 12px var(--pad);
+  border: 0; border-radius: var(--dtx-radius-sm); background: none; font: 500 var(--dtx-text-base)/1.4 var(--dtx-font);
+  color: var(--dtx-fg); text-align: start; cursor: pointer; transition: color var(--dtx-dur-fast);
+}
+.dtx-collapse__trigger:hover:not([data-disabled]) { color: var(--dtx-link); }
+.dtx-collapse__trigger[data-disabled] { opacity: .5; cursor: not-allowed; }
+/* chevron points along the reading direction while closed, down once open */
+.dtx-collapse__chev { width: 16px; height: 16px; flex: none; margin-top: calc(.7em - 8px); color: var(--dtx-fg-muted); transform: rotate(-90deg); transition: transform var(--dtx-dur-base) var(--dtx-ease-standard); }
+.dtx-collapse__chev:dir(rtl) { transform: rotate(90deg); }
+.dtx-collapse__trigger[data-panel-open] .dtx-collapse__chev { transform: none; }
+.dtx-collapse__title { display: grid; gap: 2px; min-width: 0; overflow-wrap: anywhere; }
+.dtx-collapse__title small { font-size: var(--dtx-text-xs); font-weight: 400; color: var(--dtx-fg-muted); }
+.dtx-collapse__extra { display: flex; flex: none; align-items: center; gap: 8px; height: calc(var(--dtx-text-base) * 1.4 + 24px); margin-inline-end: var(--pad); }
+.dtx-collapse__panel { overflow: hidden; height: var(--accordion-panel-height); transition: height var(--dtx-dur-base) var(--dtx-ease-standard), opacity var(--dtx-dur-base); }
+.dtx-collapse__panel[data-starting-style], .dtx-collapse__panel[data-ending-style] { height: 0; opacity: 0; }
+.dtx-collapse__body { padding: 0 var(--pad) 16px calc(var(--pad) + 24px); font-size: var(--dtx-text-sm); line-height: 1.6; color: var(--dtx-fg); }

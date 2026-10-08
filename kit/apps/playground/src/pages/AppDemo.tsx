@@ -1,12 +1,12 @@
 import { Fragment, useEffect, useRef, useState, type ReactElement, type ReactNode } from 'react';
-import { AlertTriangle, BarChart3, CalendarDays, CheckCircle2, CircleAlert, CircleCheck, Clock, FileStack, LayoutDashboard, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users, type LucideIcon } from 'lucide-react';
+import { AlertTriangle, BarChart3, CalendarDays, CheckCircle2, CircleAlert, CircleCheck, Clock, FileStack, Languages, LayoutDashboard, ListFilter, MoreHorizontal, PanelLeft, ScanText, Settings, TrendingUp, Users, type LucideIcon } from 'lucide-react';
 import {
-  AppShell, AvatarPicker, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CountUp, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
+  Alert, AppShell, AvatarPicker, Breadcrumb, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CommandPalette, type CommandItem, CountUp, Pagination, EmptyState, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
   KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
   StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, todayIso, useToast, type Column, type DateRange, type NotificationItem,
 } from '@dtx/ui';
-import { aiThroughput, batches, hours, manualThroughput, type Batch } from '../data';
-import { useT, type Translate } from '../i18n';
+import { aiThroughput, batches, hours, manualThroughput, olderBatches, type Batch } from '../data';
+import { setLang, useLang, useT, type Translate } from '../i18n';
 import { useFakeUpload } from '../fake-upload';
 
 const statusLabel = (t: Translate): Record<Batch['status'], string> => ({
@@ -87,7 +87,12 @@ function BatchDrawer({ batch: b, open, onOpenChange, t, label }: { batch: Batch 
   };
   // nothing to act on while processing
   const action: Partial<Record<Batch['status'], string>> = { qc: t('Mở hàng đợi QC', 'Open QC queue'), risk: t('Mở hàng đợi QC', 'Open QC queue'), done: t('Tải kết quả', 'Download results'), error: t('Sửa mẫu trích xuất', 'Fix extraction template') };
+  const alert: Partial<Record<Batch['status'], ReactNode>> = {
+    risk: <Alert tone="warn" title={t(`Có thể trễ hạn SLA ${b.sla}`, `May miss the ${b.sla} SLA`)}>{t('Chuyển lô sang mức Khẩn hoặc giao thêm người kiểm tra.', 'Raise the batch to Urgent or add a reviewer.')}</Alert>,
+    error: <Alert tone="err" title={t('Không khớp mẫu trích xuất', 'Does not match the extraction template')}>{t('Cập nhật mẫu rồi chạy lại trích xuất cho lô này. Các trang đã quét vẫn được giữ.', 'Update the template, then run extraction again. The scanned pages are kept.')}</Alert>,
+  };
   const info = <>
+    {alert[b.status] && <div className="mb-5">{alert[b.status]}</div>}
     <dl className="m-0 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-6 gap-y-3 text-sm">
       {rows.map(([k, v]) => <Fragment key={k}><dt className="text-fg-muted">{k}</dt><dd className="m-0 font-medium dtx-num">{v}</dd></Fragment>)}
     </dl>
@@ -192,7 +197,7 @@ export function AppDemo() {
   const savePhoto = (file: File | null) => {
     if (photo) URL.revokeObjectURL(photo);
     setPhoto(file ? URL.createObjectURL(file) : undefined);
-    toast({ title: file ? t('Đã cập nhật ảnh đại diện', 'Profile photo updated') : t('Đã xoá ảnh đại diện', 'Profile photo removed'), icon: <Badge tone="ok" size="sm" icon={<CheckCircle2 />} /> });
+    toast({ title: file ? t('Đã cập nhật ảnh đại diện', 'Profile photo updated') : t('Đã xoá ảnh đại diện', 'Profile photo removed'), tone: 'ok' });
   };
   const [created, setCreated] = useState<Batch[]>([]);
   const [announce, setAnnounce] = useState('');
@@ -203,9 +208,27 @@ export function AppDemo() {
     setReceived(r => (r.from && b.received < r.from) || (r.to && b.received > r.to) ? { from: null, to: null } : r);
     setAnnounce(t(`Đã tạo lô ${b.id}, đang xử lý.`, `Created batch ${b.id}, processing.`));
   };
-  const rows = [...created, ...batches].filter(b => (!status.length || status.includes(b.status))
+  const all = [...created, ...batches, ...olderBatches];
+  const rows = all.filter(b => (!status.length || status.includes(b.status))
     && (!received.from || b.received >= received.from) && (!received.to || b.received <= received.to));
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  // any filter change or new batch starts again at page 1, whichever control caused it
+  useEffect(() => setPage(1), [status, received, created.length]);
+  const first = (Math.min(page, Math.ceil(rows.length / pageSize) || 1) - 1) * pageSize; // Pagination shows the same clamped page
+  const shown = rows.slice(first, first + pageSize);
   const resetFilters = () => { setStatus([]); setReceived({ from: null, to: null }); };
+  const lang = useLang();
+  const showBatches = (s: string[]) => { setStatus(s); setReceived({ from: null, to: null }); document.getElementById('batches')?.scrollIntoView({ block: 'start' }); };
+  const commands: CommandItem[] = [
+    { id: 'all', group: t('Đi tới', 'Go to'), label: t('Tất cả lô', 'All batches'), icon: <FileStack />, keywords: ['batches'], onSelect: () => showBatches([]) },
+    { id: 'qc', group: t('Đi tới', 'Go to'), label: t('Lô cần QC', 'Batches needing QC'), description: t('Chờ QC và có nguy cơ trễ SLA', 'Awaiting QC and at risk of missing SLA'), icon: <CircleCheck />, keywords: ['qc', 'kiểm tra', 'quality'], onSelect: () => showBatches(['qc', 'risk']) },
+    { id: 'err', group: t('Đi tới', 'Go to'), label: t('Lô bị lỗi', 'Failed batches'), icon: <ListFilter />, keywords: ['error', 'lỗi'], onSelect: () => showBatches(['error']) },
+    ...all.map(b => ({ id: b.id, group: t('Lô tài liệu', 'Batches'), label: `${b.id} · ${t(...b.type)}`, description: `${b.client} · ${label[b.status]}`,
+      icon: <FileStack />, keywords: [...b.type, label[b.status]], onSelect: () => openDetail(b) })),
+    { id: 'rail', group: t('Lệnh', 'Commands'), label: rail ? t('Mở rộng thanh bên', 'Expand sidebar') : t('Thu gọn thanh bên', 'Collapse sidebar'), icon: <PanelLeft />, shortcut: 'Ctrl B', keywords: ['sidebar'], onSelect: () => setRail(r => !r) },
+    { id: 'lang', group: t('Lệnh', 'Commands'), label: lang === 'vi' ? 'Chuyển sang English' : 'Chuyển sang Tiếng Việt', icon: <Languages />, keywords: ['language', 'ngôn ngữ'], onSelect: () => setLang(lang === 'vi' ? 'en' : 'vi') },
+  ];
 
   const sidebar = (
     <Sidebar>
@@ -236,8 +259,9 @@ export function AppDemo() {
           <Tooltip content={rail ? t('Mở rộng thanh bên', 'Expand sidebar') : t('Thu gọn thanh bên', 'Collapse sidebar')} shortcut="Ctrl B">
             <Button variant="secondary" icon aria-label={t('Thu gọn thanh bên', 'Collapse sidebar')} aria-pressed={rail} onClick={() => setRail(r => !r)}><PanelLeft /></Button>
           </Tooltip>
-          <span className="text-sm text-fg-muted">{t('Vận hành', 'Operations')} / <b className="font-medium text-fg">{t('Tổng quan', 'Overview')}</b></span>
-          <CommandButton placeholder={t('Tìm lô, khách hàng, lệnh…', 'Search batches, clients, commands…')} />
+          <Breadcrumb aria-label={t('Đường dẫn', 'Breadcrumb')} items={[{ label: t('Vận hành', 'Operations') }, { label: t('Tổng quan', 'Overview') }]} />
+          <CommandPalette items={commands} placeholder={t('Tìm lô, khách hàng, lệnh…', 'Search batches, clients, commands…')}
+            trigger={<CommandButton placeholder={t('Tìm lô, khách hàng, lệnh…', 'Search batches, clients, commands…')} />} />
           <Notification items={notifications} onSelect={openNotification} onMarkAllRead={() => setRead(new Set(notifications.map(n => n.id)))}
             title={t('Thông báo', 'Notifications')} aria-label={t('Thông báo', 'Notifications')} />
           <AvatarPicker name={me} src={photo} onChange={savePhoto} />
@@ -303,8 +327,12 @@ export function AppDemo() {
               <div className="w-60 max-w-full"><DateRangePicker size="sm" aria-label={t('Lọc theo ngày nhận', 'Filter by received date')} placeholder={t('Mọi ngày nhận', 'Any received date')} value={received} onValueChange={setReceived} /></div>
               <div className="w-72 max-w-full"><MultiSelect size="sm" aria-label={t('Lọc theo trạng thái', 'Filter by status')} placeholder={t('Tất cả trạng thái', 'All statuses')} items={statusFilter} value={status} onValueChange={setStatus} /></div>
             </>} />
-            <DataTable caption={t('Lô tài liệu gần đây', 'Recent batches')} columns={columns(t, label, openDetail)} rows={rows} rowKey={b => b.id}
-              empty={<div className="grid justify-items-center gap-2"><span>{t('Không có lô nào khớp bộ lọc.', 'No batches match the filters.')}</span><Button variant="secondary" size="sm" onClick={resetFilters}>{t('Xoá bộ lọc', 'Clear filters')}</Button></div>} />
+            <DataTable caption={t('Lô tài liệu gần đây', 'Recent batches')} columns={columns(t, label, openDetail)} rows={shown} rowKey={b => b.id}
+              empty={<EmptyState size="sm" icon={<ListFilter />} title={t('Không có lô nào khớp bộ lọc', 'No batches match the filters')}
+                action={<Button variant="secondary" size="sm" onClick={resetFilters}>{t('Xoá bộ lọc', 'Clear filters')}</Button>}>{t('Bỏ bớt trạng thái hoặc khoảng ngày đang chọn.', 'Remove a status or the date range.')}</EmptyState>} />
+            {rows.length > 0 && <div className="border-t border-border px-4 py-3">
+              <Pagination page={page} total={rows.length} pageSize={pageSize} onPageChange={setPage} onPageSizeChange={setPageSize} pageSizeOptions={[10, 20, 50]} itemLabel="lô" aria-label={t('Phân trang lô tài liệu', 'Batch pages')} />
+            </div>}
           </Card>
         </div>
         <p role="status" className="dtx-sr">{announce}</p>

@@ -6,6 +6,62 @@
 @import "@dtx/tokens/tailwind.css";
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* Home + catalog chrome: neutrals tinted toward DIGI-TEXX navy and blue instead of the kit's flat grays.
+   Remaps semantic tokens only. Demos render in their own data-theme frames, which redeclare the kit's real values.
+   light-dark() follows color-scheme, which theme.css sets per theme, so one block covers light, dark and the
+   always-dark brand bands. */
+:root:has(.pg-brand), .pg-brand .dtx-backdrop-tech {
+  --dtx-bg: light-dark(#EEF3F9, #0F1729);
+  --dtx-surface: light-dark(#FFFFFF, #162036);
+  --dtx-surface-2: light-dark(#F4F7FB, #1D2943);
+  --dtx-border: light-dark(rgb(26 74 140 / .14), rgb(168 229 245 / .11));
+  --dtx-border-strong: light-dark(rgb(26 74 140 / .26), rgb(168 229 245 / .2));
+  --dtx-hover: light-dark(rgb(37 130 215 / .07), rgb(123 210 242 / .08));
+  --dtx-fg: light-dark(#16213A, #EEF3FA);
+  --dtx-fg-muted: light-dark(#4A566F, #A9B5CB);
+  --dtx-shadow-pop: light-dark(0 12px 32px rgb(26 74 140 / .16), 0 12px 40px rgb(2 6 18 / .5));
+  /* a band one step bluer than the page, for the section that should catch the eye */
+  --pg-band: light-dark(#E1ECF8, #132241);
+}
+.pg-brand .dtx-backdrop-tech { background: var(--dtx-bg); }
+
+/* the home page has no sticky header to clear (base.css reserves 72px for it) */
+:root:has(.pg-home) { scroll-padding-top: 0; }
+
 /* playground-only helpers */
-.pg-code { margin: 0; padding: 12px 14px; overflow-x: auto; border-radius: var(--dtx-radius-md); background: #16151B; color: #E4E6EB; font: 400 12.5px/1.6 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+.pg-code { margin: 0; padding: 12px 44px 12px 14px; overflow-x: auto; border-radius: var(--dtx-radius-md); border: 1px solid rgb(168 229 245 / .12); background: #0D1526; color: #E4E6EB; /* theme-fixed: code is always light on navy ink; the edge keeps it apart from a dark page */ font: 400 12.5px/1.6 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
 .pg-stage { background-image: radial-gradient(var(--dtx-border) 1px, transparent 1px); background-size: 16px 16px; }
+/* Catalog overview tiles: a live miniature of the first demo over the name. Flat at rest, the border answers hover. */
+.pg-tile { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); overflow: hidden; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface); color: var(--dtx-fg); text-decoration: none; transition: border-color var(--dtx-dur-fast); }
+.pg-tile:hover { border-color: var(--dtx-border-strong); }
+.pg-tile:has(.pg-tile__link:focus-visible) { outline: 2px solid var(--dtx-focus); outline-offset: 2px; }
+.pg-tile__link { color: inherit; text-decoration: none; outline: none; }
+.pg-tile__link::after { content: ""; position: absolute; inset: 0; }
+.pg-tile__foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-block-size: 44px; padding: 8px 12px; border-top: 1px solid var(--dtx-border); font-size: 14px; }
+.pg-thumb { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 3; overflow: hidden; contain: size layout paint; background: var(--dtx-surface-2); }
+.pg-thumb__canvas { position: absolute; top: 0; left: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; transform-origin: 0 0; pointer-events: none; }
+
+/* Home page. Blocks below the fold fade up once as they scroll in (useScrollReveal); the illustration inside a block
+   plays after it. Visible by default: only JS marks a block "wait", and never under reduced motion. */
+.pg-home [data-reveal="wait"] { opacity: 0; transform: translateY(16px); }
+.pg-home [data-reveal="in"] { transition: opacity var(--dtx-dur-page) var(--dtx-ease-enter), transform var(--dtx-dur-page) var(--dtx-ease-enter); transition-delay: calc(var(--i, 0) * 70ms); }
+.pg-home [data-reveal="in"] .pg-grow { transform-origin: left center; animation: pg-grow var(--dtx-dur-page) var(--dtx-ease-emphasis) both; animation-delay: calc(var(--i, 0) * 70ms + 160ms + var(--j, 0) * 80ms); }
+.pg-home [data-reveal="in"] .pg-rise { animation: pg-rise var(--dtx-dur-slow) var(--dtx-ease-enter) both; animation-delay: calc(var(--i, 0) * 70ms + 160ms + var(--j, 0) * 80ms); }
+@keyframes pg-grow { from { opacity: 0; transform: scaleX(.15); } }
+@keyframes pg-rise { from { opacity: 0; transform: translateY(8px); } }
+@media print { .pg-home [data-reveal] { opacity: 1 !important; transform: none !important; } }
+.pg-why__art { block-size: 120px; }
+.pg-hero-demo { position: relative; display: grid; justify-items: center; gap: 16px; }
+.pg-hero-demo__steps { inline-size: min(100%, 420px); }
+/* isolate: the scan beam's z-index stays inside the page, under the floating fields panel */
+.pg-hero-demo__page { inline-size: min(100%, 380px); isolation: isolate; }
+.pg-hero-demo__fields { display: grid; gap: 10px; inline-size: min(100%, 270px); padding: 14px; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface); }
+.pg-hero-demo__field { display: grid; align-content: start; gap: 2px; min-block-size: 50px; padding-block-end: 8px; border-block-end: 1px solid var(--dtx-border); }
+.pg-hero-demo__field--wait { gap: 8px; padding-block-start: 4px; }
+.pg-hero-demo__field:last-child { padding-block-end: 0; border-block-end: 0; }
+/* on wide screens the fields float over the page's lower-left corner: a floating layer, so it gets the popover shadow */
+@media (min-width: 1024px) { .pg-hero-demo__fields { position: absolute; inset-inline-start: 0; inset-block-end: 32px; box-shadow: var(--dtx-shadow-pop); } }
+.pg-chip { display: inline-flex; align-items: center; min-block-size: 32px; padding: 4px 12px; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-sm); color: var(--dtx-fg); font-size: 14px; text-decoration: none; transition: border-color var(--dtx-dur-fast), color var(--dtx-dur-fast); }
+.pg-chip:hover { border-color: var(--dtx-border-strong); color: var(--dtx-link); }
+.pg-chip:focus-visible { outline: 2px solid var(--dtx-focus); outline-offset: 2px; }
+.pg-step-n { display: grid; place-items: center; inline-size: 32px; block-size: 32px; flex: none; border-radius: var(--dtx-radius-sm); background: color-mix(in oklab, var(--dtx-primary) 14%, transparent); color: var(--dtx-tone-brand); font-weight: 700; }

@@ -1,0 +1,24 @@
+/* ---------- breadcrumb ---------- */
+.dtx-crumbs { min-width: 0; max-width: 100%; font-size: var(--dtx-text-sm); }
+.dtx-crumbs ol { display: flex; align-items: center; min-width: 0; margin: 0; padding: 0; list-style: none; }
+/* crumbs shrink in proportion to their length (the longest gives most), never below separator + icon.
+   Equal factors on purpose: a lower factor on the last crumb starves the parents to nothing. */
+.dtx-crumbs li { display: flex; align-items: center; flex: 0 1 auto; }
+/* expanded on request: every crumb readable, so wrap instead of squeezing them into slivers */
+.dtx-crumbs[data-expanded] ol { flex-wrap: wrap; row-gap: 2px; }
+.dtx-crumbs[data-expanded] li { max-width: 100%; }
+.dtx-crumbs__sep { width: 14px; height: 14px; flex: none; margin: 0 2px; color: var(--dtx-fg-muted); }
+.dtx-crumbs__item {
+  display: inline-grid; grid-auto-flow: column; align-items: center; gap: 6px; min-width: 0; max-width: 28ch; min-height: 24px; padding: 2px 4px;
+  border: 0; border-radius: var(--dtx-radius-sm); background: none; font: inherit; color: var(--dtx-fg-muted); text-decoration: none;
+}
+.dtx-crumbs__text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* the text sits in a minmax(0, max-content) track: full width when there is room, zero min-content, so a long trail never forces its parent wider */
+.dtx-crumbs__item { grid-template-columns: minmax(0, max-content); }
+.dtx-crumbs__item:has(> .dtx-crumbs__icon) { grid-template-columns: auto minmax(0, max-content); }
+.dtx-crumbs__icon { display: grid; flex: none; }
+.dtx-crumbs__icon svg { width: 14px; height: 14px; }
+.dtx-crumbs__link { cursor: pointer; transition: color var(--dtx-dur-fast), background var(--dtx-dur-fast); }
+.dtx-crumbs__link:hover { color: var(--dtx-fg); background: var(--dtx-hover); }
+.dtx-crumbs__more { min-width: 24px; justify-content: center; }
+.dtx-crumbs [aria-current="page"] { max-width: 40ch; color: var(--dtx-fg); font-weight: 500; }

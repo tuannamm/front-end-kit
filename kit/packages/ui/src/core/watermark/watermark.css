@@ -1,0 +1,12 @@
+/* ---------- watermark ---------- */
+/* isolated, so the layer's z-index ranks it above sticky headers inside the content and nothing outside */
+.dtx-watermark { position: relative; isolation: isolate; }
+/* the mask cuts the text out of a flat fill in --dtx-watermark-color: fg at low strength by default, so it is
+   faint ink on light themes and faint chalk on dark ones. On a theme-fixed white paper, set the variable. */
+.dtx-watermark__layer {
+  position: absolute; inset: 0; z-index: 100; pointer-events: none;
+  background: var(--dtx-watermark-color, color-mix(in oklab, var(--dtx-fg) 13%, transparent));
+  mask-repeat: repeat; mask-position: 0 0;
+  /* kept when printing and in forced-colours mode, where a background would otherwise be dropped or replaced */
+  print-color-adjust: exact; forced-color-adjust: none;
+}

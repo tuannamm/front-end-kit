@@ -1,0 +1,9 @@
+/* ---------- masonry ---------- */
+/* The grid only defines column tracks (auto-fill keeps empty ones, so the count is the width's); tiles are absolutely
+   placed in the first track (1 / 2: an abspos `auto` end line would be the container edge) and moved to their column and offset by Masonry's place(). */
+.dtx-masonry {
+  position: relative; display: grid; gap: var(--gap);
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--min), 100%), 1fr));
+}
+.dtx-masonry[data-columns] { grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
+.dtx-masonry > * { position: absolute; inset-block-start: 0; inset-inline: 0; grid-column: 1 / 2; box-sizing: border-box; margin: 0; min-width: 0; }

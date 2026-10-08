@@ -3,11 +3,22 @@ import { Check, Copy, RotateCcw } from 'lucide-react';
 import { Badge, Button, Card, DataTable, Input, Reveal, Segmented } from '@dtx/ui';
 import { categories, entries, type Entry } from './entries';
 import { Stage } from './demos';
+import { Overview } from './overview';
 import { useT } from '../i18n';
+import { readPropsDocs } from '../../../../packages/ui/src/props-doc';
+
+// Props come from the components' READMEs, the same tables `npm test` checks against the source (docs.check.ts)
+const readmes = import.meta.glob<string>('../../../../packages/ui/src/**/README.md', { query: '?raw', import: 'default', eager: true });
+const propsDocs = new Map(Object.values(readmes).flatMap(readPropsDocs).map(d => [d.name, d]));
+/** README blocks for the names in an entry's import line, e.g. "Notification, type NotificationItem". */
+const docsFor = (importLine?: string) => (/\{([^}]*)\}/.exec(importLine ?? '')?.[1].split(',') ?? []).map(n => n.trim().replace(/^type /, '')).flatMap(n => propsDocs.get(n) ?? []);
+/** `code` and **bold** of a README cell. */
+const inline = (s: string) => s.split(/(`[^`]+`|\*\*[^*]+\*\*)/).map((p, i) =>
+  p.startsWith('`') && p.endsWith('`') && p.length > 1 ? <code key={i}>{p.slice(1, -1)}</code> : p.startsWith('**') && p.endsWith('**') && p.length > 4 ? <b key={i} className="font-medium text-fg">{p.slice(2, -2)}</b> : p);
 
 const fold = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
 
-function CopyCode({ code }: { code: string }) {
+export function CopyCode({ code }: { code: string }) {
   const t = useT();
   const [done, setDone] = useState(false);
   // min-w-0: a long import line scrolls inside the block instead of widening the page on phones
@@ -57,6 +68,7 @@ function DemoBlock({ d, theme }: { d: Entry['demos'][number]; theme: DemoTheme }
 function EntryView({ e, theme, setTheme }: { e: Entry; theme: DemoTheme; setTheme: (t: DemoTheme) => void }) {
   const t = useT();
   const cat = categories.find(c => c.id === e.category)!;
+  const docs = docsFor(e.importLine);
   return (
     <Reveal key={e.id} className="grid gap-6">
       <header className="grid gap-2">
@@ -76,45 +88,22 @@ function EntryView({ e, theme, setTheme }: { e: Entry; theme: DemoTheme; setThem
       )}
       {e.status === 'planned' && <Card className="p-6 text-sm text-fg-muted">{t('Chưa có. Mục này nằm trong lộ trình, để FE biết cái gì sắp có và tránh tự viết trùng.', 'Not built yet. It is on the roadmap so FE knows what is coming and does not write a duplicate.')}</Card>}
       {e.demos.map(d => <DemoBlock key={d.title} d={d} theme={theme} />)}
-      {e.props && (
+      {docs.length > 0 && (
         <Card>
           <div className="border-b border-border px-4 py-2.5"><h3 className="m-0 text-sm font-medium">Props</h3></div>
-          <DataTable rowKey={r => r[0]} rows={e.props} columns={[
-            { key: 'n', header: 'Prop', render: r => <code className="text-xs text-link">{r[0]}</code> },
-            { key: 't', header: 'Type', render: r => <code className="text-xs whitespace-normal">{r[1]}</code> },
-            { key: 'd', header: 'Note', render: r => <span className="text-xs whitespace-normal text-fg-muted">{r[2]}</span> }]} />
+          {docs.map(d => (
+            <section key={d.name} className="border-b border-border last:border-b-0">
+              {docs.length > 1 && <h4 className="m-0 px-4 pt-3 text-sm font-medium"><code>{d.name}</code></h4>}
+              {d.rows.length > 0 && <DataTable caption={`${d.name} props`} rowKey={r => r[0]} rows={d.rows} columns={[
+                { key: 'n', header: 'Prop', render: r => <span className="text-xs text-link">{inline(r[0])}</span> },
+                { key: 't', header: 'Type', render: r => <span className="text-xs whitespace-normal">{inline(r[1])}</span> },
+                { key: 'v', header: 'Default', render: r => <span className="text-xs whitespace-normal">{inline(r[2])}</span> },
+                { key: 'd', header: 'Description', render: r => <span className="text-xs whitespace-normal text-fg-muted">{inline(r[3])}</span> }]} />}
+              {d.note && <p className="m-0 max-w-[80ch] px-4 py-3 text-xs text-fg-muted">{inline(d.note)}</p>}
+            </section>
+          ))}
         </Card>
       )}
-    </Reveal>
-  );
-}
-
-function Overview({ go }: { go: (id: string) => void }) {
-  const t = useT();
-  const ready = entries.filter(e => e.status === 'ready').length;
-  return (
-    <Reveal className="grid gap-6">
-      <header className="grid gap-2">
-        <h1 className="m-0 text-3xl font-bold tracking-tight">{t('Danh mục Frontend Kit', 'Frontend Kit catalog')}</h1>
-        <p className="m-0 max-w-[68ch] text-fg-muted">{t(<><b className="text-fg">{ready}</b> mục đã có, <b className="text-fg">{entries.length - ready}</b> dự kiến. Mỗi mục có ví dụ tương tác, dòng import và props. Chuyển động được tách theo từng pha.</>, <><b className="text-fg">{ready}</b> ready, <b className="text-fg">{entries.length - ready}</b> planned. Each entry has interactive examples, an import line and props. Motion is split by phase.</>)}</p>
-      </header>
-      {categories.map(c => {
-        const list = entries.filter(e => e.category === c.id);
-        return (
-          <section key={c.id} className="grid gap-3">
-            <div className="flex items-baseline gap-3"><h2 className="m-0 text-lg font-bold">{c.id}</h2><code className="text-xs text-fg-muted">{c.folder}</code><span className="ml-auto text-xs text-fg-muted dtx-num">{list.filter(e => e.status === 'ready').length}/{list.length}</span></div>
-            <p className="m-0 -mt-2 text-sm text-fg-muted">{c.blurb}</p>
-            <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-3">
-              {list.map(e => (
-                <button key={e.id} type="button" onClick={() => go(e.id)} className="dtx-card dtx-hover-lift grid cursor-pointer gap-1.5 p-4 text-left">
-                  <span className="flex items-center gap-2 text-sm font-medium"><i className={`block size-1.5 rounded-[1px] ${e.status === 'ready' ? 'bg-lime' : 'bg-border-strong'}`} />{e.name}</span>
-                  <span className="line-clamp-2 text-xs text-fg-muted">{e.summary}</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        );
-      })}
     </Reveal>
   );
 }
@@ -122,9 +111,8 @@ function Overview({ go }: { go: (id: string) => void }) {
 export function Catalog({ id, go }: { id?: string; go: (id?: string) => void }) {
   const t = useT();
   const [q, setQ] = useState('');
-  const [filter, setFilter] = useState('all');
   const [theme, setTheme] = useState<DemoTheme>('light');
-  const shown = useMemo(() => entries.filter(e => (filter === 'all' || e.status === filter) && (!q || fold(`${e.name} ${e.summary} ${e.category}`).includes(fold(q)))), [q, filter]);
+  const shown = useMemo(() => entries.filter(e => !q || fold(`${e.name} ${e.summary} ${e.category}`).includes(fold(q))), [q]);
   const entry = entries.find(e => e.id === id);
   const groups = [{ title: null, cats: categories.filter(c => !c.id.startsWith('AI')) }, { title: 'AI', cats: categories.filter(c => c.id.startsWith('AI')) }];
   return (
@@ -132,7 +120,6 @@ export function Catalog({ id, go }: { id?: string; go: (id?: string) => void }) 
       <aside className="lg:sticky lg:top-[72px] lg:max-h-[calc(100vh-88px)] lg:self-start lg:overflow-y-auto" aria-label={t('Mục lục', 'Contents')}>
         <div className="grid gap-2 pb-3">
           <Input placeholder={t('Tìm thành phần…', 'Search components…')} value={q} onChange={e => setQ(e.target.value)} aria-label={t('Tìm thành phần', 'Search components')} />
-          <Segmented aria-label={t('Lọc trạng thái', 'Filter by status')} value={filter} onValueChange={setFilter} options={[{ value: 'all', label: t('Tất cả', 'All') }, { value: 'ready', label: t('Đã có', 'Ready') }, { value: 'planned', label: t('Dự kiến', 'Planned') }]} />
         </div>
         <button type="button" onClick={() => go()} className={`dtx-sidebar__item w-full border-0 bg-transparent text-left ${!entry ? 'aria-[current]:' : ''}`} aria-current={!entry ? 'page' : undefined}>{t('Tổng quan', 'Overview')}</button>
         {groups.map(g => (
@@ -160,7 +147,7 @@ export function Catalog({ id, go }: { id?: string; go: (id?: string) => void }) 
         ))}
         {!shown.length && <p className="px-2.5 text-xs text-fg-muted">{t('Không có mục nào khớp.', 'No matching entries.')}</p>}
       </aside>
-      <div className="min-w-0">{entry ? <EntryView e={entry} theme={theme} setTheme={setTheme} /> : <Overview go={go} />}</div>
+      <div className="min-w-0">{entry ? <EntryView e={entry} theme={theme} setTheme={setTheme} /> : <Overview shown={shown} />}</div>
     </div>
   );
 }
