@@ -117,7 +117,8 @@ function ThemePair() {
   );
 }
 
-export function Home() {
+/** `prefs`: the language and theme switches, which sit in the hero because the home page has no app header. */
+export function Home({ prefs }: { prefs: ReactNode }) {
   const t = useT();
   const root = useScrollReveal();
   const reduced = useReducedMotion();
@@ -183,9 +184,12 @@ export function Home() {
   return (
     <main ref={root} className="pg-home">
       <TechBackdrop className="border-b border-border">
-        <div className="mx-auto grid max-w-[1240px] items-center gap-14 px-4 pt-14 pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+        <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 px-4 pt-6">
+          <Logo variant="horizontal-white" width={180} />
+          {prefs}
+        </div>
+        <div className="mx-auto grid max-w-[1240px] items-center gap-14 px-4 pt-12 pb-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
           <Reveal>
-            <div className="mb-8"><Logo variant="horizontal-white" width={200} /></div>
             <Display>{t(<>DIGI-TEXX<br /><em>Frontend Kit</em></>, <>DIGI-TEXX<br /><em>Frontend Kit</em></>)}</Display>
             <div className="mt-6"><Lede>{t('Bộ component React, design token và mẫu giao diện AI dùng chung cho sản phẩm và POC của DIGI-TEXX. Đúng brand, đủ sáng tối, đạt WCAG 2.2 AA ngay từ dòng code đầu tiên.', 'React components, design tokens and AI interface patterns shared by every DIGI-TEXX product and POC. On brand, light and dark, WCAG 2.2 AA from the first line of code.')}</Lede></div>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -246,7 +250,7 @@ export function Home() {
         </div>
       </section>
 
-      <section id="start" className="scroll-mt-20 border-t border-border bg-surface" aria-labelledby="start-h">
+      <section id="start" className="border-t border-border bg-surface" aria-labelledby="start-h">
         <div className="mx-auto max-w-[1240px] px-4 py-20">
           <div data-reveal=""><SectionHeader id="start-h" title={t('Bắt đầu trong ba bước', 'Start in three steps')} description={t('Kit là workspace nội bộ, chưa phát hành lên npm.', 'The kit is an internal workspace, not published to npm.')} /></div>
           <ol className="m-0 mt-10 grid list-none gap-6 p-0 lg:grid-cols-3">

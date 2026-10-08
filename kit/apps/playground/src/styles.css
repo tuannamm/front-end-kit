@@ -25,6 +25,9 @@
 }
 .pg-brand .dtx-backdrop-tech { background: var(--dtx-bg); }
 
+/* the home page has no sticky header to clear (base.css reserves 72px for it) */
+:root:has(.pg-home) { scroll-padding-top: 0; }
+
 /* playground-only helpers */
 .pg-code { margin: 0; padding: 12px 44px 12px 14px; overflow-x: auto; border-radius: var(--dtx-radius-md); border: 1px solid rgb(168 229 245 / .12); background: #0D1526; color: #E4E6EB; /* theme-fixed: code is always light on navy ink; the edge keeps it apart from a dark page */ font: 400 12.5px/1.6 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
 .pg-stage { background-image: radial-gradient(var(--dtx-border) 1px, transparent 1px); background-size: 16px 16px; }
