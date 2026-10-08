@@ -3,10 +3,15 @@ import { cx } from '../../cx';
 import { useReducedMotion } from '../../motion/primitives';
 import { scanRevealProps, useScanBeam } from './scan-beam';
 import { ConfidenceDots, confidenceLevel, confidenceWord, defaultThresholds, type Thresholds } from './confidence';
+import { bounds } from './geometry';
 
 export type RegionKind = 'title' | 'text' | 'table' | 'figure' | 'stamp' | 'signature' | 'field';
 /** Coordinates are 0–1 fractions of the document, so boxes survive any display size. */
-export type OcrBox = { id: string; x: number; y: number; w: number; h: number; text?: string; confidence?: number; kind?: RegionKind; label?: string };
+export type OcrBox = {
+  id: string; x: number; y: number; w: number; h: number; text?: string; confidence?: number; kind?: RegionKind; label?: string;
+  /** Outline of a rotated, skewed or curved region, as 0–1 page points. Drawn as-is; x/y/w/h are then derived from it. */
+  points?: Array<[number, number]>;
+};
 /**
  * How a hovered box lets a reviewer compare the AI reading with the original.
  * lens:  the original region magnified, with the AI text directly beneath at the same scale and left edge (default).
@@ -68,7 +73,13 @@ function fitFontSize(text: string, width: number, max: number) {
  */
 function Lens({ b, page, size, rgb, thresholds, inset, children }: { b: OcrBox; page: ReactNode; size: { w: number; h: number }; rgb: string; thresholds: Thresholds; inset: number; children?: ReactNode }) {
   const PAD = 8, TAG = 30;
-  const bw = b.w * size.w, bh = b.h * size.h;
+  // a quad (TL, TR, BR, BL, as engines emit them) is cropped along its own edges and turned level, so a tilted line
+  // reads straight above its AI text; any other shape is cropped by its bounding rectangle
+  const q = b.points?.length === 4 ? b.points.map(([px, py]) => [px * size.w, py * size.h]) : null;
+  const [ox, oy] = q ? q[0] : [b.x * size.w, b.y * size.h];
+  const angle = q ? Math.atan2(q[1][1] - q[0][1], q[1][0] - q[0][0]) : 0;
+  const bw = q ? Math.hypot(q[1][0] - q[0][0], q[1][1] - q[0][1]) : b.w * size.w;
+  const bh = q ? Math.hypot(q[3][0] - q[0][0], q[3][1] - q[0][1]) : b.h * size.h;
   const k = Math.max(1.4, Math.min(4, 34 / Math.max(bh, 1)));            // magnify the line to ~34px tall
   const maxW = size.w - 2 * PAD;
   // at least 260px so the score line stays on one row; the crop itself is only ever the box
@@ -85,7 +96,7 @@ function Lens({ b, page, size, rgb, thresholds, inset, children }: { b: OcrBox; 
         <span className="dtx-ocr__lens-tag">Gốc</span>
         {/* exactly the box, magnified: a 2-character box shows those 2 characters, not its neighbours */}
         <div className="dtx-ocr__lens-crop" style={{ width: Math.min(bw * k, lensW - TAG - PAD), height: bh * k, marginLeft: PAD }}>
-          <div inert style={{ position: 'absolute', width: size.w * k, left: -(b.x * size.w) * k, top: -(b.y * size.h) * k }}>{page}</div>
+          <div inert style={{ position: 'absolute', width: size.w * k, left: 0, top: 0, transformOrigin: '0 0', transform: `rotate(${-angle}rad) translate(${-ox * k}px, ${-oy * k}px)` }}>{page}</div>
         </div>
       </div>
       <div className="dtx-ocr__lens-row">
@@ -108,8 +119,13 @@ function Lens({ b, page, size, rgb, thresholds, inset, children }: { b: OcrBox; 
  * Bounding boxes over a document, built for checking AI reading against the original.
  * Hover or focus a box (or pass pinnedId) to compare; boxes are keyboard-reachable buttons.
  */
-export function BoxOverlay({ boxes, children, colorBy = 'confidence', hover = 'lens', showLabels, thresholds = defaultThresholds, selectedId, onSelect, animate = true, hideText, pinnedId, textInset = 2, className }: BoxOverlayProps) {
+/** The polygon in the box's own 0–100 space, as an SVG path. */
+const polyPath = (b: OcrBox) => `M${b.points!.map(([px, py]) => `${(((px - b.x) / (b.w || 1)) * 100).toFixed(2)} ${(((py - b.y) / (b.h || 1)) * 100).toFixed(2)}`).join('L')}Z`;
+
+export function BoxOverlay({ boxes: input, children, colorBy = 'confidence', hover = 'lens', showLabels, thresholds = defaultThresholds, selectedId, onSelect, animate = true, hideText, pinnedId, textInset = 2, className }: BoxOverlayProps) {
   const reduced = useReducedMotion();
+  // a polygon is the truth: its bounding rectangle places the button, the scan reveal and the lens
+  const boxes = input.map(b => (b.points && b.points.length > 2 ? { ...b, ...bounds(b.points) } : b));
   const beam = useScanBeam(); // inside an active ScanBeam, boxes reveal with the beam
   const mode: BoxHover = hover === 'blink' && reduced ? 'lens' : hover;
   const pageRef = useRef<HTMLDivElement>(null);
@@ -145,12 +161,19 @@ export function BoxOverlay({ boxes, children, colorBy = 'confidence', hover = 'l
                 className={cx('dtx-ocr__box', animate && !beam && 'dtx-ocr__box--animate', rv.className)}
                 data-selected={selectedId === b.id ? '' : undefined}
                 data-active={isActive ? '' : undefined}
+                data-shape={b.points && b.points.length > 2 ? 'poly' : undefined}
                 aria-label={(hideText ? [labelOf(b) ?? 'Vùng chữ'] : [labelOf(b), b.text, b.confidence !== undefined && `${b.confidence.toFixed(1)}%`]).filter(Boolean).join(' · ')}
                 onClick={() => onSelect?.(b)}
                 onPointerEnter={() => setHovered(b.id)} onPointerLeave={() => setHovered(null)}
                 onFocus={() => setHovered(b.id)} onBlur={() => setHovered(null)}
                 style={{ left: `${b.x * 100}%`, top: `${b.y * 100}%`, width: `${b.w * 100}%`, height: `${b.h * 100}%`, '--c': rgbOf(b), animationDelay: `${i * 35}ms`, ...rv.style } as CSSProperties}
               >
+                {b.points && b.points.length > 2 && (
+                  <svg className="dtx-ocr__poly" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
+                    <path className="dtx-ocr__poly-dim" d={`M-1e4 -1e4H1e4V1e4H-1e4Z${polyPath(b)}`} />
+                    <path className="dtx-ocr__poly-shape" d={polyPath(b)} />
+                  </svg>
+                )}
                 {showLabels && labelOf(b) && colorBy === 'kind' && <span className="dtx-ocr__tag">{labelOf(b)}</span>}
                 {mode === 'blink' && isActive && comparing && (
                   <>

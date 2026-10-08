@@ -1,7 +1,7 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
-import { Alert, Badge, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, SkeletonText, useToast, type CommandItem } from '@dtx/ui';
+import { Alert, Badge, BoxOverlay, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dtx/ui';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -395,4 +395,68 @@ export function StepsWizardDemo() {
       </div>
     </div>
   );
+}
+
+// ---- polygon boxes: a synthetic receipt photographed askew, with a round stamp ----
+// Text is drawn with a fixed textLength, so each line's outline is known exactly and the polygons are computed, not traced.
+const PW = 480, PH = 340;
+type P = [number, number];
+const rot = ([x, y]: P, deg: number, [ox, oy]: P): P => {
+  const a = (deg * Math.PI) / 180, dx = x - ox, dy = y - oy;
+  return [ox + dx * Math.cos(a) - dy * Math.sin(a), oy + dx * Math.sin(a) + dy * Math.cos(a)];
+};
+const quad = (x: number, y: number, w: number, h: number, deg = 0, o: P = [x + w / 2, y + h / 2]): P[] =>
+  ([[x, y], [x + w, y], [x + w, y + h], [x, y + h]] as P[]).map(p => rot(p, deg, o));
+/** Band around an arc of the circle (cx, cy) between radii r0..r1, from angle a0 to a1 (degrees, screen space). */
+const arcBand = (cx: number, cy: number, r0: number, r1: number, a0: number, a1: number, steps = 10): P[] => {
+  const at = (r: number, a: number): P => [cx + r * Math.cos((a * Math.PI) / 180), cy + r * Math.sin((a * Math.PI) / 180)];
+  const angles = Array.from({ length: steps + 1 }, (_, i) => a0 + ((a1 - a0) * i) / steps);
+  return [...angles.map(a => at(r1, a)), ...angles.reverse().map(a => at(r0, a))];
+};
+
+const TILT = -6, PIVOT: P = [210, 172];
+const receiptLines = [
+  { id: 'l1', text: 'Khách hàng: Nguyễn Văn An', y: 130, len: 214, confidence: 99.1 },
+  { id: 'l2', text: 'Số hồ sơ: HS-2026-0193', y: 158, len: 188, confidence: 97.4 },
+  { id: 'l3', text: 'Ngày nhận: 03/10/2026', y: 186, len: 176, confidence: 88.6 },
+  { id: 'l4', text: 'Tình trạng: Đủ giấy tờ', y: 214, len: 180, confidence: 98.8 },
+];
+const STAMP: P = [388, 246], ARC_R = 49, ARC_FROM = 195, ARC_TO = 345;
+const ARC_LEN = (ARC_R * (ARC_TO - ARC_FROM) * Math.PI) / 180;
+/** Engine-style output in page pixels: polygons, as PaddleOCR or CRAFT emit them. toBox turns them into OcrBoxes. */
+const polyEngine: Array<{ id: string; text: string; confidence: number; poly: P[]; kind?: OcrBox['kind'] }> = [
+  { id: 'title', text: 'PHIẾU BIÊN NHẬN', confidence: 99.6, poly: quad(38, 32, 216, 27) }, // upright: stays a rectangle
+  ...receiptLines.map(l => ({ id: l.id, text: l.text, confidence: l.confidence, poly: quad(68, l.y - 14, l.len + 4, 19, TILT, PIVOT) })),
+  { id: 'arc', text: 'CÔNG TY TNHH MINH PHÁT', confidence: 76.2, poly: arcBand(STAMP[0], STAMP[1], ARC_R - 3, ARC_R + 11, ARC_FROM, ARC_TO, 14), kind: 'stamp' },
+  { id: 'seal', text: 'ĐÃ KÝ', confidence: 91.5, poly: quad(STAMP[0] - 27, STAMP[1] - 12, 54, 19, -12), kind: 'stamp' },
+];
+export const polyBoxes: OcrBox[] = polyEngine.map(({ poly, ...b }) => ({ ...b, ...toBox(poly, PW, PH) }));
+
+function PolyPage() {
+  const arc = useId();
+  const ink = '#1B1A1F', red = '#C42B2B'; // theme-fixed: ink and stamp on white paper
+  const font = { fontFamily: 'var(--dtx-font)' };
+  const [cx, cy] = STAMP;
+  const a = (deg: number, r = ARC_R) => `${cx + r * Math.cos((deg * Math.PI) / 180)} ${cy + r * Math.sin((deg * Math.PI) / 180)}`;
+  return (
+    <svg viewBox={`0 0 ${PW} ${PH}`} className="block h-auto w-full" role="img" aria-label="Phiếu biên nhận chụp nghiêng, có con dấu tròn">
+      <rect width={PW} height={PH} fill="#FFFFFF" /> {/* theme-fixed: paper */}
+      <text x="40" y="54" fontSize="22" fontWeight="700" fill={ink} textLength="212" lengthAdjust="spacingAndGlyphs" style={font}>PHIẾU BIÊN NHẬN</text>
+      <g transform={`rotate(${TILT} ${PIVOT[0]} ${PIVOT[1]})`}>
+        {receiptLines.map(l => <text key={l.id} x="70" y={l.y} fontSize="15" fill={ink} textLength={l.len} lengthAdjust="spacingAndGlyphs" style={font}>{l.text}</text>)}
+      </g>
+      <g fill="none" stroke={red} strokeWidth="2.5" opacity=".85">
+        <circle cx={cx} cy={cy} r="66" /><circle cx={cx} cy={cy} r="40" />
+      </g>
+      <path id={arc} d={`M${a(ARC_FROM)} A${ARC_R} ${ARC_R} 0 0 1 ${a(ARC_TO)}`} fill="none" />
+      <text fontSize="10.5" fontWeight="700" fill={red} opacity=".85" style={font}><textPath href={`#${arc}`} textLength={ARC_LEN} lengthAdjust="spacingAndGlyphs">CÔNG TY TNHH MINH PHÁT</textPath></text>
+      <text x={cx - 25} y={cy + 4} fontSize="15" fontWeight="700" fill={red} opacity=".85" textLength="50" lengthAdjust="spacingAndGlyphs" transform={`rotate(-12 ${cx} ${cy - 2.5})`} style={font}>ĐÃ KÝ</text>
+    </svg>
+  );
+}
+
+/** BoxOverlay over the askew receipt. */
+export function PolygonDemo({ scan, ...props }: { scan?: boolean; pinnedId?: string; selectedId?: string; colorBy?: 'confidence' | 'kind' }) {
+  const overlay = <BoxOverlay boxes={polyBoxes} textInset={2} animate={!scan} {...props}><PolyPage /></BoxOverlay>;
+  return <div className="w-full max-w-[640px]">{scan ? <ScanBeam>{overlay}</ScanBeam> : overlay}</div>;
 }

@@ -39,7 +39,8 @@ import { OcrShowcase, type OcrDocument } from '@dtx/ui';
 | `fileName` | `string` |  | Shown in the player |
 | `engine` | `string` |  | Engine name |
 
-A `box` is any shape engines emit: `[x, y, w, h]`, `{ x, y, w, h }`, `{ x1, y1, x2, y2 }` or a polygon.
+A `box` is any shape engines emit: `[x, y, w, h]`, `{ x, y, w, h }`, `{ x1, y1, x2, y2 }` or a polygon (kept as
+`points`, so BoxOverlay draws rotated and curved text as-is).
 
 ## Files
 

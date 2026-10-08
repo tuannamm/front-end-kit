@@ -12,7 +12,7 @@ import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
-import { AlertDemo, MasonryLiveDemo, SplitterListDemo, StepsWizardDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { PolygonDemo, AlertDemo, MasonryLiveDemo, SplitterListDemo, StepsWizardDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -813,7 +813,12 @@ export const entries: Entry[] = [
       { title: 'Any element: <ScanReveal>', note: 'Give it x/y/w/h (fractions of the beam area). Here three highlight bands.', replay: true, render: run => <ScanRevealDemo key={run} /> }] },
   { id: 'sample-invoice', name: 'SampleInvoice', category: 'AI · Shared', status: 'ready', summary: 'Synthetic Vietnamese VAT invoice in SVG for demos. Line boxes are measured from the rendered text (onBoxes), regions come from the layout.', importLine: imp('SampleInvoice, sampleInvoiceRegions'),
     demos: [{ title: 'Page', render: () => <div className="w-full max-w-sm shadow-pop"><SampleInvoice /></div> }] },
-  planned('polygon-box', 'Polygon boxes', 'AI · Shared', 'Draw rotated/curved quads as-is instead of bounding rectangles.'),
+  { id: 'polygon-box', name: 'Polygon boxes', category: 'AI · Shared', status: 'ready', summary: 'Rotated, skewed and curved text drawn as the engine outlined it, not as a bounding rectangle. Give an OcrBox `points`, or pass engine polygons through toBox / normalizeOcr, which keep them. Only the shape takes the pointer, and the hover spotlight has a hole in its shape. An upright 4-point polygon stays a rectangle.',
+    importLine: imp('BoxOverlay, toBox, type OcrBox'), demos: [
+      { title: '1 · Askew receipt with a round stamp', note: 'Lines tilted 6°, the stamp text on an arc (15 points a side). The title is an upright quad, so it stays a rectangle. Hover or Tab through the boxes: the lens shows the original and the AI text.', plain: true, code: '<BoxOverlay boxes={lines.map(l => ({ id: l.id, text: l.text, confidence: l.score * 100, ...toBox(l.poly, W, H) }))}>\n  <img src={page} alt="Trang 1" />\n</BoxOverlay>', render: () => <PolygonDemo /> },
+      { title: '2 · Hover and selected, static', note: 'pinnedId="arc": the spotlight hole follows the curve. selectedId="l2": a denser fill.', plain: true, render: () => <PolygonDemo pinnedId="arc" selectedId="l2" /> },
+      { title: '3 · By region kind', note: 'colorBy="kind": the two stamp regions in the stamp colour.', plain: true, render: () => <PolygonDemo colorBy="kind" /> },
+      { title: '4 · Under the scan beam', note: 'Inside <ScanBeam> the polygons reveal with the beam, like rectangles.', replay: true, plain: true, render: run => <PolygonDemo key={run} scan /> }] },
   planned('field-link', 'Field ↔ box connector', 'AI · Extraction', 'Line from an extracted field to its source box.'),
   planned('heatmap', 'Confidence heatmap', 'AI · OCR', 'Page tint by local confidence for QC triage.'),
   planned('box-editor', 'Box editor', 'AI · OCR', 'Drag/resize boxes and correct text for human-in-the-loop QC.'),

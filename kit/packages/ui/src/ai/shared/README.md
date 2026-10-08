@@ -10,6 +10,25 @@ import { BoxOverlay, ScanBeam, CompareSlider, ConfidenceBadge } from '@dtx/ui';
 <CompareSlider before={<img src={raw} alt="Bản gốc" />} after={<img src={clean} alt="Đã xử lý" />} />
 ```
 
+### Polygon boxes
+
+Engines such as PaddleOCR, EasyOCR or CRAFT emit text regions as polygons: quads for rotated or skewed lines, many
+points for curved text on a stamp. Give the box `points` (or pass the engine shape through `toBox` / `normalizeOcr`,
+which keep them) and BoxOverlay draws the shape instead of its bounding rectangle:
+
+```tsx
+<BoxOverlay boxes={lines.map(l => ({ id: l.id, text: l.text, confidence: l.score * 100, ...toBox(l.poly, W, H) }))}>
+  <img src={page} alt="Trang 1" />
+</BoxOverlay>
+```
+
+- Only the polygon takes the pointer, so overlapping slanted lines each get their own hover.
+- The hover spotlight has a hole in the shape of the polygon; selected and confidence colours work as for rectangles.
+- The lens crops a quad along its own edges and turns it level, so a tilted line reads straight above its AI text.
+  Points must run top-left, top-right, bottom-right, bottom-left (PaddleOCR, EasyOCR and CRAFT do). Other shapes, e.g.
+  curved text, are cropped by their bounding rectangle. The scan reveal uses the bounding rectangle.
+- A 4-point polygon that is an upright rectangle stays a rectangle (corner brackets on hover).
+
 ## Props
 
 ### BoxOverlay
@@ -43,6 +62,7 @@ import { BoxOverlay, ScanBeam, CompareSlider, ConfidenceBadge } from '@dtx/ui';
 | `confidence` | `number` |  | 0–100 |
 | `kind` | `'title' \| 'text' \| 'table' \| 'figure' \| 'stamp' \| 'signature' \| 'field'` |  | Layout region kind |
 | `label` | `string` |  | Tag text; defaults to the kind's name |
+| `points` | `Array<[number, number]>` |  | Outline of a rotated, skewed or curved region (0–1 page points, 3 or more). Drawn as-is; `x`/`y`/`w`/`h` are derived from it. `toBox` fills it from an engine polygon |
 
 ### ConfidenceBadge
 
@@ -120,5 +140,5 @@ import { BoxOverlay, ScanBeam, CompareSlider, ConfidenceBadge } from '@dtx/ui';
 - `compare-slider.tsx`: CompareSlider
 - `scan-beam.tsx`: ScanBeam, ScanReveal, `useScanBeam`, `scanRevealProps`
 - `sample-invoice.tsx`: SampleInvoice, `sampleInvoiceRegions`, `sampleInvoiceInset`
-- `geometry.ts`: `toBox` (any engine box shape → 0–1 box)
+- `geometry.ts`: `toBox` (any engine box shape → 0–1 box; a polygon keeps its `points`), `bounds`
 - `shared.css`

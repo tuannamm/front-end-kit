@@ -56,6 +56,22 @@
 }
 @keyframes dtx-reticle { from { opacity: 0; transform: scale(1.35); } }
 
+/* polygon boxes (rotated, skewed, curved text): the shape is drawn as-is, and only the shape takes the pointer, so a
+   slanted line never steals hover from its neighbour through the corners of its bounding rectangle */
+.dtx-ocr__box[data-shape="poly"] { border: 0; border-radius: 0; background: none; pointer-events: none; }
+.dtx-ocr__box[data-shape="poly"][data-active] { box-shadow: none; }
+.dtx-ocr__box[data-shape="poly"][data-active]::after { content: none; }
+.dtx-ocr__poly { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.dtx-ocr__poly-shape {
+  fill: rgb(var(--c) / .1); stroke: rgb(var(--c)); stroke-width: 1.5; stroke-linejoin: round; vector-effect: non-scaling-stroke;
+  pointer-events: all; transition: fill var(--dtx-dur-fast), stroke-width var(--dtx-dur-fast);
+}
+.dtx-ocr__box[data-selected] .dtx-ocr__poly-shape { fill: rgb(var(--c) / .22); }
+.dtx-ocr__box[data-active] .dtx-ocr__poly-shape { fill: none; stroke-width: 2.5; }
+/* the spotlight, with a hole the shape of the polygon */
+.dtx-ocr__poly-dim { fill: rgb(15 15 20 / .22); fill-rule: evenodd; opacity: 0; transition: opacity var(--dtx-dur-slow) var(--dtx-ease-standard); } /* theme-fixed: dims the paper, not the UI */
+.dtx-ocr__box[data-active] .dtx-ocr__poly-dim { opacity: 1; }
+
 /* lens: magnified original over AI text, same scale, same left edge.
    It sits on paper (it IS a piece of the page), so its colours are paper colours, not theme colours. */
 .dtx-ocr__lens {
