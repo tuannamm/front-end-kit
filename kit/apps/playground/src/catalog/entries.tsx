@@ -12,7 +12,7 @@ import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
-import { PolygonDemo, AlertDemo, MasonryLiveDemo, SplitterListDemo, StepsWizardDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { FieldLinkDemo, PolygonDemo, AlertDemo, MasonryLiveDemo, SplitterListDemo, StepsWizardDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -819,7 +819,11 @@ export const entries: Entry[] = [
       { title: '2 · Hover and selected, static', note: 'pinnedId="arc": the spotlight hole follows the curve. selectedId="l2": a denser fill.', plain: true, render: () => <PolygonDemo pinnedId="arc" selectedId="l2" /> },
       { title: '3 · By region kind', note: 'colorBy="kind": the two stamp regions in the stamp colour.', plain: true, render: () => <PolygonDemo colorBy="kind" /> },
       { title: '4 · Under the scan beam', note: 'Inside <ScanBeam> the polygons reveal with the beam, like rectangles.', replay: true, plain: true, render: run => <PolygonDemo key={run} scan /> }] },
-  planned('field-link', 'Field ↔ box connector', 'AI · Extraction', 'Line from an extracted field to its source box.'),
+  { id: 'field-link', name: 'FieldLink', category: 'AI · Extraction', status: 'ready', summary: 'Field ↔ box connector. Hover or focus an extracted field and a line runs to the box it was read from, in that box\'s colour; hover a box and it runs back to its field. Mark each field data-source="<box id>"; BoxOverlay boxes carry data-box. linked holds a pair: a selection, or a static state.',
+    importLine: imp('FieldLink, BoxOverlay') + '\n<FieldLink linked={selected} className="grid gap-16 sm:grid-cols-[1fr_240px]">\n  <BoxOverlay boxes={lines}>{page}</BoxOverlay>\n  <button data-source="total">Tổng cộng · 15.552.000</button>\n</FieldLink>',
+    demos: [
+      { title: '1 · Live', note: 'Hover or Tab through the fields or the boxes. Click a field or a box to keep its link.', plain: true, render: run => <FieldLinkDemo key={run} /> },
+      { title: '2 · Linked, static', note: 'linked="vat": the 94.2% field links to its amber box.', plain: true, render: () => <FieldLinkDemo linked="vat" /> }] },
   planned('heatmap', 'Confidence heatmap', 'AI · OCR', 'Page tint by local confidence for QC triage.'),
   planned('box-editor', 'Box editor', 'AI · OCR', 'Drag/resize boxes and correct text for human-in-the-loop QC.'),
   planned('table-extract', 'Table extraction view', 'AI · Extraction', 'Detected table grid with cell-level confidence.'),

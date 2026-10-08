@@ -158,6 +158,7 @@ export function BoxOverlay({ boxes: input, children, colorBy = 'confidence', hov
               <button
                 key={b.id}
                 type="button"
+                data-box={b.id}
                 className={cx('dtx-ocr__box', animate && !beam && 'dtx-ocr__box--animate', rv.className)}
                 data-selected={selectedId === b.id ? '' : undefined}
                 data-active={isActive ? '' : undefined}

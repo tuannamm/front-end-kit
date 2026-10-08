@@ -9,6 +9,22 @@ import { DocumentScan, type ScanRow, type ScanField } from '@dtx/ui';
 <DocumentScan fileName="HD-0347.pdf" title="Hoá đơn GTGT" rows={rows} fields={fields} />
 ```
 
+`FieldLink`: a line from an extracted field to the box it was read from. Hover or focus a field and the line runs to
+its box, in that box's colour; hover a box and it runs back to its field. Mark each field `data-source="<box id>"`;
+BoxOverlay boxes already carry `data-box`. It only draws the line: the page, the field list and the layout stay yours.
+Side by side, the line leaves the facing edges; stacked (a phone), it runs from the field's top to the box's bottom.
+
+```tsx
+import { FieldLink, BoxOverlay } from '@dtx/ui';
+
+<FieldLink linked={selected} className="grid gap-16 sm:grid-cols-[1fr_240px]">
+  <BoxOverlay boxes={lines} selectedId={selected}>{page}</BoxOverlay>
+  <ul>{fields.map(f => <li key={f.key}><button data-source={f.lineId}>{f.label} · {f.value}</button></li>)}</ul>
+</FieldLink>
+```
+
+Any element can be an end: `data-box` is just an attribute, so a table cell or a region outside BoxOverlay works too.
+
 ## Props
 
 ### DocumentScan
@@ -44,7 +60,17 @@ import { DocumentScan, type ScanRow, type ScanField } from '@dtx/ui';
 | `value` | `string` | **required** | Extracted value |
 | `confidence` | `number` | **required** | 0–100 |
 
+### FieldLink
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `linked` | `string \| null` | `null` | Box id linked while nothing is hovered or focused: a selection, or a static state for docs |
+| `children` | `ReactNode` | **required** | The page (BoxOverlay) and the fields marked `data-source="<box id>"` |
+| `className` | `string` |  | Lay the two out here, e.g. a grid |
+
 ## Files
 
 - `document-scan.tsx`: DocumentScan, `ScanRow`, `ScanField`, `ScanPhase`
+- `field-link.tsx`: FieldLink
+- `connect.ts`: the curve between a field and its box (`connect.check.ts`)
 - `extraction.css`

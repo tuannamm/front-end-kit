@@ -1,7 +1,7 @@
 // Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
 import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
-import { Alert, Badge, BoxOverlay, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dtx/ui';
+import { Alert, Badge, BoxOverlay, ConfidenceBadge, FieldLink, SampleInvoice, sampleInvoiceInset, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dtx/ui';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -459,4 +459,35 @@ function PolyPage() {
 export function PolygonDemo({ scan, ...props }: { scan?: boolean; pinnedId?: string; selectedId?: string; colorBy?: 'confidence' | 'kind' }) {
   const overlay = <BoxOverlay boxes={polyBoxes} textInset={2} animate={!scan} {...props}><PolyPage /></BoxOverlay>;
   return <div className="w-full max-w-[640px]">{scan ? <ScanBeam>{overlay}</ScanBeam> : overlay}</div>;
+}
+
+const linkFields = [
+  { box: 'company', label: 'Đơn vị bán', value: 'Công ty TNHH Minh Phát', confidence: 99.4 },
+  { box: 'no', label: 'Số hoá đơn', value: '0000347', confidence: 99.8 },
+  { box: 'date', label: 'Ngày lập', value: '02/10/2026', confidence: 99.6 },
+  { box: 'tax', label: 'Mã số thuế', value: '0312456789', confidence: 97.9 },
+  { box: 'vat', label: 'Thuế GTGT', value: '1.152.000', confidence: 94.2 },
+  { box: 'total', label: 'Tổng cộng', value: '15.552.000 VND', confidence: 99.7 },
+];
+
+/** Extracted fields beside the invoice: hover or focus either end to link it; click to keep the link. */
+export function FieldLinkDemo({ linked }: { linked?: string }) {
+  const [lines, setLines] = useState<OcrBox[]>([]);
+  const [sel, setSel] = useState<string | null>(linked ?? null);
+  return (
+    <FieldLink linked={sel} className="grid w-full max-w-[820px] items-center gap-x-16 gap-y-8 sm:grid-cols-[minmax(0,1fr)_240px]">
+      <BoxOverlay boxes={lines} textInset={sampleInvoiceInset} selectedId={sel} onSelect={b => setSel(b.id)}><SampleInvoice onBoxes={setLines} /></BoxOverlay>
+      <ul className="m-0 grid list-none gap-2 p-0" aria-label="Trường đã trích xuất">
+        {linkFields.map(f => (
+          <li key={f.box}>
+            <button type="button" data-source={f.box} aria-pressed={sel === f.box} onClick={() => setSel(sel === f.box ? null : f.box)}
+              className="grid w-full cursor-pointer gap-0.5 rounded-sm border border-border bg-surface px-3 py-2 text-left text-fg">
+              <span className="flex items-center justify-between gap-2 text-xs text-fg-muted">{f.label}<ConfidenceBadge value={f.confidence} /></span>
+              <span className="text-sm font-medium tabular-nums">{f.value}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </FieldLink>
+  );
 }
