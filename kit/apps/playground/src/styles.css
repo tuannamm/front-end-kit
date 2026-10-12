@@ -65,3 +65,5 @@
 .pg-chip:hover { border-color: var(--dtx-border-strong); color: var(--dtx-link); }
 .pg-chip:focus-visible { outline: 2px solid var(--dtx-focus); outline-offset: 2px; }
 .pg-step-n { display: grid; place-items: center; inline-size: 32px; block-size: 32px; flex: none; border-radius: var(--dtx-radius-sm); background: color-mix(in oklab, var(--dtx-primary) 14%, transparent); color: var(--dtx-tone-brand); font-weight: 700; }
+/* AI playground: every tab's stage keeps one height, so switching tabs never moves the page below */
+.pg-ai-stage { display: grid; justify-items: center; align-content: start; gap: 12px; min-block-size: 620px; padding-block-start: 24px; text-align: center; }

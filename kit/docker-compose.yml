@@ -1,7 +1,11 @@
 # On the deploy machine: git pull && docker compose up -d --build
 services:
   web:
-    build: .
+    build:
+      context: .
+      # the repo root, for its .git: the changelog page is built from the history
+      additional_contexts:
+        repo: ..
     image: dtx-frek
     ports:
       - "${PORT:-8080}:80"

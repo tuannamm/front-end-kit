@@ -3,3 +3,10 @@ dist/
 .omc/
 # real customer pages (1266 civil records, stengg) — internal, regenerate with kit/apps/playground/scripts/import_*.py
 kit/apps/playground/public/samples/
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+.beads/proxieddb/
+*.gate.lock*

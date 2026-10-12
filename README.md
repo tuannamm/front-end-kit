@@ -32,7 +32,8 @@ npm run dev          # http://<host>:5173 on the LAN, hot reload
 ```
 
 Open the **Catalog** (left index by category, ready/planned status, every demo in light + dark), the **Website**
-and **App** demo pages (built only from the kit), and **POC** (paste OCR engine JSON + an image, play the pipeline).
+and **App** demo pages (built only from the kit), **POC** (paste OCR engine JSON + an image, play the pipeline), and the **Changelog** (every commit to `kit/packages/`,
+read from git at build time, filterable by component).
 
 ## Checks
 

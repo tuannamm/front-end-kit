@@ -6,6 +6,10 @@ COPY packages/tokens/package.json packages/tokens/
 COPY packages/ui/package.json packages/ui/
 COPY apps/playground/package.json apps/playground/
 RUN npm ci
+# git history for the changelog page (vite plugin apps/playground/changelog.ts); the repo root comes in as a named context
+RUN apk add --no-cache git
+COPY --from=repo .git /repo.git
+ENV GIT_DIR=/repo.git
 COPY . .
 RUN npm run build
 

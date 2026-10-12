@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Check, CircleCheck, RotateCcw, TrendingUp } from 'lucide-react';
 import {
-  Badge, BoxOverlay, Button, CompareSlider, ConfidenceBadge, ConfidenceBar, CountUp, Display, Lede, Logo, Reveal, SampleInvoice, ScanBeam,
-  Carousel, SectionHeader, Skeleton, Steps, Switch, TechBackdrop, sampleInvoiceInset, useReducedMotion, type OcrBox,
+  AreaChart, Badge, BoxOverlay, Button, Card, CardBody, CardHeader, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots, CountUp, Display, KpiCard,
+  Lede, Logo, Reveal, SampleInvoice, ScanBeam, Carousel, SectionHeader, Skeleton, Sparkline, Steps, Switch, Tabs, TargetBar, TechBackdrop,
+  sampleInvoiceInset, useReducedMotion, type OcrBox,
 } from '@dtx/ui';
 import { categories, entries } from '../catalog/entries';
 import { CopyCode } from '../catalog/Catalog';
 import { Tile } from '../catalog/overview';
 import { demoPair } from '../demo-pairs';
-import { invoiceFields, invoiceRows } from '../data';
+import { aiThroughput, hours, invoiceFields, invoiceRows, manualThroughput } from '../data';
 import { useT } from '../i18n';
 
 const ready = entries.filter(e => e.status === 'ready');
@@ -92,6 +93,73 @@ function HeroDemo() {
             </Reveal>
           ))}
         </dl>
+      </div>
+    </div>
+  );
+}
+
+/** Box detection with the lens: hover or Tab to a line to see the original magnified over what the AI read. */
+function LensDemo() {
+  const [lines, setLines] = useState<OcrBox[]>([]);
+  const onBoxes = useCallback((b: OcrBox[]) => setLines(b), []);
+  return <BoxOverlay boxes={lines} textInset={sampleInvoiceInset} hover="lens"><SampleInvoice onBoxes={onBoxes} /></BoxOverlay>;
+}
+
+/** The page cleans up line by line behind the beam; replay restarts it. */
+function CleanDemo() {
+  const t = useT();
+  const [run, setRun] = useState(0);
+  const { before, after } = demoPair('denoise', <SampleInvoice />);
+  return (
+    <div className="grid w-full gap-3">
+      <ScanBeam key={run} duration={2400} before={before}>{after}</ScanBeam>
+      <Button size="sm" variant="secondary" className="justify-self-center" onClick={() => setRun(r => r + 1)}><RotateCcw />{t('Quét lại', 'Scan again')}</Button>
+    </div>
+  );
+}
+
+/** The AI pieces, one per tab, each live. Panels unmount when hidden, so a scan replays when its tab opens. */
+function AiPlayground() {
+  const t = useT();
+  const stage = (hint: ReactNode, demo: ReactNode) => (
+    <div className="pg-ai-stage">
+      <div className="w-full max-w-sm">{demo}</div>
+      <p className="m-0 text-sm text-fg-muted">{hint}</p>
+    </div>
+  );
+  return (
+    <Tabs className="pg-ai-tabs" items={[
+      { value: 'compare', label: t('Trước / sau', 'Before / after'), content: stage(t('Kéo, hoặc Tab tới thanh trượt rồi dùng ←/→.', 'Drag, or Tab to the slider and use ←/→.'), <CompareSlider {...demoPair('binarize', <SampleInvoice />)} />) },
+      { value: 'scan', label: t('Quét làm sạch', 'Scan to clean'), content: stage(t('ScanBeam với before/after: trang sạch dần sau tia quét.', 'ScanBeam with before/after: the page cleans up behind the beam.'), <CleanDemo />) },
+      { value: 'lens', label: t('Soi từng dòng', 'Line by line'), content: stage(t('Rê chuột hoặc Tab tới một khung: ảnh gốc phóng to ngay trên chữ AI đọc.', 'Hover or Tab to a box: the original, magnified, right above what the AI read.'), <LensDemo />) },
+      { value: 'confidence', label: t('Độ tin cậy', 'Confidence'), content: stage(t('Cùng ngưỡng cho badge, thanh và chấm: cao ≥ 95, thấp < 80.', 'One set of thresholds for badge, bar and dots: high ≥ 95, low < 80.'), (
+        <ul className="m-0 grid list-none gap-4 p-0">
+          {[99.7, 95.2, 91.3, 86.4, 72.5].map(v => <li key={v} className="grid grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-3"><ConfidenceDots value={v} /><ConfidenceBadge value={v} showLabel /><ConfidenceBar value={v} /></li>)}
+        </ul>
+      )) },
+    ]} />
+  );
+}
+
+/** Data components composed the way a product screen uses them: the chart leads, two KPIs beside it. */
+function DashboardPreview() {
+  const t = useT();
+  return (
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <Card data-reveal="" className="lg:row-span-2">
+        <CardHeader title={t('Sản lượng theo giờ', 'Throughput by hour')} action={<Badge tone="ok" variant="surface">{t('Hôm nay', 'Today')}</Badge>} />
+        <CardBody>
+          <AreaChart label={t('Sản lượng theo giờ', 'Throughput by hour')} labels={hours} stacked curve="smooth" defaultActive={7} height={260}
+            series={[{ name: t('AI tự động', 'AI automated'), data: aiThroughput }, { name: t('Thủ công', 'Manual'), data: manualThroughput }]} />
+        </CardBody>
+      </Card>
+      <div data-reveal="" style={{ '--i': 1 } as CSSProperties}>
+        <KpiCard label={t('Tài liệu xử lý hôm nay', 'Documents processed today')} badge={<Badge size="sm" tone="ok" variant="surface">▲ 12.4%</Badge>} value={<CountUp value={48210} />}
+          viz={<Sparkline data={[4, 7, 6, 11, 10, 15, 14, 20, 19, 23]} />} tone="ok" captionIcon={<TrendingUp />} caption={t(<><b>+5,320</b> so với hôm qua</>, <><b>+5,320</b> vs. yesterday</>)} />
+      </div>
+      <div data-reveal="" style={{ '--i': 2 } as CSSProperties}>
+        <KpiCard label={t('Độ chính xác sau QC', 'Accuracy after QC')} badge={<Badge size="sm" variant="surface">{t('Đạt mục tiêu', 'On target')}</Badge>} value={<CountUp value={99.62} decimals={2} />} unit="%"
+          viz={<TargetBar value={99.62} target={99.5} min={98} max={100} label={t('99.62% so với mục tiêu 99.5%, thang 98–100%', '99.62% vs. 99.5% target, scale 98–100%')} />} captionIcon={<CircleCheck />} caption={t(<>Mục tiêu <b>99.5%</b> · vượt 0.12 pt</>, <>Target <b>99.5%</b> · ahead by 0.12 pt</>)} />
       </div>
     </div>
   );
@@ -226,7 +294,7 @@ export function Home({ prefs }: { prefs: ReactNode }) {
             <SectionHeader id="gallery-h" title={t(`${ready.length} mục, ví dụ chạy thật`, `${ready.length} entries, live examples`)} description={t(`${categories.length} nhóm, từ token tới component AI. Mỗi mục có ví dụ tương tác, dòng import và bảng props lấy từ README.`, `${categories.length} groups, from tokens to AI components. Each entry has interactive examples, an import line and a props table taken from its README.`)} />
             <Button variant="secondary" href="#/catalog">{t('Xem toàn bộ', 'See all')}<ArrowRight /></Button>
           </div>
-          <Carousel className="mt-10" aria-label={t('Component nổi bật', 'Featured components')} autoPlay interval={1000}>
+          <Carousel className="mt-10" aria-label={t('Component nổi bật', 'Featured components')} autoPlay interval={6000}>
             {pages.map((page, p) => (
               <ul key={p} className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(232px,1fr))] gap-4 p-0">
                 {/* only the first page reveals on scroll: later pages sit off to the side, where the observer never sees them */}
@@ -237,16 +305,23 @@ export function Home({ prefs }: { prefs: ReactNode }) {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-[1240px] items-center gap-12 px-4 py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]" aria-labelledby="ai-h">
-        <div data-reveal="" className="grid gap-6">
+      <section className="mx-auto grid max-w-[1240px] items-start gap-12 px-4 py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]" aria-labelledby="ai-h">
+        <div data-reveal="" className="grid gap-6 lg:pt-16">
           <SectionHeader id="ai-h" title={t('Kết quả AI, nhìn là hiểu', 'AI results people can read')} description={t('Người duyệt cần so ảnh gốc với cái AI đọc được. Kit có sẵn các mảnh đó, dùng riêng hoặc ghép lại.', 'Reviewers need to compare the original with what the AI read. The kit has those pieces, alone or combined.')} />
           <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
             {aiEntries.map(e => <li key={e.id}><a href={`#/catalog/${e.id}`} className="pg-chip">{e.name}</a></li>)}
           </ul>
         </div>
-        <div data-reveal="" className="grid justify-items-center gap-3" style={{ '--i': 1 } as CSSProperties}>
-          <div className="w-full max-w-sm"><CompareSlider {...demoPair('binarize', <SampleInvoice />)} /></div>
-          <p className="m-0 text-sm text-fg-muted">{t('Kéo, hoặc Tab tới thanh trượt rồi dùng ←/→.', 'Drag, or Tab to the slider and use ←/→.')}</p>
+        <div data-reveal="" className="min-w-0" style={{ '--i': 1 } as CSSProperties}><AiPlayground /></div>
+      </section>
+
+      <section className="border-t border-border bg-[var(--pg-band)]" aria-labelledby="data-h">
+        <div className="mx-auto grid max-w-[1240px] gap-10 px-4 py-20">
+          <div data-reveal="" className="flex flex-wrap items-end justify-between gap-6">
+            <SectionHeader id="data-h" title={t('Số liệu thành màn hình', 'From numbers to screens')} description={t('KpiCard, biểu đồ và bảng dùng chung token, nên một dashboard ghép từ kit đã đúng brand và đủ sáng tối. Rê chuột hoặc dùng ←/→ trên biểu đồ.', 'KpiCard, charts and tables share the tokens, so a dashboard built from the kit is already on brand, light and dark. Hover the chart or use ←/→.')} />
+            <Button variant="secondary" href="#/app">{t('Mở App demo', 'Open the App demo')}<ArrowRight /></Button>
+          </div>
+          <DashboardPreview />
         </div>
       </section>
 
