@@ -1,0 +1,55 @@
+# DIGI-TEXX frontend kit. Only kit/ is built and released; the folders around it (docs/, research/…) are reference.
+# A push that changes kit/ checks it; a version tag also publishes @dgtx/ui-frek to Nexus.
+# Release: bump "version" in kit/packages/ui/package.json, commit, push, then push the tag v<version>.
+# CI/CD variables: NPM_REGISTRY (Nexus npm repo URL) and NPM_TOKEN (Nexus token with deploy rights), both masked.
+# If they are Protected, protect the release tags too (Settings → Repository → Protected tags: v*),
+# otherwise the publish job runs without them and stops at its first check.
+
+image: docker.digi-texx.vn/u-builder:nx20.8.4-node22.21-alpine3.21
+
+stages: [check, publish]
+
+default:
+  before_script:
+    - cd kit
+    # Install from Nexus when the variables are available. npm keys auth by registry URL (//host/path/:_authToken);
+    # the token stays in the environment: npm expands ${NPM_TOKEN} itself, nothing secret is written to disk.
+    - |
+      if [ -n "$NPM_REGISTRY" ]; then
+        REGISTRY="${NPM_REGISTRY%/}/"
+        echo "registry=$REGISTRY" > .npmrc
+        if [ -n "$NPM_TOKEN" ]; then echo "${REGISTRY#https:}:_authToken=\${NPM_TOKEN}" >> .npmrc; fi
+      fi
+
+check:
+  stage: check
+  rules:
+    - if: $CI_COMMIT_TAG                        # a release always re-checks before publish
+    - changes: [kit/**/*, .gitlab-ci.yml]       # pushes that only touch docs/, research/… run nothing
+  script:
+    - npm ci
+    - npm test
+    - npm run typecheck
+    - npm run build                    # playground
+    - npm run build -w @dgtx/ui-frek   # the library build that publish ships
+
+publish:
+  stage: publish
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v?\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/
+  script:
+    - ': "${NPM_REGISTRY:?missing CI/CD variable NPM_REGISTRY}" "${NPM_TOKEN:?missing CI/CD variable NPM_TOKEN}"'
+    - VERSION=$(node -p "require('./packages/ui/package.json').version")
+    - TARGET=$(node -p "require('./packages/ui/package.json').publishConfig.registry")
+    - |
+      if [ "${CI_COMMIT_TAG#v}" != "$VERSION" ]; then
+        echo "Tag $CI_COMMIT_TAG does not match version $VERSION in kit/packages/ui/package.json"; exit 1
+      fi
+      # publishConfig.registry decides where npm publishes; the token only authenticates against NPM_REGISTRY
+      if [ "${TARGET%/}" != "${NPM_REGISTRY%/}" ]; then
+        echo "publishConfig.registry ($TARGET) differs from NPM_REGISTRY ($NPM_REGISTRY)"; exit 1
+      fi
+    # a pre-release (1.2.0-rc.1) goes out as "next", so `npm i @dgtx/ui-frek` keeps getting the last stable version
+    - case "$VERSION" in *-*) DIST_TAG=next ;; *) DIST_TAG=latest ;; esac
+    - npm ci
+    - npm publish -w @dgtx/ui-frek --tag "$DIST_TAG"   # prepack builds dist/

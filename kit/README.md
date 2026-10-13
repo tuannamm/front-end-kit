@@ -66,19 +66,23 @@ The package ships compiled JS + `.d.ts` from `packages/ui/dist` (built by `npm r
 automatically on pack/publish) and the CSS straight from `src/` and `tokens/`. The playground and tests read the TypeScript source
 through the `dtx-source` export condition, so day-to-day work needs no build.
 
-1. Nexus (one time, admin): an **npm (hosted)** repo that is a member of the `npm` group, the *npm Bearer Token
-   Realm* enabled, and a routing rule on the npmjs proxy that blocks `@dgtx/*` (otherwise a public package with the
-   same name and a higher version can be served instead of ours).
-2. `publishConfig.registry` in `packages/ui/package.json` must be that hosted repo's URL. Nexus OSS cannot publish to a group URL.
-3. Log in once: `npm login --auth-type=legacy --registry=<hosted repo URL>`.
-4. Bump `version` in `packages/ui/package.json`, then from `kit/`:
+GitLab CI publishes it (`.gitlab-ci.yml` at the repo root). Every push runs the checks; a version tag also publishes.
 
 ```bash
-npm run check
-npm publish -w @dgtx/ui-frek
+# 1. bump "version" in kit/packages/ui/package.json (e.g. 0.2.0), commit and push
+# 2. tag that exact version
+git tag v0.2.0 && git push origin v0.2.0
 ```
 
-`npm pack -w @dgtx/ui-frek` builds the tarball without publishing, to inspect what ships.
+- The publish job stops when the tag differs from `version`, or when `publishConfig.registry` in
+  `packages/ui/package.json` differs from the `NPM_REGISTRY` variable.
+- A pre-release (`0.2.0-rc.1`, tag `v0.2.0-rc.1`) is published under the `next` dist-tag: `npm i @dgtx/ui-frek@next`.
+  Plain `npm i @dgtx/ui-frek` keeps installing the last stable version.
+- Nexus refuses to overwrite a published version: bump `version` for every release.
+- CI/CD variables `NPM_REGISTRY` and `NPM_TOKEN` (masked). If they are *Protected*, protect the release tags as well
+  (Settings → Repository → Protected tags, pattern `v*`), or the job runs without them.
+
+`npm pack -w @dgtx/ui-frek` builds the tarball locally without publishing, to inspect what ships.
 
 ## Rules
 
