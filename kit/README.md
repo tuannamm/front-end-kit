@@ -79,8 +79,10 @@ npm run release:major   # → 1.0.0
 `release.mjs` sets `version` in `packages/ui/package.json` and the lockfile, commits `release: @dgtx/ui-frek <version>`,
 tags `v<version>` and pushes branch and tag together. Uncommitted changes outside `kit/` are left alone.
 
-- The publish job stops when the tag differs from `version`, or when `publishConfig.registry` in
-  `packages/ui/package.json` differs from the `NPM_REGISTRY` variable.
+- `publishConfig.registry` in `packages/ui/package.json` is the Nexus **hosted** npm repo the package is deployed to.
+  `NPM_REGISTRY` (and everyone's `~/.npmrc`) is the npm **group**, which serves that hosted repo plus the npmjs proxy.
+  Nexus OSS cannot deploy to a group, so the publish job stops when the two are the same URL.
+- The publish job also stops when the tag differs from `version`.
 - A pre-release is published under its own dist-tag (`0.2.0-alpha.3` → `alpha`, `0.2.0-rc.1` → `rc`):
   `npm i @dgtx/ui-frek@alpha`. Plain `npm i @dgtx/ui-frek` keeps installing the last stable version.
 - Nexus refuses to overwrite a published version: every release needs a new version, which the scripts guarantee.
