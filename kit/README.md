@@ -66,19 +66,24 @@ The package ships compiled JS + `.d.ts` from `packages/ui/dist` (built by `npm r
 automatically on pack/publish) and the CSS straight from `src/` and `tokens/`. The playground and tests read the TypeScript source
 through the `dtx-source` export condition, so day-to-day work needs no build.
 
-GitLab CI publishes it (`.gitlab-ci.yml` at the repo root). Every push runs the checks; a version tag also publishes.
+GitLab CI publishes it (`.gitlab-ci.yml` at the repo root). A push that changes `kit/` runs the checks; a version tag
+also publishes. Release from `kit/` with a clean `kit/` tree, up to date with origin:
 
 ```bash
-# 1. bump "version" in kit/packages/ui/package.json (e.g. 0.2.0), commit and push
-# 2. tag that exact version
-git tag v0.2.0 && git push origin v0.2.0
+npm run release:alpha   # 0.1.0 → 0.1.1-alpha.0 → 0.1.1-alpha.1 …   (npm i @dgtx/ui-frek@alpha)
+npm run release:patch   # 0.1.1-alpha.1 → 0.1.1, 0.1.1 → 0.1.2
+npm run release:minor   # → 0.2.0
+npm run release:major   # → 1.0.0
 ```
+
+`release.mjs` sets `version` in `packages/ui/package.json` and the lockfile, commits `release: @dgtx/ui-frek <version>`,
+tags `v<version>` and pushes branch and tag together. Uncommitted changes outside `kit/` are left alone.
 
 - The publish job stops when the tag differs from `version`, or when `publishConfig.registry` in
   `packages/ui/package.json` differs from the `NPM_REGISTRY` variable.
-- A pre-release (`0.2.0-rc.1`, tag `v0.2.0-rc.1`) is published under the `next` dist-tag: `npm i @dgtx/ui-frek@next`.
-  Plain `npm i @dgtx/ui-frek` keeps installing the last stable version.
-- Nexus refuses to overwrite a published version: bump `version` for every release.
+- A pre-release is published under its own dist-tag (`0.2.0-alpha.3` → `alpha`, `0.2.0-rc.1` → `rc`):
+  `npm i @dgtx/ui-frek@alpha`. Plain `npm i @dgtx/ui-frek` keeps installing the last stable version.
+- Nexus refuses to overwrite a published version: every release needs a new version, which the scripts guarantee.
 - CI/CD variables `NPM_REGISTRY` and `NPM_TOKEN` (masked). If they are *Protected*, protect the release tags as well
   (Settings → Repository → Protected tags, pattern `v*`), or the job runs without them.
 

@@ -1,6 +1,7 @@
 # DIGI-TEXX frontend kit. Only kit/ is built and released; the folders around it (docs/, research/…) are reference.
 # A push that changes kit/ checks it; a version tag also publishes @dgtx/ui-frek to Nexus.
-# Release: bump "version" in kit/packages/ui/package.json, commit, push, then push the tag v<version>.
+# Release from kit/: npm run release:alpha | release:patch | release:minor | release:major (kit/release.mjs bumps
+# "version" in kit/packages/ui/package.json, commits, and pushes the tag v<version>).
 # CI/CD variables: NPM_REGISTRY (Nexus npm repo URL) and NPM_TOKEN (Nexus token with deploy rights), both masked.
 # If they are Protected, protect the release tags too (Settings → Repository → Protected tags: v*),
 # otherwise the publish job runs without them and stops at its first check.
@@ -49,7 +50,12 @@ publish:
       if [ "${TARGET%/}" != "${NPM_REGISTRY%/}" ]; then
         echo "publishConfig.registry ($TARGET) differs from NPM_REGISTRY ($NPM_REGISTRY)"; exit 1
       fi
-    # a pre-release (1.2.0-rc.1) goes out as "next", so `npm i @dgtx/ui-frek` keeps getting the last stable version
-    - case "$VERSION" in *-*) DIST_TAG=next ;; *) DIST_TAG=latest ;; esac
+    # a pre-release goes out under its own dist-tag (1.2.0-alpha.3 → "alpha", 1.2.0-rc.1 → "rc"; "next" when the
+    # id is a bare number), so `npm i @dgtx/ui-frek` keeps getting the last stable version
+    - |
+      case "$VERSION" in
+        *-*) DIST_TAG=$(echo "${VERSION#*-}" | cut -d. -f1); case "$DIST_TAG" in *[!0-9]*) ;; *) DIST_TAG=next ;; esac ;;
+        *) DIST_TAG=latest ;;
+      esac
     - npm ci
     - npm publish -w @dgtx/ui-frek --tag "$DIST_TAG"   # prepack builds dist/
