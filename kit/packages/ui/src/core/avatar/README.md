@@ -3,7 +3,7 @@
 A person's photo, or their initials when there is no photo.
 
 ```tsx
-import { Avatar, AvatarPicker } from '@dtx/ui';
+import { Avatar, AvatarPicker } from '@dgtx/ui-frek';
 
 <Avatar name="Nguyễn Thị Thuận" src={user.photo} />            // "NT" while the photo loads or if it fails
 <AvatarPicker name={user.name} src={user.photo} onChange={file => file ? uploadPhoto(file) : removePhoto()} />

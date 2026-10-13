@@ -3,7 +3,7 @@
 Where this page sits: root → … → current page. Put it in the `Topbar` or above the page title.
 
 ```tsx
-import { Breadcrumb } from '@dtx/ui';
+import { Breadcrumb } from '@dgtx/ui-frek';
 
 <Breadcrumb items={[
   { label: 'Vận hành', href: '/ops' },

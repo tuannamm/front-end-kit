@@ -3,7 +3,7 @@
 Sections that open and close under their headings: FAQ, settings groups, long details on a record page.
 
 ```tsx
-import { Collapse } from '@dtx/ui';
+import { Collapse } from '@dgtx/ui-frek';
 
 <Collapse multiple={false} defaultValue={['sla']} items={[
   { value: 'sla', title: 'SLA được tính từ lúc nào?', content: 'Từ khi lô được nhận đủ hồ sơ gốc…' },

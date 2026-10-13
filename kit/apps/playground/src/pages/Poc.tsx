@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Alert, Textarea, Badge, Button, Card, CardHeader, Field, OcrShowcase, SampleInvoice, Select, normalizeOcr, type OcrDocument, type OcrStage } from '@dtx/ui';
+import { Alert, Textarea, Badge, Button, Card, CardHeader, Field, OcrShowcase, SampleInvoice, Select, normalizeOcr, type OcrDocument, type OcrStage } from '@dgtx/ui-frek';
 import { sampleOptions, useSampleIndex } from '../samples';
 import { useT } from '../i18n';
 

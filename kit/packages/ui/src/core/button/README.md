@@ -3,7 +3,7 @@
 The kit's only button. Renders a `<button type="button">`, or an `<a>` when `href` is set.
 
 ```tsx
-import { Button } from '@dtx/ui';
+import { Button } from '@dgtx/ui-frek';
 
 <Button onClick={save}>Lưu</Button>
 <Button variant="secondary" href="/reports">Xem báo cáo</Button>

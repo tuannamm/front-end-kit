@@ -4,7 +4,7 @@ Reusable motion, one phase per component: enter (`Reveal`), wait (`Skeleton`), b
 Under reduced motion everything shows its final state. `useReducedMotion()` returns the OS setting for JS-driven animation.
 
 ```tsx
-import { Loadable, Reveal, CountUp } from '@dtx/ui';
+import { Loadable, Reveal, CountUp } from '@dgtx/ui-frek';
 
 <Loadable loading={isLoading}><BatchList /></Loadable>
 {items.map((it, i) => <Reveal key={it.id} index={i}>{…}</Reveal>)}

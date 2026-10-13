@@ -3,7 +3,7 @@
 On/off choices with a clickable label.
 
 ```tsx
-import { Checkbox, CheckboxGroup, RadioGroup } from '@dtx/ui';
+import { Checkbox, CheckboxGroup, RadioGroup } from '@dgtx/ui-frek';
 
 <Checkbox label="Tôi đồng ý với điều khoản" required error={errors.terms} />
 <CheckboxGroup label="Thông báo" options={channels} selectAll="Tất cả kênh" defaultValue={['email']} />

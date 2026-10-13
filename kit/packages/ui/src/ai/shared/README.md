@@ -4,7 +4,7 @@ Pieces several AI tasks reuse: bounding boxes over a page, confidence, before/af
 synthetic sample page.
 
 ```tsx
-import { BoxOverlay, ScanBeam, CompareSlider, ConfidenceBadge } from '@dtx/ui';
+import { BoxOverlay, ScanBeam, CompareSlider, ConfidenceBadge } from '@dgtx/ui-frek';
 
 <ScanBeam><BoxOverlay boxes={lines}><img src={page} alt="Trang 1" /></BoxOverlay></ScanBeam>
 <CompareSlider before={<img src={raw} alt="Bản gốc" />} after={<img src={clean} alt="Đã xử lý" />} />

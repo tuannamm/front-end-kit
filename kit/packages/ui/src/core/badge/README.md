@@ -4,7 +4,7 @@ Small status labels and the helpers that sit inside them. Also owns `Tone`, the 
 Icon, Select and KpiCard reuse.
 
 ```tsx
-import { Badge, Counter, ProgressRing, Kbd, IconTile } from '@dtx/ui';
+import { Badge, Counter, ProgressRing, Kbd, IconTile } from '@dgtx/ui-frek';
 
 <Badge tone="ok" dot>Hoàn tất</Badge>
 <Badge tone="brand" live>Đang xử lý</Badge>

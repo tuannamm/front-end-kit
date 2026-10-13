@@ -4,7 +4,7 @@ A bell button with the unread count. Clicking it opens the list of notifications
 `NotificationList` is that panel on its own, for a full "all notifications" page.
 
 ```tsx
-import { Notification, NotificationList, Button } from '@dtx/ui';
+import { Notification, NotificationList, Button } from '@dgtx/ui-frek';
 
 <Notification
   items={notifications}                                   // newest first; the app decides the order

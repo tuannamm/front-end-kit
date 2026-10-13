@@ -4,7 +4,7 @@ Pick files, validate them and show upload progress. **Nothing here uploads**: th
 reports progress back.
 
 ```tsx
-import { FileDropzone, FileList, FileItem, UploadToast } from '@dtx/ui';
+import { FileDropzone, FileList, FileItem, UploadToast } from '@dgtx/ui-frek';
 
 <FileDropzone label="Hồ sơ đính kèm" accept=".pdf,image/*" maxSize={20 * 1024 * 1024} onFiles={upload} />
 

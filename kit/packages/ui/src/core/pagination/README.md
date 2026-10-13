@@ -4,7 +4,7 @@ Page controls for a table or a list of cards: a "21–40 trên 1.234 dòng" summ
 and the page buttons.
 
 ```tsx
-import { Pagination } from '@dtx/ui';
+import { Pagination } from '@dgtx/ui-frek';
 
 const [page, setPage] = useState(1);
 const [size, setSize] = useState(20);

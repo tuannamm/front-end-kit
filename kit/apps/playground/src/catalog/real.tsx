@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Badge, BoxOverlay, Button, CompareSlider, OcrShowcase, ScanBeam, Select, UnwarpView, normalizeOcr, type OcrBox } from '@dtx/ui';
+import { Badge, BoxOverlay, Button, CompareSlider, OcrShowcase, ScanBeam, Select, UnwarpView, normalizeOcr, type OcrBox } from '@dgtx/ui-frek';
 import { sampleOptions, useSample, useSampleIndex } from '../samples';
 
 function Picker({ value, onChange }: { value: string | null; onChange: (v: string | null) => void }) {

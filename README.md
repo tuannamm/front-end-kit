@@ -16,8 +16,8 @@ docs/            DIGI-TEXX Branding Guidelines (PDF = the rules) + reference ass
 research/        frontend-kit research report (design systems, style, typography, a11y, performance)
 visual-proof/    the approved single-file style proof (start point of the kit)
 kit/             the frontend kit (npm workspaces)
-  packages/tokens   @dtx/tokens  colour/type/shape/motion tokens, light + dark, Roboto (vi subset), contrast test
-  packages/ui       @dtx/ui      components
+  packages/ui       @dgtx/ui-frek  the one published package: components + tokens
+    tokens/                                        colour/type/shape/motion tokens, light + dark, Roboto (vi subset), contrast test
     src/core  layout  data  motion  brand          generic UI
     src/ai/shared  preprocess  ocr  extraction     AI tasks (try-on, enhance, remove-bg planned)
   apps/playground   catalog + Website / App / POC demo pages
@@ -47,23 +47,34 @@ npm run test:a11y    # rendered contrast (axe) on every catalog entry + demo pag
 
 ## Using the kit in an app
 
+First set the company Nexus as your npm registry, in the `.npmrc` in your home directory (`~/.npmrc`; Windows
+`%USERPROFILE%\.npmrc`):
+
+```ini
+registry=https://nexus.digi-texx.vn/repository/npm/
+```
+
+```bash
+npm i @dgtx/ui-frek
+```
+
 ```css
 @layer theme, base, dtx, components, utilities;   /* kit sits under Tailwind utilities */
 @import "tailwindcss";                              /* optional */
-@import "@dtx/tokens/fonts.css";
-@import "@dtx/ui/styles.css";
-@import "@dtx/tokens/tailwind.css";                 /* optional: bg-surface, text-fg-muted… */
+@import "@dgtx/ui-frek/fonts.css";
+@import "@dgtx/ui-frek/styles.css";
+@import "@dgtx/ui-frek/tailwind.css";               /* optional: bg-surface, text-fg-muted… */
 ```
 
 ```tsx
-import { ToastProvider, TooltipProvider, OcrShowcase } from '@dtx/ui';
+import { ToastProvider, TooltipProvider, OcrShowcase } from '@dgtx/ui-frek';
 
 <TooltipProvider><ToastProvider>
   <OcrShowcase data={engineJson} stages={['unwarp', 'binarize', 'detect', 'recognize', 'extract']} />
 </ToastProvider></TooltipProvider>
 ```
 
-More: [`kit/README.md`](kit/README.md) · folder guide [`kit/packages/ui/src/README.md`](kit/packages/ui/src/README.md).
+Setup and publishing: [`kit/README.md`](kit/README.md) · folder guide [`kit/packages/ui/src/README.md`](kit/packages/ui/src/README.md).
 
 ## AI building blocks (highlights)
 

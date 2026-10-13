@@ -1,5 +1,5 @@
 import { Grid2x2, Layers, FolderOpen, ScanLine, Users } from 'lucide-react';
-import { Button, Card, DocumentScan, Display, Eyebrow, HexIcon, Lede, Logo, Reveal, SectionHeader, TechBackdrop } from '@dtx/ui';
+import { Button, Card, DocumentScan, Display, Eyebrow, HexIcon, Lede, Logo, Reveal, SectionHeader, TechBackdrop } from '@dgtx/ui-frek';
 import { invoiceFields, invoiceRows } from '../data';
 import { useT, type Translate } from '../i18n';
 

@@ -3,7 +3,7 @@
 Layers above the page: a modal dialog, a side panel or bottom sheet, and stacked toasts.
 
 ```tsx
-import { Dialog, DialogClose, Drawer, DrawerClose, ToastProvider, useToast, Button } from '@dtx/ui';
+import { Dialog, DialogClose, Drawer, DrawerClose, ToastProvider, useToast, Button } from '@dgtx/ui-frek';
 
 <Dialog trigger={<Button variant="danger">Xoá hồ sơ</Button>} title="Xoá hồ sơ HS-0142?" description="Không thể hoàn tác."
   footer={<><DialogClose><Button variant="ghost">Huỷ</Button></DialogClose><Button variant="danger" onClick={remove}>Xoá hồ sơ</Button></>} />

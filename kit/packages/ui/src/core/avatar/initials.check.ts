@@ -1,4 +1,4 @@
-// Self-check for Avatar initials. Run: npm test -w @dtx/ui
+// Self-check for Avatar initials. Run: npm test -w @dgtx/ui-frek
 import assert from 'node:assert/strict';
 import { initials } from './initials.ts';
 

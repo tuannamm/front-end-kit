@@ -2,7 +2,6 @@
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-COPY packages/tokens/package.json packages/tokens/
 COPY packages/ui/package.json packages/ui/
 COPY apps/playground/package.json apps/playground/
 RUN npm ci

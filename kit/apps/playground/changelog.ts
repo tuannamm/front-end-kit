@@ -16,10 +16,18 @@ type Commit = { hash: string; date: string; subject: string; units: { label: str
 const exportsOf = (file: string) => [...readFileSync(file, 'utf8').matchAll(/export (?:function|const|class|type) ([A-Z]\w*)/g)].map(m => m[1]);
 const isDir = (p: string) => existsSync(p) && statSync(p).isDirectory();
 
+/** npm name of a kit/packages/ folder, from its package.json (folder name for a package that no longer exists). */
+const packageName = (pkg: string): string => {
+  const file = join(PACKAGES, pkg, 'package.json');
+  return existsSync(file) ? JSON.parse(readFileSync(file, 'utf8')).name : pkg;
+};
+
 /** A path under kit/packages/ → the unit it belongs to: a core folder, a file in a flat folder, or a folder's shared files. */
 export function unitOf(path: string): string {
   const [pkg, src, ...rest] = path.split('/');
-  if (pkg !== 'ui' || src !== 'src' || !rest.length) return `@dtx/${pkg}`;
+  // tokens were their own package before they moved into ui/tokens/
+  if (pkg === 'tokens' || (pkg === 'ui' && src === 'tokens')) return 'tokens';
+  if (pkg !== 'ui' || src !== 'src' || !rest.length) return packageName(pkg);
   // core components live in one folder each (history from before that split has core/<name>.tsx, handled below)
   if (rest[0] === 'core' && rest.length > 2) return `core/${rest[1]}`;
   const dir = rest.slice(0, -1).join('/');
@@ -27,7 +35,7 @@ export function unitOf(path: string): string {
   const stem = file.replace(/(\.check)?\.\w+$/, '');
   // index, README, assets and the folder's own stylesheet belong to the folder as a whole
   const shared = !/\.(tsx?|css)$/.test(file) || ['index', dir.split('/').at(-1)].includes(stem);
-  return !dir ? '@dtx/ui' : shared ? dir : `${dir}/${stem}`;
+  return !dir ? packageName('ui') : shared ? dir : `${dir}/${stem}`;
 }
 
 function namesOf(unit: string): string[] {

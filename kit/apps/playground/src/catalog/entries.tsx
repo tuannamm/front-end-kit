@@ -6,7 +6,7 @@ import {
   Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   LineChart, AreaChart, SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
   Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type DateRange, type NormalizedOcr, type NotificationItem, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
-} from '@dtx/ui';
+} from '@dgtx/ui-frek';
 import { aiThroughput, batches, hours, invoiceFields, invoiceRows, manualThroughput, olderBatches, type Batch } from '../data';
 import { docTypeGroups, shiftOptions, statusOptions } from '../options';
 import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
@@ -16,7 +16,7 @@ import { FieldLinkDemo, PolygonDemo, AlertDemo, MasonryLiveDemo, SplitterListDem
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
-  { id: 'Foundations', folder: '@dtx/tokens', blurb: 'Colour, type, spacing, shape, elevation, contrast.' },
+  { id: 'Foundations', folder: 'ui/tokens', blurb: 'Colour, type, spacing, shape, elevation, contrast.' },
   { id: 'Core', folder: 'ui/src/core', blurb: 'Generic controls every screen uses.' },
   { id: 'Layout', folder: 'ui/src/layout', blurb: 'Page structure and app frame.' },
   { id: 'Data', folder: 'ui/src/data', blurb: 'KPIs, tables and small charts.' },
@@ -35,7 +35,7 @@ export type Demo = { title: string; note?: string; replay?: boolean; /** theme-f
 export type Entry = { id: string; name: string; category: Category; status: 'ready' | 'planned'; summary: string; importLine?: string; demos: Demo[] };
 
 const chartDays = Array.from({ length: 14 }, (_, i) => `${String(i + 1).padStart(2, '0')}/10`);
-const imp = (names: string) => `import { ${names} } from '@dtx/ui';`;
+const imp = (names: string) => `import { ${names} } from '@dgtx/ui-frek';`;
 const stages = [
   { title: 'Tiếp nhận', description: '3.860 trang' },
   { title: 'Nhận dạng', subTitle: 'Còn 00:08', description: '2.140 / 3.860 trang' },
@@ -315,7 +315,7 @@ const demoPhoto = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http:/
 export const entries: Entry[] = [
   // ───────────── Foundations ─────────────
   { id: 'color', name: 'Colour', category: 'Foundations', status: 'ready', summary: 'Every colour is tagged by source: rule (stated in the Guidelines PDF), sampled (in PDF artwork, pixel-sampled), kit (our UI decision).',
-    importLine: '@import "@dtx/tokens/theme.css";  /* var(--dtx-blue), var(--dtx-surface)… */',
+    importLine: '@import "@dgtx/ui-frek/theme.css";  /* var(--dtx-blue), var(--dtx-surface)… */',
     demos: [{ title: 'Palette', plain: true, render: () => <SwatchGrid /> },
       { title: 'Semantic tokens follow the theme', note: 'Components use semantic tokens only (--dtx-bg, --dtx-surface, --dtx-fg…). data-theme="dark" on any element flips that subtree.', render: () => (
         <div className="grid w-full gap-3 sm:grid-cols-2">{[undefined, 'dark'].map(t => (
@@ -325,7 +325,7 @@ export const entries: Entry[] = [
           </div>))}
         </div>) }] },
   { id: 'typography', name: 'Typography', category: 'Foundations', status: 'ready', summary: 'Roboto only (Guidelines §07), Arial fallback. Headlines: Roboto Bold Italic uppercase. Numbers: tabular figures. Line-height ≥ 1.15 so Vietnamese stacked diacritics never clip.',
-    importLine: '@import "@dtx/tokens/fonts.css";  /* self-hosted Roboto variable, latin + vietnamese subsets */',
+    importLine: '@import "@dgtx/ui-frek/fonts.css";  /* self-hosted Roboto variable, latin + vietnamese subsets */',
     demos: [{ title: 'Type scale', plain: true, render: () => <TypeScale /> }] },
   { id: 'spacing', name: 'Spacing & radius', category: 'Foundations', status: 'ready', summary: '4px base unit (8px for layout). Radius is squared and small: tech feel, matching the logo’s square dots.',
     demos: [

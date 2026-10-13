@@ -3,7 +3,7 @@
 Columns of tiles of different heights: notes, document thumbnails, image galleries, dashboard widgets of uneven size.
 
 ```tsx
-import { Masonry } from '@dtx/ui';
+import { Masonry } from '@dgtx/ui-frek';
 
 <Masonry aria-label="Ghi chú QC">
   {notes.map(n => <NoteCard key={n.id} note={n} />)}

@@ -4,7 +4,7 @@ import {
   AreaChart, Badge, BoxOverlay, Button, Card, CardBody, CardHeader, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots, CountUp, Display, KpiCard,
   Lede, Logo, Reveal, SampleInvoice, ScanBeam, Carousel, SectionHeader, Skeleton, Sparkline, Steps, Switch, Tabs, TargetBar, TechBackdrop,
   sampleInvoiceInset, useReducedMotion, type OcrBox,
-} from '@dtx/ui';
+} from '@dgtx/ui-frek';
 import { categories, entries } from '../catalog/entries';
 import { CopyCode } from '../catalog/Catalog';
 import { Tile } from '../catalog/overview';
@@ -235,17 +235,17 @@ export function Home({ prefs }: { prefs: ReactNode }) {
     {
       title: t('Thêm kit vào app', 'Add the kit to your app'),
       text: t('App nằm trong kit/apps/ dùng chung workspace, rồi chạy npm install ở thư mục kit.', 'Apps live in kit/apps/ and share the workspace; then run npm install in kit.'),
-      code: '// kit/apps/<your-app>/package.json\n"dependencies": {\n  "@dtx/tokens": "0.1.0",\n  "@dtx/ui": "0.1.0"\n}',
+      code: '// kit/apps/<your-app>/package.json\n"dependencies": {\n  "@dgtx/ui-frek": "0.1.0"\n}',
     },
     {
       title: t('Nạp CSS', 'Load the CSS'),
       text: t('Kit nằm dưới các utility của Tailwind. Tailwind là tuỳ chọn.', 'The kit sits under Tailwind utilities. Tailwind is optional.'),
-      code: '@layer theme, base, dtx, components, utilities;\n@import "tailwindcss";               /* optional */\n@import "@dtx/tokens/fonts.css";\n@import "@dtx/ui/styles.css";\n@import "@dtx/tokens/tailwind.css";  /* optional */',
+      code: '@layer theme, base, dtx, components, utilities;\n@import "tailwindcss";               /* optional */\n@import "@dgtx/ui-frek/fonts.css";\n@import "@dgtx/ui-frek/styles.css";\n@import "@dgtx/ui-frek/tailwind.css";  /* optional */',
     },
     {
       title: t('Dùng component', 'Use the components'),
       text: t('Bọc app bằng hai provider một lần, sau đó import component cần dùng.', 'Wrap the app in the two providers once, then import what you need.'),
-      code: "import { Button, ToastProvider, TooltipProvider } from '@dtx/ui';\n\nexport function App() {\n  return (\n    <TooltipProvider><ToastProvider>\n      <Button>Tạo lô mới</Button>\n    </ToastProvider></TooltipProvider>\n  );\n}",
+      code: "import { Button, ToastProvider, TooltipProvider } from '@dgtx/ui-frek';\n\nexport function App() {\n  return (\n    <TooltipProvider><ToastProvider>\n      <Button>Tạo lô mới</Button>\n    </ToastProvider></TooltipProvider>\n  );\n}",
     },
   ];
 

@@ -3,8 +3,8 @@
 React kit for DIGI-TEXX products and POCs. Brand rules come from the 2024 Branding Guidelines PDF (`../docs/`).
 
 ```
-packages/tokens   @dtx/tokens  theme.css (light/dark tokens), fonts.css (Roboto, vi subset), tailwind.css (utilities bridge)
-packages/ui       @dtx/ui      React components (Base UI + plain CSS in @layer dtx)
+packages/ui       @dgtx/ui-frek  React components (Base UI + plain CSS in @layer dtx) + tokens; the one published package
+  tokens/                                    theme.css (light/dark tokens), fonts.css (Roboto, vi subset), tailwind.css (utilities bridge)
   src/core  layout  data  motion  brand      generic UI
   src/ai/shared  preprocess  ocr  extraction   AI tasks (try-on, enhance, remove-bg later)
 apps/playground   catalog (left index, status, live demos) + Website/App demos + POC page
@@ -21,16 +21,33 @@ npm run test:a11y  # rendered contrast (axe) on every catalog entry + demo page,
 
 ## Use in an app
 
+The kit is published to the company Nexus as one package, `@dgtx/ui-frek`: the components, their CSS and the design tokens.
+
+**Before the first install**, point npm at Nexus in the `.npmrc` in your home directory (`~/.npmrc` on Linux/macOS,
+`%USERPROFILE%\.npmrc` on Windows). Create the file if it does not exist:
+
+```ini
+registry=https://nexus.digi-texx.vn/repository/npm/
+```
+
+Or run `npm config set registry https://nexus.digi-texx.vn/repository/npm/`, which writes the same line.
+Check it with `npm config get registry`. Without this setting, `npm i @dgtx/ui-frek` fails with `404 Not Found`,
+because the package exists only on Nexus, not on the public npm registry.
+
+```bash
+npm i @dgtx/ui-frek        # peer deps: react, react-dom 19
+```
+
 ```css
 @layer theme, base, dtx, components, utilities;   /* kit under Tailwind utilities */
 @import "tailwindcss";                              /* optional */
-@import "@dtx/tokens/fonts.css";
-@import "@dtx/ui/styles.css";
-@import "@dtx/tokens/tailwind.css";                 /* optional: bg-surface, text-fg-muted… */
+@import "@dgtx/ui-frek/fonts.css";
+@import "@dgtx/ui-frek/styles.css";
+@import "@dgtx/ui-frek/tailwind.css";               /* optional: bg-surface, text-fg-muted… */
 ```
 
 ```tsx
-import { ToastProvider, TooltipProvider, OcrShowcase } from '@dtx/ui';
+import { ToastProvider, TooltipProvider, OcrShowcase } from '@dgtx/ui-frek';
 
 <TooltipProvider><ToastProvider>
   <OcrShowcase data={engineJson} stages={['unwarp', 'binarize', 'detect', 'recognize', 'extract']} />
@@ -39,6 +56,29 @@ import { ToastProvider, TooltipProvider, OcrShowcase } from '@dtx/ui';
 
 `engineJson` is an `OcrDocument`: `{ image: { src, width, height }, lines: [{ text, confidence, box }], fields?, regions? }`.
 Boxes accept `[x,y,w,h]`, `{x1,y1,x2,y2}` or 4-point polygons in pixels; confidence 0–1 or 0–100.
+
+Works with any bundler that handles `new URL('…', import.meta.url)` (Vite, webpack 5, Rspack): the logos and the
+pdf.js worker ship as files next to the JS.
+
+## Publish to Nexus
+
+The package ships compiled JS + `.d.ts` from `packages/ui/dist` (built by `npm run build -w @dgtx/ui-frek`, run
+automatically on pack/publish) and the CSS straight from `src/` and `tokens/`. The playground and tests read the TypeScript source
+through the `dtx-source` export condition, so day-to-day work needs no build.
+
+1. Nexus (one time, admin): an **npm (hosted)** repo that is a member of the `npm` group, the *npm Bearer Token
+   Realm* enabled, and a routing rule on the npmjs proxy that blocks `@dgtx/*` (otherwise a public package with the
+   same name and a higher version can be served instead of ours).
+2. `publishConfig.registry` in `packages/ui/package.json` must be that hosted repo's URL. Nexus OSS cannot publish to a group URL.
+3. Log in once: `npm login --auth-type=legacy --registry=<hosted repo URL>`.
+4. Bump `version` in `packages/ui/package.json`, then from `kit/`:
+
+```bash
+npm run check
+npm publish -w @dgtx/ui-frek
+```
+
+`npm pack -w @dgtx/ui-frek` builds the tarball without publishing, to inspect what ships.
 
 ## Rules
 

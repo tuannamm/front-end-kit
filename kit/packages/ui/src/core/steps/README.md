@@ -3,7 +3,7 @@
 Where the user is in a sequence: a wizard, a checkout, the stages a batch goes through.
 
 ```tsx
-import { Steps } from '@dtx/ui';
+import { Steps } from '@dgtx/ui-frek';
 
 <Steps current={1} items={[
   { title: 'Tiếp nhận', description: '3.860 trang' },

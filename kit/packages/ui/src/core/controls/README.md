@@ -3,7 +3,7 @@
 Small Base UI controls.
 
 ```tsx
-import { Switch, Tabs, Segmented, Tooltip, TooltipProvider } from '@dtx/ui';
+import { Switch, Tabs, Segmented, Tooltip, TooltipProvider } from '@dgtx/ui-frek';
 
 <Switch label="Tự động duyệt" checked={auto} onCheckedChange={setAuto} />
 

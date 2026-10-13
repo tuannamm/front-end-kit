@@ -12,7 +12,8 @@ test('unitOf groups a changed file under the component it belongs to', () => {
   assert.equal(unitOf('ui/src/ai/shared/shared.css'), 'ai/shared');            // the folder's own stylesheet, README, index, assets
   assert.equal(unitOf('ui/src/ai/shared/README.md'), 'ai/shared');
   assert.equal(unitOf('ui/src/assets/logo-square.png'), 'assets');
-  assert.equal(unitOf('ui/src/styles.css'), '@dtx/ui');
-  assert.equal(unitOf('ui/package.json'), '@dtx/ui');
-  assert.equal(unitOf('tokens/tokens.css'), '@dtx/tokens');
+  assert.equal(unitOf('ui/src/styles.css'), '@dgtx/ui-frek');
+  assert.equal(unitOf('ui/package.json'), '@dgtx/ui-frek');
+  assert.equal(unitOf('tokens/tokens.css'), 'tokens');                        // before tokens moved into ui/
+  assert.equal(unitOf('ui/tokens/theme.css'), 'tokens');
 });

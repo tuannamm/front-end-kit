@@ -20,7 +20,8 @@ const page = await context.newPage();
 
 await page.goto(`${BASE}/#/catalog`);
 const ids = await page.$$eval('aside a[href^="#/catalog/"]', as => as.map(a => a.getAttribute('href').replace('#/', '')));
-ids.push('catalog', 'home', 'website', 'app', 'poc'); // the overview grid, the home page and the demo pages too
+// every page in the header nav (catalog overview, demos, changelog), the home page, and Website: routed but not in the nav
+ids.push(...new Set([...await page.$$eval('header nav a', as => as.map(a => a.getAttribute('href').replace('#/', ''))), 'home', 'website']));
 let bothThemes = 0; // guards against the switcher's label changing and the dark copies silently going unchecked
 const found = new Map(); // `${entry} | ${message}` → { themes, count, example }
 for (const theme of ['light', 'dark']) {

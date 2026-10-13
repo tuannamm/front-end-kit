@@ -3,7 +3,7 @@
 Puts a lucide-react icon on the kit's size scale and tones.
 
 ```tsx
-import { Icon } from '@dtx/ui';
+import { Icon } from '@dgtx/ui-frek';
 import { Upload, CircleAlert } from 'lucide-react';
 
 <Icon icon={Upload} />                                     // decorative, 16px, text colour

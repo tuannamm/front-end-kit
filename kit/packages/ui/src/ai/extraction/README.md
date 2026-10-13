@@ -4,7 +4,7 @@
 appears with a confidence score. Phases: idle → scanning → done.
 
 ```tsx
-import { DocumentScan, type ScanRow, type ScanField } from '@dtx/ui';
+import { DocumentScan, type ScanRow, type ScanField } from '@dgtx/ui-frek';
 
 <DocumentScan fileName="HD-0347.pdf" title="Hoá đơn GTGT" rows={rows} fields={fields} />
 ```
@@ -15,7 +15,7 @@ BoxOverlay boxes already carry `data-box`. It only draws the line: the page, the
 Side by side, the line leaves the facing edges; stacked (a phone), it runs from the field's top to the box's bottom.
 
 ```tsx
-import { FieldLink, BoxOverlay } from '@dtx/ui';
+import { FieldLink, BoxOverlay } from '@dgtx/ui-frek';
 
 <FieldLink linked={selected} className="grid gap-16 sm:grid-cols-[1fr_240px]">
   <BoxOverlay boxes={lines} selectedId={selected}>{page}</BoxOverlay>

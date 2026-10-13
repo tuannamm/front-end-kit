@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { changelog, type ChangeUnit } from 'virtual:changelog';
-import { Badge, Button, EmptyState, Pagination, Segmented, Select, Timeline, type Tone } from '@dtx/ui';
+import { Badge, Button, EmptyState, Pagination, Segmented, Select, Timeline, type Tone } from '@dgtx/ui-frek';
 import { entries, type Entry } from '../catalog/entries';
 import { useT } from '../i18n';
 

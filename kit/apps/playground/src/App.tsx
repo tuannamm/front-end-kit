@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Logo, Segmented, ThemeToggle } from '@dtx/ui';
+import { Logo, Segmented, ThemeToggle } from '@dgtx/ui-frek';
 import { setLang, useLang, useT, type Lang } from './i18n';
 import { Website } from './pages/Website';
 import { AppDemo } from './pages/AppDemo';

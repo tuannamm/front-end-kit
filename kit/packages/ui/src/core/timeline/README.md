@@ -3,7 +3,7 @@
 Events in order down a rail: an activity log, an audit trail, the steps of a batch or an order.
 
 ```tsx
-import { Timeline } from '@dtx/ui';
+import { Timeline } from '@dgtx/ui-frek';
 
 // activity log, newest first
 <Timeline aria-label="Hoạt động của lô HD-5517" items={[

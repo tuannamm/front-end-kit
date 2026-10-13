@@ -1,9 +1,9 @@
 /* Layer order: kit components sit above Tailwind base but below utilities, so utilities can override them. */
 @layer theme, base, dtx, components, utilities;
 @import "tailwindcss";
-@import "@dtx/tokens/fonts.css";
-@import "@dtx/ui/styles.css";
-@import "@dtx/tokens/tailwind.css";
+@import "@dgtx/ui-frek/fonts.css";
+@import "@dgtx/ui-frek/styles.css";
+@import "@dgtx/ui-frek/tailwind.css";
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /* Home + catalog chrome: neutrals tinted toward DIGI-TEXX navy and blue instead of the kit's flat grays.

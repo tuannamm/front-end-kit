@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { UploadToastItem } from '@dtx/ui';
+import type { UploadToastItem } from '@dgtx/ui-frek';
 
 export type Upload = { id: number; file: File; status: 'uploading' | 'done' | 'error'; progress: number; thumb?: string; failOnce: boolean };
 

@@ -1,4 +1,4 @@
-# @dtx/ui
+# @dgtx/ui-frek
 
 | Folder | What lives there |
 |---|---|

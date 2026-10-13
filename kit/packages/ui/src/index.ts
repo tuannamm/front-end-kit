@@ -1,4 +1,4 @@
-// @dtx/ui — organised by category; import from the root or a category entry.
+// @dgtx/ui-frek — organised by category; import from the root or a category entry.
 export { cx } from './cx';
 export * from './core';
 export * from './layout';

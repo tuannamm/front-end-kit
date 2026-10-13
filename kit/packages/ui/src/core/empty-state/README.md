@@ -5,7 +5,7 @@ Every empty or failed-load view in the kit renders it (DataTable, NotificationLi
 so they all look and read the same.
 
 ```tsx
-import { EmptyState, Button } from '@dtx/ui';
+import { EmptyState, Button } from '@dgtx/ui-frek';
 
 <EmptyState mascot title="Chưa có lô tài liệu nào" action={<Button onClick={create}>Tạo lô đầu tiên</Button>}>
   Tải hồ sơ lên để bắt đầu số hoá. Hệ thống nhận PDF, TIFF và ảnh chụp.

@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ToastProvider, TooltipProvider } from '@dtx/ui';
+import { ToastProvider, TooltipProvider } from '@dgtx/ui-frek';
 import { App } from './App';
 import './styles.css';
 

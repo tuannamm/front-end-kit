@@ -1,7 +1,7 @@
-// Interactive demo helpers used by catalog entries. Built only from @dtx/ui.
+// Interactive demo helpers used by catalog entries. Built only from @dgtx/ui-frek.
 import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
-import { Alert, Badge, BoxOverlay, ConfidenceBadge, FieldLink, SampleInvoice, sampleInvoiceInset, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dtx/ui';
+import { Alert, Badge, BoxOverlay, ConfidenceBadge, FieldLink, SampleInvoice, sampleInvoiceInset, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dgtx/ui-frek';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };

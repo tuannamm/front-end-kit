@@ -4,7 +4,7 @@ A row of slides that scrolls sideways: announcements, a strip of cards, a set of
 snapping, so swipe, trackpad and mouse wheel work without extra code.
 
 ```tsx
-import { Carousel } from '@dtx/ui';
+import { Carousel } from '@dgtx/ui-frek';
 
 // one slide at a time
 <Carousel aria-label="Tin mới">

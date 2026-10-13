@@ -1,5 +1,5 @@
 // Sample data for the demos. Not real customers or figures.
-import type { ScanField, ScanRow } from '@dtx/ui';
+import type { ScanField, ScanRow } from '@dgtx/ui-frek';
 
 export const invoiceRows: ScanRow[] = [
   { label: 'Số hoá đơn', value: '0000347', field: 'invoice_no' },

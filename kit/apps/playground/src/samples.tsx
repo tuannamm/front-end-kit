@@ -1,6 +1,6 @@
 // Real samples from project 1266 (internal, git-ignored): run scripts/import_1266.py to (re)create public/samples/.
 import { useEffect, useState } from 'react';
-import type { OcrDocument } from '@dtx/ui';
+import type { OcrDocument } from '@dgtx/ui-frek';
 import type { Translate } from './i18n';
 
 export type SampleMeta = { id: string; title: string; docType: string; words: number; fields: number; lowConfidence: number };

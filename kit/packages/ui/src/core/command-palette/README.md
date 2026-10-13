@@ -3,7 +3,7 @@
 Ctrl/⌘+K search over pages, records and actions. Typing filters, ↑/↓ move, Enter runs the item and closes the palette.
 
 ```tsx
-import { CommandPalette, CommandButton, type CommandItem } from '@dtx/ui';
+import { CommandPalette, CommandButton, type CommandItem } from '@dgtx/ui-frek';
 
 const items: CommandItem[] = [
   { id: 'qc', group: 'Đi tới', label: 'Hàng đợi QC', icon: <CircleCheck />, onSelect: () => navigate('/qc') },

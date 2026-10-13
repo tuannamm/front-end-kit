@@ -3,7 +3,7 @@
 One API for every dropdown. A flat list, groups, icons, descriptions and search can be mixed freely.
 
 ```tsx
-import { Select, MultiSelect, Field } from '@dtx/ui';
+import { Select, MultiSelect, Field } from '@dgtx/ui-frek';
 
 <Field label="Loại hồ sơ">
   <Select items={types} value={type} onValueChange={setType} />

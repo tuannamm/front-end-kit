@@ -4,7 +4,7 @@
 `Input` is the styled text input; `Textarea` is its multi-line version.
 
 ```tsx
-import { Field, Input } from '@dtx/ui';
+import { Field, Input } from '@dgtx/ui-frek';
 
 <Field label="Họ và tên" description="Như trên CCCD" error={errors.name}>
   <Input name="name" required />

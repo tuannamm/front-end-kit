@@ -4,7 +4,7 @@ import {
   Alert, AppShell, AvatarPicker, Breadcrumb, Badge, Icon, type IconProps, Button, Card, CardHeader, CategoryBar, Checkbox, CheckboxGroup, CommandButton, CommandPalette, type CommandItem, CountUp, Pagination, EmptyState, Counter, DataTable, DateRangePicker, Dialog, DialogClose, Drawer, DrawerClose, Field, FileDropzone, Notification, PdfViewer, Select, Tabs, UploadToast,
   KpiCard, Logo, Meter, MultiSelect, RadioGroup, Segmented, Sidebar, SidebarFooter, SidebarGroup, SidebarItem, SidebarWorkspace, Sparkline,
   StackedBarChart, TargetBar, Tooltip, Topbar, formatDate, todayIso, useToast, type Column, type DateRange, type NotificationItem,
-} from '@dtx/ui';
+} from '@dgtx/ui-frek';
 import { aiThroughput, batches, hours, manualThroughput, olderBatches, type Batch } from '../data';
 import { setLang, useLang, useT, type Translate } from '../i18n';
 import { useFakeUpload } from '../fake-upload';

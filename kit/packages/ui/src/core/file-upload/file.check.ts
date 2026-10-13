@@ -1,4 +1,4 @@
-// Self-check for the file helpers behind FileDropzone. Run: npm test -w @dtx/ui
+// Self-check for the file helpers behind FileDropzone. Run: npm test -w @dgtx/ui-frek
 import assert from 'node:assert/strict';
 import { acceptLabel, acceptsFile, checkFiles, formatBytes } from './file.ts';
 

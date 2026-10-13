@@ -3,7 +3,7 @@
 KPIs, tables and small charts. Every chart takes a `label`, its accessible name; numbers use tabular figures.
 
 ```tsx
-import { KpiCard, Sparkline, DataTable, type Column } from '@dtx/ui';
+import { KpiCard, Sparkline, DataTable, type Column } from '@dgtx/ui-frek';
 
 <KpiCard label="Tài liệu xử lý hôm nay" value="48,210" viz={<Sparkline data={trend} label="Xu hướng 12 giờ" />} />
 <DataTable caption="Lô gần đây" columns={columns} rows={batches} rowKey={b => b.id} />

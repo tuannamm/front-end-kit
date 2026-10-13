@@ -3,7 +3,7 @@
 A scrolling column of PDF pages with page navigation, zoom and download. Built on pdf.js (`pdfjs-dist`).
 
 ```tsx
-import { PdfViewer } from '@dtx/ui';
+import { PdfViewer } from '@dgtx/ui-frek';
 
 <PdfViewer src="/files/hop-dong.pdf" fileName="hop-dong.pdf" />
 

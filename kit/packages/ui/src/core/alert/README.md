@@ -4,7 +4,7 @@ A message that stays in the page until its cause is gone: a form that failed as 
 tonight. It is never a field error (use `<Field error>`) and never news of a moment ago (use a toast).
 
 ```tsx
-import { Alert, Button } from '@dtx/ui';
+import { Alert, Button } from '@dgtx/ui-frek';
 
 <Alert tone="err" title="Không lưu được hồ sơ HS-0142" action={<Button size="sm" onClick={save}>Lưu lại</Button>}>
   Mất kết nối máy chủ. Dữ liệu vẫn còn trên máy này.

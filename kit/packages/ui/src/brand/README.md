@@ -3,7 +3,7 @@
 DIGI-TEXX identity pieces from the Branding Guidelines PDF: logo, headline type, the tech backdrop and the theme switch.
 
 ```tsx
-import { Logo, Display, Lede, TechBackdrop } from '@dtx/ui';
+import { Logo, Display, Lede, TechBackdrop } from '@dgtx/ui-frek';
 
 <TechBackdrop><Logo variant="horizontal-white" /><Display>Số hoá <em>thông minh</em></Display><Lede>…</Lede></TechBackdrop>
 ```

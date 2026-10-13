@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { Check, Copy, RotateCcw } from 'lucide-react';
-import { Badge, Button, Card, DataTable, Input, Reveal, Segmented } from '@dtx/ui';
+import { Badge, Button, Card, DataTable, Input, Reveal, Segmented } from '@dgtx/ui-frek';
 import { categories, entries, type Entry } from './entries';
 import { Stage } from './demos';
 import { Overview } from './overview';

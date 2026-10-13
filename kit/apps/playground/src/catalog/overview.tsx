@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
-import { Badge, EmptyState, Reveal } from '@dtx/ui';
+import { Badge, EmptyState, Reveal } from '@dgtx/ui-frek';
 import { categories, entries, type Entry } from './entries';
 import { useT } from '../i18n';
 

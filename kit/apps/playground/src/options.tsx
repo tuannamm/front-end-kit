@@ -1,5 +1,5 @@
 import { FileText, Landmark, ShieldCheck, UserRound, Receipt, Truck } from 'lucide-react';
-import type { SelectGroup, SelectOption } from '@dtx/ui';
+import type { SelectGroup, SelectOption } from '@dgtx/ui-frek';
 
 /** Grouped + icon + description: the richest Select shape. */
 export const docTypeGroups: SelectGroup[] = [

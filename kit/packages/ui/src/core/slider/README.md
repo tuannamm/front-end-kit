@@ -4,7 +4,7 @@ Pick one value or a range on a track: a confidence threshold, a page range, a bu
 type, use an `Input` instead.
 
 ```tsx
-import { Field, Slider } from '@dtx/ui';
+import { Field, Slider } from '@dgtx/ui-frek';
 
 <Field label="Ngưỡng tin cậy tối thiểu">
   <Slider value={threshold} onValueChange={setThreshold} onValueCommitted={save} max={100} format={{ style: 'unit', unit: 'percent' }} />

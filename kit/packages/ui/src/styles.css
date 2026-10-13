@@ -1,7 +1,7 @@
-/* @dtx/ui component styles. Everything lives in @layer dtx so app styles
+/* @dgtx/ui-frek component styles. Everything lives in @layer dtx so app styles
    (including Tailwind utilities) override without !important.
    Import order is cascade order: base first, so component :focus-visible rules override its outline. */
-@import "@dtx/tokens/theme.css";
+@import "../tokens/theme.css";
 @import "./ai/shared/shared.css" layer(dtx);
 @import "./ai/preprocess/preprocess.css" layer(dtx);
 @import "./ai/ocr/ocr.css" layer(dtx);

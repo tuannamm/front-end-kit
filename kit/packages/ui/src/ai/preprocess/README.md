@@ -4,7 +4,7 @@ Geometry steps (crop, unwarp, deskew) as two-phase animations, chained in a pipe
 grayscale) are a before/after pair of pages: show them with CompareSlider or ScanBeam.
 
 ```tsx
-import { Preprocess, PreprocessPipeline, UnwarpView } from '@dtx/ui';
+import { Preprocess, PreprocessPipeline, UnwarpView } from '@dgtx/ui-frek';
 
 <Preprocess effect="deskew" applied={done}><img src={page} alt="Trang 1" /></Preprocess>
 <UnwarpView raw={raw} unwarped={flat} grid={lattice} applied={done} />

@@ -1,4 +1,4 @@
-// Playground only: fake before/after pages for demos that have no real processed image. Not part of @dtx/ui —
+// Playground only: fake before/after pages for demos that have no real processed image. Not part of @dgtx/ui-frek —
 // real screens pass the service's two images to CompareSlider / ScanBeam.
 import type { CSSProperties, ReactNode } from 'react';
 

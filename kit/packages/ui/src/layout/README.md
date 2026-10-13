@@ -3,7 +3,7 @@
 Page structure: `Card` for a section of a page, and the app frame (`AppShell` with a sidebar and a topbar).
 
 ```tsx
-import { AppShell, Sidebar, SidebarGroup, SidebarItem, Topbar, Card, CardHeader, CardBody } from '@dtx/ui';
+import { AppShell, Sidebar, SidebarGroup, SidebarItem, Topbar, Card, CardHeader, CardBody } from '@dgtx/ui-frek';
 
 <AppShell sidebar={<Sidebar><SidebarGroup label="Vận hành"><SidebarItem href="#/" icon={<LayoutDashboard />} label="Tổng quan" active /></SidebarGroup></Sidebar>}>
   <Topbar>…</Topbar>

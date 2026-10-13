@@ -3,7 +3,7 @@
 Actions behind a button: row actions ("⋯"), export, view options such as visible columns or sort order.
 
 ```tsx
-import { Menu, Button } from '@dtx/ui';
+import { Menu, Button } from '@dgtx/ui-frek';
 import { MoreHorizontal, Eye, Trash2 } from 'lucide-react';
 
 <Menu align="end"

@@ -55,7 +55,7 @@ the end state. Report what was not verified.
 ## Data and privacy
 
 - Real samples (1266 civil records, stengg customer pages) live in `kit/apps/playground/public/samples/` and are
-  **git-ignored**. Never commit, publish, or put them in `@dtx/ui`. Regenerate with `kit/apps/playground/scripts/import_*.py`.
+  **git-ignored**. Never commit, publish, or put them in `@dgtx/ui-frek`. Regenerate with `kit/apps/playground/scripts/import_*.py`.
 - The stengg autopreprocessing service (`127.0.0.1:6005`) is shared; call it only for sample imports.
 
 ## Conventions

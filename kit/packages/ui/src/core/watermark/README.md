@@ -4,7 +4,7 @@ Repeated, rotated text over a document, a record or a whole page: marks it confi
 when, so a screenshot or a photo of the screen can be traced.
 
 ```tsx
-import { Watermark } from '@dtx/ui';
+import { Watermark } from '@dgtx/ui-frek';
 
 <Watermark content={['DIGI-TEXX · Tài liệu mật', `${user.name} · ${shortTime(new Date())}`]}>
   <RecordDetail />

@@ -1,4 +1,4 @@
-// Self-check for the date helpers behind DatePicker. Run: npm test -w @dtx/ui
+// Self-check for the date helpers behind DatePicker. Run: npm test -w @dgtx/ui-frek
 import assert from 'node:assert/strict';
 import { addDays, addMonths, clampDate, formatDate, monthGrid, parseDate, weekday } from './date.ts';
 

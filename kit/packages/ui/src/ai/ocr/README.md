@@ -4,7 +4,7 @@
 extraction. `normalizeOcr` turns an `OcrDocument` into 0–1 boxes and 0–100 confidence.
 
 ```tsx
-import { OcrShowcase, type OcrDocument } from '@dtx/ui';
+import { OcrShowcase, type OcrDocument } from '@dgtx/ui-frek';
 
 <OcrShowcase data={engineJson} stages={['unwarp', 'binarize', 'detect', 'recognize', 'extract']} />
 ```

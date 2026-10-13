@@ -4,7 +4,7 @@ Date input that you can type into or pick from a calendar. Values are always ISO
 no time and no timezone, so they compare with `<` and `>`.
 
 ```tsx
-import { DatePicker, DateRangePicker, Calendar, Field } from '@dtx/ui';
+import { DatePicker, DateRangePicker, Calendar, Field } from '@dgtx/ui-frek';
 
 <Field label="Ngày sinh">
   <DatePicker value={dob} onValueChange={setDob} max={todayIso()} name="dob" />

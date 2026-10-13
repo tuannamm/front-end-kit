@@ -3,7 +3,7 @@
 Panels with draggable handles between them: list and detail, document and extracted fields, editor and log.
 
 ```tsx
-import { Splitter } from '@dtx/ui';
+import { Splitter } from '@dgtx/ui-frek';
 
 <div style={{ height: 480 }}>
   <Splitter onResizeEnd={save} panels={[
