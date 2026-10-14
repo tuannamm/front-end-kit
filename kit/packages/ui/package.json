@@ -27,7 +27,7 @@
     "tokens/*.css"
   ],
   "publishConfig": {
-    "registry": "https://nexus.digi-texx.vn/repository/npm/"
+    "registry": "https://nexus.digi-texx.vn/repository/npm-xteam/"
   },
   "peerDependencies": {
     "react": "^19",

@@ -2,9 +2,9 @@
 # A push that changes kit/ checks it; a version tag also publishes @dgtx/ui-frek to Nexus.
 # Release from kit/: npm run release:alpha | release:patch | release:minor | release:major (kit/release.mjs bumps
 # "version" in kit/packages/ui/package.json, commits, and pushes the tag v<version>).
-# CI/CD variables: NPM_REGISTRY (Nexus npm group the installs read from) and NPM_TOKEN (Nexus token with deploy rights
-# on the hosted repo), both masked. Publish goes to publishConfig.registry in kit/packages/ui/package.json, which must be
-# the hosted npm repo: Nexus OSS refuses deploys to a group (403 "Deploying to groups is a PRO-licensed feature").
+# CI/CD variables (masked): NPM_REGISTRY, the Nexus npm group that installs read from; NPM_PUBLISH_REGISTRY, the hosted
+# npm repo the package is deployed to (Nexus OSS refuses deploys to a group: 403 "Deploying to groups is a PRO-licensed
+# feature"); NPM_TOKEN, a Nexus token with deploy rights on that hosted repo.
 # If they are Protected, protect the release tags too (Settings → Repository → Protected tags: v*),
 # otherwise the publish job runs without them and stops at its first check.
 
@@ -50,8 +50,8 @@ publish:
     - if: $CI_COMMIT_TAG =~ /^v?\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/
   script:
     - |
-      if [ -z "$NPM_REGISTRY" ] || [ -z "$NPM_TOKEN" ]; then
-        echo "NPM_REGISTRY or NPM_TOKEN is empty in this job. Protected variables reach only protected refs:"
+      if [ -z "$NPM_REGISTRY" ] || [ -z "$NPM_PUBLISH_REGISTRY" ] || [ -z "$NPM_TOKEN" ]; then
+        echo "NPM_REGISTRY, NPM_PUBLISH_REGISTRY or NPM_TOKEN is empty in this job. Protected variables reach only protected refs:"
         echo "add the tag pattern v* under Settings → Repository → Protected tags, then run the pipeline of $CI_COMMIT_TAG again."
         exit 1
       fi
@@ -61,14 +61,13 @@ publish:
       if [ "${CI_COMMIT_TAG#v}" != "$VERSION" ]; then
         echo "Tag $CI_COMMIT_TAG does not match version $VERSION in kit/packages/ui/package.json"; exit 1
       fi
-      # publishConfig.registry decides where npm publishes. NPM_REGISTRY is the group installs read from, and Nexus OSS
-      # cannot deploy to a group, so the two must differ; the token then authenticates against the hosted repo too
-      if [ "${TARGET%/}" = "${NPM_REGISTRY%/}" ]; then
-        echo "publishConfig.registry in kit/packages/ui/package.json is the npm group ($TARGET), and Nexus OSS cannot deploy to a group."
-        echo "Set it to the hosted npm repo the group contains (Nexus → Repositories, type hosted, format npm)."; exit 1
+      # publishConfig.registry decides where npm publishes (it also guards a manual `npm publish`); it must be the
+      # hosted repo in NPM_PUBLISH_REGISTRY, which the token authenticates against
+      if [ "${TARGET%/}" != "${NPM_PUBLISH_REGISTRY%/}" ]; then
+        echo "publishConfig.registry in kit/packages/ui/package.json ($TARGET) differs from NPM_PUBLISH_REGISTRY ($NPM_PUBLISH_REGISTRY)"; exit 1
       fi
-      TARGET="${TARGET%/}/"
-      echo "${TARGET#https:}:_authToken=\${NPM_TOKEN}" >> .npmrc
+      PUBLISH="${NPM_PUBLISH_REGISTRY%/}/"
+      echo "${PUBLISH#https:}:_authToken=\${NPM_TOKEN}" >> .npmrc
     # a pre-release goes out under its own dist-tag (1.2.0-alpha.3 → "alpha", 1.2.0-rc.1 → "rc"; "next" when the
     # id is a bare number), so `npm i @dgtx/ui-frek` keeps getting the last stable version
     - |

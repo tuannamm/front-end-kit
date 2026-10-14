@@ -37,6 +37,11 @@ function release(bump) {
   git('fetch', '--quiet', 'origin', branch);
   if (git('rev-list', '--count', `HEAD..origin/${branch}`) !== '0') fail(`origin/${branch} has commits you do not have. Pull first.`);
 
+  // Nexus OSS cannot deploy to the npm group that installs read from: stop here instead of tagging a version CI cannot publish
+  const target = (JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).publishConfig?.registry ?? '').replace(/\/$/, '');
+  const group = execFileSync('npm', ['config', 'get', 'registry'], { encoding: 'utf8' }).trim().replace(/\/$/, '');
+  if (target === group) fail(`publishConfig.registry in packages/ui/package.json is your install registry (${group}), the Nexus npm group. Set it to the hosted npm repo inside that group, then release.`);
+
   // edited directly rather than with `npm version`, which also re-resolves the whole lockfile against the registry
   const edit = (file, set) => { const json = JSON.parse(readFileSync(file, 'utf8')); set(json); writeFileSync(file, JSON.stringify(json, null, 2) + '\n'); };
   const version = nextVersion(JSON.parse(readFileSync('packages/ui/package.json', 'utf8')).version, bump);

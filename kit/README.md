@@ -79,14 +79,16 @@ npm run release:major   # → 1.0.0
 `release.mjs` sets `version` in `packages/ui/package.json` and the lockfile, commits `release: @dgtx/ui-frek <version>`,
 tags `v<version>` and pushes branch and tag together. Uncommitted changes outside `kit/` are left alone.
 
-- `publishConfig.registry` in `packages/ui/package.json` is the Nexus **hosted** npm repo the package is deployed to.
-  `NPM_REGISTRY` (and everyone's `~/.npmrc`) is the npm **group**, which serves that hosted repo plus the npmjs proxy.
-  Nexus OSS cannot deploy to a group, so the publish job stops when the two are the same URL.
-- The publish job also stops when the tag differs from `version`.
+- The package is deployed to the Nexus **hosted** repo `npm-xteam` (`publishConfig.registry` in
+  `packages/ui/package.json`, equal to the CI/CD variable `NPM_PUBLISH_REGISTRY`). Everyone installs from the npm
+  **group** `npm/` (`NPM_REGISTRY`, `~/.npmrc`), which serves that hosted repo plus the npmjs proxy. Nexus OSS cannot
+  deploy to a group.
+- The publish job stops when the tag differs from `version`, or when `publishConfig.registry` differs from
+  `NPM_PUBLISH_REGISTRY`.
 - A pre-release is published under its own dist-tag (`0.2.0-alpha.3` → `alpha`, `0.2.0-rc.1` → `rc`):
   `npm i @dgtx/ui-frek@alpha`. Plain `npm i @dgtx/ui-frek` keeps installing the last stable version.
 - Nexus refuses to overwrite a published version: every release needs a new version, which the scripts guarantee.
-- CI/CD variables `NPM_REGISTRY` and `NPM_TOKEN` (masked). If they are *Protected*, protect the release tags as well
+- CI/CD variables `NPM_REGISTRY`, `NPM_PUBLISH_REGISTRY` and `NPM_TOKEN` (masked). If they are *Protected*, protect the release tags as well
   (Settings → Repository → Protected tags, pattern `v*`), or the job runs without them.
 
 `npm pack -w @dgtx/ui-frek` builds the tarball locally without publishing, to inspect what ships.
