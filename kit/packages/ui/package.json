@@ -1,6 +1,6 @@
 {
   "name": "@dgtx/ui-frek",
-  "version": "0.1.1-alpha.3",
+  "version": "0.1.1-alpha.4",
   "type": "module",
   "description": "DIGI-TEXX React components and design tokens (Base UI + plain CSS).",
   "sideEffects": [
