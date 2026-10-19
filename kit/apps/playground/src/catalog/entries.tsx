@@ -3,7 +3,7 @@ import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileS
 import {
   Alert, AppShell, Breadcrumb, Carousel, Collapse, Masonry, Splitter, Steps, Timeline, Watermark, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
-  Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, ImageViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
+  Logo, Meter, MultiSelect, TableExtraction, sampleInvoiceTable, Notification, NotificationList, OcrShowcase, PdfViewer, ImageViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   LineChart, AreaChart, SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
   Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type DateRange, type NormalizedOcr, type NotificationItem, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
 } from '@dgtx/ui-frek';
@@ -26,7 +26,7 @@ export const categories: { id: Category; folder: string; blurb: string }[] = [
   { id: 'AI · Shared', folder: 'ui/src/ai/shared', blurb: 'Reused across AI tasks: boxes, confidence, compare, sample page.' },
   { id: 'AI · Preprocess', folder: 'ui/src/ai/preprocess', blurb: 'Crop, unwarp, deskew, denoise, binarize: each a two-phase animation.' },
   { id: 'AI · OCR', folder: 'ui/src/ai/ocr', blurb: 'Engine JSON → boxes, and the POC pipeline player.' },
-  { id: 'AI · Extraction', folder: 'ui/src/ai/extraction', blurb: 'Field extraction (VLM) visuals.' },
+  { id: 'AI · Extraction', folder: 'ui/src/ai/extraction', blurb: 'Field and table extraction (VLM) visuals.' },
   { id: 'AI · Try-on', folder: 'ui/src/ai/try-on', blurb: 'Planned.' },
   { id: 'AI · Enhance', folder: 'ui/src/ai/enhance', blurb: 'Planned.' },
   { id: 'AI · Remove background', folder: 'ui/src/ai/remove-bg', blurb: 'Planned.' },
@@ -857,7 +857,11 @@ export const entries: Entry[] = [
       { title: '2 · Linked, static', note: 'linked="vat": the 94.2% field links to its amber box.', plain: true, render: () => <FieldLinkDemo linked="vat" /> }] },
   planned('heatmap', 'Confidence heatmap', 'AI · OCR', 'Page tint by local confidence for QC triage.'),
   planned('box-editor', 'Box editor', 'AI · OCR', 'Drag/resize boxes and correct text for human-in-the-loop QC.'),
-  planned('table-extract', 'Table extraction view', 'AI · Extraction', 'Detected table grid with cell-level confidence.'),
+  { id: 'table-extract', name: 'TableExtraction', category: 'AI · Extraction', status: 'ready', summary: 'A detected table checked cell by cell: the cell grid over the page, coloured by confidence, beside the table rebuilt from the cells (row, col, spans). Cells below the high threshold are tinted and show their score. Hover a cell on either side and a line joins it to its twin (FieldLink); hover a box on the page for the lens.',
+    importLine: imp('TableExtraction, type TableCell') + '\n<TableExtraction cells={cells} page={<img src={page} alt="Trang 1" />} caption="Hàng hoá, dịch vụ" />',
+    demos: [
+      { title: '1 · Live', note: 'Hover or Tab through the cells on the page, or hover a cell in the table.', plain: true, render: () => <div className="w-full max-w-[960px]"><TableExtraction cells={sampleInvoiceTable} page={<SampleInvoice />} caption="Hàng hoá, dịch vụ" /></div> },
+      { title: '2 · Linked, static', note: 'linked="r3c1": the 72.5% name cell joins its red box on the page.', plain: true, render: () => <div className="w-full max-w-[960px]"><TableExtraction cells={sampleInvoiceTable} page={<SampleInvoice />} caption="Hàng hoá, dịch vụ" linked="r3c1" /></div> }] },
   planned('vlm-qa', 'VLM answer with evidence', 'AI · Extraction', 'Question → answer, with the boxes the model used highlighted.'),
   planned('tryon-compare', 'Try-on result viewer', 'AI · Try-on', 'Person + garment → result, with CompareSlider.'),
   planned('enhance-compare', 'Enhance before/after', 'AI · Enhance', 'Super-resolution / denoise with zoom loupe + CompareSlider.'),

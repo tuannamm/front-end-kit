@@ -25,6 +25,21 @@ import { FieldLink, BoxOverlay } from '@dgtx/ui-frek';
 
 Any element can be an end: `data-box` is just an attribute, so a table cell or a region outside BoxOverlay works too.
 
+`TableExtraction`: a detected table, checked cell by cell. The cell grid is drawn over the page (BoxOverlay, coloured by
+confidence) beside the table rebuilt from the cells. A cell below the high threshold is tinted and shows its score; a
+count of those sits under the table. Hover a cell on either side and FieldLink joins it to its twin; hover a box on
+the page for the lens.
+
+```tsx
+import { TableExtraction, type TableCell } from '@dgtx/ui-frek';
+
+<TableExtraction cells={cells} page={<img src={page} alt="Page 1" />} caption="Goods" />
+```
+
+A `TableCell` is an OcrBox (box in 0–1 fractions, `text`, `confidence`, `points`) plus its place in the grid, the shape
+table engines emit (Azure Document Intelligence, Textract, PaddleOCR table): 0-based `row` and `col`, optional spans.
+Pass engine boxes through `toBox`. A hole no cell covers renders as an empty cell, so the columns stay aligned.
+
 ## Props
 
 ### DocumentScan
@@ -68,9 +83,33 @@ Any element can be an end: `data-box` is just an attribute, so a table cell or a
 | `children` | `ReactNode` | **required** | The page (BoxOverlay) and the fields marked `data-source="<box id>"` |
 | `className` | `string` |  | Lay the two out here, e.g. a grid |
 
+### TableExtraction
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `cells` | `TableCell[]` | **required** | Detected cells, in any order |
+| `page` | `ReactNode` | **required** | The page under the grid (`<img>`, `<canvas>`, `<SampleInvoice/>`) |
+| `caption` | `string` |  | Table name, shown above the table |
+| `thresholds` | `Thresholds` | `{ high: 95, low: 80 }` | Below high a cell is flagged in amber, below low in red |
+| `linked` | `string \| null` | `null` | Cell id linked while nothing is hovered or focused: a selection, or a static state for docs |
+| `className` | `string` |  | Extra classes |
+
+### TableCell
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `row` | `number` | **required** | Row it starts in, 0-based |
+| `col` | `number` | **required** | Column it starts in, 0-based |
+| `rowSpan` | `number` | `1` | Rows it covers |
+| `colSpan` | `number` | `1` | Columns it covers |
+| `header` | `boolean` |  | A header cell (`<th>`) |
+| `id` | `string` | `r<row>c<col>` | Stable key; links the cell to its box |
+
 ## Files
 
 - `document-scan.tsx`: DocumentScan, `ScanRow`, `ScanField`, `ScanPhase`
 - `field-link.tsx`: FieldLink
 - `connect.ts`: the curve between a field and its box (`connect.check.ts`)
+- `table-extraction.tsx`: TableExtraction, `TableCell`
+- `table-grid.ts`: detected cells → table rows, with spans and holes (`table-grid.check.ts`)
 - `extraction.css`

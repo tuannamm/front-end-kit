@@ -143,7 +143,7 @@
  * - `confidence.tsx`: ConfidenceBadge, ConfidenceBar, ConfidenceDots, `confidenceLevel`, `defaultThresholds`
  * - `compare-slider.tsx`: CompareSlider
  * - `scan-beam.tsx`: ScanBeam, ScanReveal, `useScanBeam`, `scanRevealProps`
- * - `sample-invoice.tsx`: SampleInvoice, `sampleInvoiceRegions`, `sampleInvoiceInset`
+ * - `sample-invoice.tsx`: SampleInvoice, `sampleInvoiceRegions`, `sampleInvoiceInset`, `sampleInvoiceTable` (its goods table as cells)
  * - `geometry.ts`: `toBox` (any engine box shape → 0–1 box; a polygon keeps its `points`), `bounds`
  * - `shared.css`
  *
@@ -180,7 +180,23 @@ const REGIONS: OcrBox[] = ([
   { id: 'reg-stamp', kind: 'stamp', x: 390, y: 540, w: 150, h: 140 },
 ] as OcrBox[]).map(r => ({ ...r, x: r.x / W, y: r.y / H, w: r.w / W, h: r.h / H }));
 
+/* The goods table, for TableExtraction: column and row edges in page px, each cell's text and confidence. The name
+   column is the OCR lines r1–r3, so it takes their text and confidence (0 below). */
+const COLS = [40, 80, 360, 420, 490, 560], ROWS = [220, 244, 272, 302, 342];
+const HEAD = ['STT', 'Tên hàng', 'SL', 'Đơn giá', 'Thành tiền'];
+const ITEMS = [['12', '650.000', '7.800.000'], ['4', '1.250.000', '5.000.000'], ['30', '18.000', '540.000']];
+const CELL_CONF = [[99.6, 99.4, 99.5, 99.2, 99.3], [99.8, 0, 99.1, 98.9, 99.0], [99.7, 0, 97.2, 96.8, 95.9], [99.5, 0, 90.8, 98.1, 93.6]];
+
 export const sampleInvoiceRegions = REGIONS;
+/** The goods table as detected cells (0–1 boxes), for TableExtraction. */
+export const sampleInvoiceTable = ROWS.slice(0, -1).flatMap((y, row) => COLS.slice(0, -1).map((x, col) => {
+  const line = row && col === 1 ? LINES.find(l => l.id === `r${row}`) : undefined;
+  return {
+    id: `r${row}c${col}`, row, col, header: row === 0, x: x / W, y: y / H, w: (COLS[col + 1] - x) / W, h: (ROWS[row + 1] - y) / H,
+    text: line?.text ?? (row === 0 ? HEAD[col] : col === 0 ? String(row) : ITEMS[row - 1][col - 2]),
+    confidence: line?.conf ?? CELL_CONF[row][col],
+  };
+}));
 /** Line boxes are measured with this padding around the glyphs; pass it as BoxOverlay textInset. */
 export const sampleInvoiceInset = 4;
 
@@ -203,23 +219,20 @@ export function SampleInvoice({ onBoxes, className }: { onBoxes?: (boxes: OcrBox
     document.fonts?.ready.then(measure);
     return () => { live = false; };
   }, [onBoxes]);
-  const cols = [40, 80, 360, 420, 490];
   return (
     <svg ref={ref} className={className} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Hoá đơn mẫu" style={{ display: 'block', width: '100%', height: 'auto', background: '#FFFFFF' }}>
       <g fontFamily="var(--dtx-font)" fill="#231F20">
         {LINES.map(l => <text key={l.id} data-id={l.id} x={l.x} y={l.y} fontSize={l.size} fontWeight={l.bold ? 700 : 400} textAnchor={l.anchor}>{l.text}</text>)}
         <rect x="40" y="220" width="520" height="24" fill="#EEF1F5" />
-        {['STT', 'Tên hàng', 'SL', 'Đơn giá', 'Thành tiền'].map((h, i) => <text key={h} x={cols[i] + 8} y="236" fontSize="11" fontWeight="700">{h}</text>)}
+        {HEAD.map((h, i) => <text key={h} x={COLS[i] + 8} y="236" fontSize="11" fontWeight="700">{h}</text>)}
         {[262, 292, 322].map((y, i) => (
           <g key={y} fontSize="13">
             <text x="48" y={y}>{i + 1}</text>
-            <text x="368" y={y}>{[12, 4, 30][i]}</text>
-            <text x="428" y={y}>{['650.000', '1.250.000', '18.000'][i]}</text>
-            <text x="498" y={y}>{['7.800.000', '5.000.000', '540.000'][i]}</text>
+            {ITEMS[i].map((v, k) => <text key={k} x={COLS[k + 2] + 8} y={y}>{v}</text>)}
             <line x1="40" x2="560" y1={y + 10} y2={y + 10} stroke="#D5D9E0" />
           </g>
         ))}
-        {cols.slice(1).map(x => <line key={x} x1={x} x2={x} y1="220" y2="342" stroke="#D5D9E0" />)}
+        {COLS.slice(1, -1).map(x => <line key={x} x1={x} x2={x} y1="220" y2="342" stroke="#D5D9E0" />)}
         <rect x="40" y="220" width="520" height="122" fill="none" stroke="#B9BFC9" />
         <text x="80" y="580" fontSize="11" fontWeight="700">NGƯỜI MUA HÀNG</text>
         <path d="M78 625c18-22 30 14 46-6s20-18 30 2 22-10 34 0" fill="none" stroke="#1A3C8F" strokeWidth="2" />
