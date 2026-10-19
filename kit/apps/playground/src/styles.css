@@ -29,7 +29,10 @@
 :root:has(.pg-home) { scroll-padding-top: 0; }
 
 /* playground-only helpers */
+.pg-doc :not(pre) > code { padding: 1px 5px; border-radius: var(--dtx-radius-sm); background: var(--dtx-surface-2); color: var(--dtx-fg); font: 400 .9em/1.4 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; overflow-wrap: anywhere; }
 .pg-code { margin: 0; padding: 12px 44px 12px 14px; overflow-x: auto; border-radius: var(--dtx-radius-md); border: 1px solid rgb(168 229 245 / .12); background: #0D1526; color: #E4E6EB; /* theme-fixed: code is always light on navy ink; the edge keeps it apart from a dark page */ font: 400 12.5px/1.6 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+/* tabIndex=0: a block that scrolls sideways on a phone must be scrollable by keyboard too */
+.pg-code:focus-visible { outline: 2px solid var(--dtx-focus); outline-offset: 2px; }
 .pg-stage { background-image: radial-gradient(var(--dtx-border) 1px, transparent 1px); background-size: 16px 16px; }
 /* Catalog overview tiles: a live miniature of the first demo over the name. Flat at rest, the border answers hover. */
 .pg-tile { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); overflow: hidden; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-md); background: var(--dtx-surface); color: var(--dtx-fg); text-decoration: none; transition: border-color var(--dtx-dur-fast); }

@@ -38,6 +38,25 @@
 .dtx-file__bar > i { display: block; height: 100%; background: var(--dtx-primary); transform-origin: left; transition: transform var(--dtx-dur-base) var(--dtx-ease-standard); }
 .dtx-file__actions { flex: none; display: flex; gap: 2px; }
 
+/* Picked files inside the dashed box (FileDropzone children). The box takes over the button's border and states;
+   the rows become hairline rows under the pick area, so no card sits inside the box. */
+.dtx-drop-wrap { display: contents; }
+.dtx-drop-box {
+  min-width: 0; border: 1px dashed var(--dtx-border-strong); border-radius: var(--dtx-radius-lg); background: var(--dtx-surface-2);
+  transition: border-color var(--dtx-dur-fast) var(--dtx-ease-standard), background-color var(--dtx-dur-fast) var(--dtx-ease-standard);
+}
+.dtx-drop-box:has(> .dtx-drop:hover:not(:disabled)) { border-color: var(--dtx-primary); }
+.dtx-drop-box:has(> .dtx-drop[aria-invalid="true"]) { border-color: var(--dtx-tone-err); }
+.dtx-drop-box[data-over] { border-style: solid; border-color: var(--dtx-primary); background: rgb(37 130 215 / .08); }
+.dtx-drop-box[data-over] .dtx-drop__icon { transform: translateY(-3px); }
+.dtx-drop-box > .dtx-drop { border: 0; border-radius: var(--dtx-radius-lg) var(--dtx-radius-lg) 0 0; background: none; }
+.dtx-drop-box > .dtx-files { gap: 0; margin: 0 12px; border-top: 1px solid var(--dtx-border); }
+.dtx-drop-box .dtx-file { padding: 8px 0; border: 0; border-bottom: 1px solid var(--dtx-border); border-radius: 0; background: none; }
+.dtx-drop-box .dtx-file:last-child { border-bottom: 0; }
+/* the tile and the progress track are surface-2 elsewhere: lift them off the box's own surface-2 */
+.dtx-drop-box .dtx-file__icon { background: var(--dtx-surface); }
+.dtx-drop-box .dtx-file__bar { background: var(--dtx-border); }
+
 /* upload progress inside a toast: hairline rows, the list scrolls instead of growing the toast */
 .dtx-toast__body { flex-basis: 100%; min-width: 0; display: grid; gap: 8px; } /* full toast width, below icon / text / close */
 .dtx-toast__toggle { justify-self: start; display: inline-flex; align-items: center; gap: 4px; min-height: 24px; padding: 0; border: 0; background: none; color: var(--dtx-link); font: 500 var(--dtx-text-xs) var(--dtx-font); cursor: pointer; }

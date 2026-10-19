@@ -7,13 +7,14 @@ import { Poc } from './pages/Poc';
 import { Catalog } from './catalog/Catalog';
 import { Home } from './pages/Home';
 import { Changelog } from './pages/Changelog';
+import { Install } from './pages/Install';
 
 const useHash = () => {
   const [h, setH] = useState(location.hash || '#/home');
   useEffect(() => { const f = () => setH(location.hash || '#/home'); addEventListener('hashchange', f); return () => removeEventListener('hashchange', f); }, []);
   return h;
 };
-const NAV = [['home', 'Giới thiệu', 'Home'], ['catalog', 'Danh mục', 'Catalog'], ['app', 'App', 'App'], ['poc', 'POC', 'POC'], ['changelog', 'Thay đổi', 'Changelog']] as const;
+const NAV = [['home', 'Giới thiệu', 'Home'], ['install', 'Cài đặt', 'Install'],['catalog', 'Danh mục', 'Catalog'], ['app', 'App', 'App'], ['poc', 'POC', 'POC'], ['changelog', 'Thay đổi', 'Changelog']] as const;
 
 export function App() {
   const t = useT();
@@ -29,7 +30,7 @@ export function App() {
       <ThemeToggle />
     </div>
   );
-  const view = page === 'website' ? <Website /> : page === 'app' ? <AppDemo /> : page === 'poc' ? <Poc /> : page === 'changelog' ? <Changelog id={id} go={i => { location.hash = i ? `#/changelog/${i}` : '#/changelog'; }} /> : page === 'catalog' ? <Catalog id={id} go={i => { location.hash = i ? `#/catalog/${i}` : '#/catalog'; }} /> : null;
+  const view = page === 'website' ? <Website /> : page === 'app' ? <AppDemo /> : page === 'poc' ? <Poc /> : page === 'install' ? <Install /> :page === 'changelog' ? <Changelog id={id} go={i => { location.hash = i ? `#/changelog/${i}` : '#/changelog'; }} /> : page === 'catalog' ? <Catalog id={id} go={i => { location.hash = i ? `#/catalog/${i}` : '#/catalog'; }} /> : null;
   return (
     // App demo fills the viewport (below this header) like a real app; other pages scroll as documents
     <div className={page === 'app' ? 'flex h-dvh flex-col max-[960px]:h-auto' : brand ? 'pg-brand' : undefined}>

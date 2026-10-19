@@ -197,12 +197,17 @@ function DrawerFilters() {
   );
 }
 
+/** Progress (and retry) in the toast; a file moves into the box once it is uploaded. Both read the same state. */
 function UploadDemo() {
   const { add, rows } = useFakeUpload();
+  const items = rows('Mất kết nối khi tải lên. Bấm thử lại.');
+  const done = items.filter(u => u.status === 'done');
   return (
     <div className="w-full max-w-xl">
-      <FileDropzone label="Tài liệu cần xử lý" accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.zip" maxSize={20 * 1024 * 1024} onFiles={add} />
-      <UploadToast items={rows('Mất kết nối khi tải lên. Bấm thử lại.')} />
+      <FileDropzone label="Tài liệu cần xử lý" accept=".pdf,.jpg,.jpeg,.png,.tif,.tiff,.zip" maxSize={20 * 1024 * 1024} onFiles={add}>
+        {done.length > 0 && <FileList aria-label="Tệp đã tải lên">{done.map(({ id, ...u }) => <FileItem key={id} {...u} />)}</FileList>}
+      </FileDropzone>
+      <UploadToast items={items} />
     </div>
   );
 }
@@ -543,10 +548,10 @@ export const entries: Entry[] = [
       { title: '1 · Record detail (right)', note: 'Long body scrolls under a fixed header and footer.', render: () => <DrawerRecord /> },
       { title: '2 · Filters (left, sm)', note: 'Select and DateRangePicker popups open above the drawer.', render: () => <DrawerFilters /> },
       { title: '3 · Bottom sheet', note: 'Drag the handle or swipe down to close.', render: () => <Drawer side="bottom" trigger={<Button variant="secondary">Thao tác với lô</Button>} title="Lô HD-5517" description="3.860 trang · Nguy cơ trễ SLA"><div className="grid gap-2"><Button variant="secondary">Chuyển ưu tiên Khẩn</Button><Button variant="secondary">Giao cho người khác</Button><DrawerClose><Button variant="danger">Huỷ lô</Button></DrawerClose></div></Drawer> }] },
-  { id: 'upload', name: 'File upload / dropzone', category: 'Core', status: 'ready', summary: 'FileDropzone picks files (drop, click or Enter), checks type and size, and lists rejections with the reason; it never uploads. Upload progress goes to UploadToast: count, overall bar and a collapsible list with retry / remove, still visible after a drawer or dialog closes. FileList + FileItem show the same rows inline when a toast does not fit. The hint defaults to the accepted formats and size limit.',
+  { id: 'upload', name: 'File upload / dropzone', category: 'Core', status: 'ready', summary: 'FileDropzone picks files (drop, click or Enter), checks type and size, and lists rejections with the reason; it never uploads. Upload progress goes to UploadToast: count, overall bar and a collapsible list with retry / remove, still visible after a drawer or dialog closes. FileList + FileItem show the same rows inline; passed as FileDropzone children they list the uploaded files inside the box. The hint defaults to the accepted formats and size limit.',
     importLine: imp('FileDropzone, UploadToast, FileList, FileItem, formatBytes'),
     demos: [
-      { title: '1 · Drop or pick, progress in a toast', note: 'Progress shows bottom-right. Try a file over 20 MB or a .docx to see rejections. Every 3rd file fails once; retry it from the toast.', render: () => <UploadDemo /> },
+      { title: '1 · Drop or pick, progress in a toast', note: 'Progress shows bottom-right; each file moves into the box once uploaded. Try a file over 20 MB or a .docx to see rejections. Every 3rd file fails once; retry it from the toast.', code: "const done = uploads.filter(u => u.status === 'done');\n<FileDropzone label=\"Tài liệu cần xử lý\" accept=\".pdf,.jpg,.png\" maxSize={20 * 1024 * 1024} onFiles={add}>\n  {done.length > 0 && <FileList aria-label=\"Tệp đã tải lên\">\n    {done.map(u => <FileItem key={u.id} {...u} />)}\n  </FileList>}\n</FileDropzone>\n<UploadToast items={uploads} />", render: () => <UploadDemo /> },
       { title: '2 · File states (inline FileList)', note: 'Static: queued, uploading, done, error. The same rows UploadToast lists.', render: () => (
         <FileList aria-label="Trạng thái tệp" className="w-full max-w-xl">
           <FileItem name="HD-5517_trang-001-120.pdf" size={18_400_000} status="queued" onRemove={() => {}} />
@@ -554,7 +559,7 @@ export const entries: Entry[] = [
           <FileItem name="scan_CMND_mat-truoc.jpg" size={812_000} status="done" onRemove={() => {}} />
           <FileItem name="TD-0931_phu-luc-hop-dong-tin-dung-ngan-hang-dong-a-moi-ban-scan-mau.tiff" size={56_700_000} status="error" error="Mất kết nối khi tải lên. Bấm thử lại." onRetry={() => {}} onRemove={() => {}} />
         </FileList>) },
-      { title: '3 · Compact, one file, in a form', render: () => <div className="grid w-full max-w-md gap-4"><Field label="Tên mẫu"><Input defaultValue="Hoá đơn VAT" /></Field><FileDropzone compact multiple={false} label="Tệp mẫu" description="Một trang PDF đã điền đủ các trường." accept=".pdf" maxSize={10 * 1024 * 1024} onFiles={() => {}} /></div> },
+      { title: '3 · Compact, one file, in a form', render: () => <div className="grid w-full max-w-md gap-4"><Field label="Tên mẫu"><Input defaultValue="Hoá đơn VAT" /></Field><FileDropzone compact multiple={false} label="Tệp mẫu" description="Một trang PDF đã điền đủ các trường." accept=".pdf" maxSize={10 * 1024 * 1024} onFiles={() => {}}><FileList aria-label="Tệp đã chọn"><FileItem name="mau-hoa-don-VAT.pdf" size={286_000} onRemove={() => {}} /></FileList></FileDropzone></div> },
       { title: '4 · Error and disabled', render: () => <div className="grid w-full max-w-md gap-4"><FileDropzone compact label="Ảnh chữ ký" accept="image/*" error="Cần ít nhất một ảnh chữ ký." onFiles={() => {}} /><FileDropzone compact label="Tài liệu bổ sung" disabled description="Lô đã khoá, không thêm tệp được." onFiles={() => {}} /></div> }] },
   { id: 'toast', name: 'Toast', category: 'Core', status: 'ready', summary: 'Stacks, expands on hover, swipe right/down to dismiss. Wrap the app once in <ToastProvider>. tone picks the icon; an error (tone \'err\') stays until closed, is announced at once, and has a red-tinted edge.', importLine: imp('ToastProvider, useToast, type ToastOptions'),
     demos: [{ title: 'Success · error · warning · in progress', note: 'The error toast stays until you close it.', code: "const toast = useToast();\ntoast({ title: 'Đã lưu lô BH-2210', tone: 'ok' });\ntoast({ title: 'Không gửi được lô BH-2210', description: 'Máy chủ OCR không phản hồi…', tone: 'err' });", render: () => <ToastDemo /> }] },

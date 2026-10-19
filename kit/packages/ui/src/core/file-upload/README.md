@@ -6,7 +6,11 @@ reports progress back.
 ```tsx
 import { FileDropzone, FileList, FileItem, UploadToast } from '@dgtx/ui-frek';
 
-<FileDropzone label="Hồ sơ đính kèm" accept=".pdf,image/*" maxSize={20 * 1024 * 1024} onFiles={upload} />
+<FileDropzone label="Hồ sơ đính kèm" accept=".pdf,image/*" maxSize={20 * 1024 * 1024} onFiles={upload}>
+  <FileList aria-label="Tệp đã chọn">               // the picked files, listed inside the box
+    {uploads.map(u => <FileItem key={u.id} {...u} />)}
+  </FileList>
+</FileDropzone>
 
 <UploadToast items={uploads} />                     // { id, name, size, status, progress, error, onRetry, onRemove }[]
 
@@ -22,6 +26,10 @@ import { FileDropzone, FileList, FileItem, UploadToast } from '@dgtx/ui-frek';
   The hint defaults to the accepted formats and the size limit ("PDF, ảnh · tối đa 20 MB").
 - Drag events are always cancelled, even when the dropzone is disabled, so a dropped file never opens in the browser tab.
 - `compact`: one row, for forms and narrow panels. AvatarPicker uses it.
+- `children` render inside the dashed box, under the pick area: pass a `<FileList>` of the picked files so they show
+  where they were dropped. The rows turn into hairline rows, the pick text reads "Kéo thả thêm tệp…", and dropping
+  anywhere in the box adds files. With no children (or `false`) the box looks as before. The dropzone keeps no file
+  state: the app owns the list.
 - **FileItem:** `queued · uploading · done · error`. Screen readers announce the status changes, but not the changing percentage.
   A thumbnail that cannot be decoded falls back to the file-type icon.
 - **UploadToast:** shows a count, an overall progress bar, and a collapsible list with failed files first.
@@ -49,6 +57,7 @@ import { FileDropzone, FileList, FileItem, UploadToast } from '@dgtx/ui-frek';
 | `description` | `ReactNode` |  | Line under the box |
 | `error` | `ReactNode` |  | Error message. Marks the box invalid |
 | `compact` | `boolean` |  | One row instead of a tall box |
+| `children` | `ReactNode` |  | Inside the box, under the pick area: usually a `<FileList>` of the picked files |
 | `aria-label` | `string` |  | Accessible name when there is no `label` |
 | `className` | `string` |  | On the field wrapper |
 

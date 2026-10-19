@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type DragEvent, type ReactNode } from 'react';
+import { Children, useEffect, useId, useRef, useState, type DragEvent, type ReactNode } from 'react';
 import { Toast } from '@base-ui/react/toast';
 import { CheckCircle2, ChevronDown, CircleAlert, File as FileIcon, FileArchive, FileImage, FileText, RotateCw, Upload, X } from 'lucide-react';
 import { cx } from '../../cx';
@@ -24,18 +24,22 @@ export type FileDropzoneProps = {
   error?: ReactNode;
   /** One row instead of a tall box, for forms and narrow panels. */
   compact?: boolean;
+  /** Inside the dashed box, under the pick area: usually <FileList> with the picked files. Dropping on it adds files too. */
+  children?: ReactNode;
   className?: string;
   'aria-label'?: string;
 };
 
 /** Drop files or click / Enter to pick. Validates type and size; never uploads by itself. */
-export function FileDropzone({ onFiles, onReject, accept, maxSize, multiple = true, disabled, label, hint, description, error, compact, className, 'aria-label': ariaLabel }: FileDropzoneProps) {
+export function FileDropzone({ onFiles, onReject, accept, maxSize, multiple = true, disabled, label, hint, description, error, compact, children, className, 'aria-label': ariaLabel }: FileDropzoneProps) {
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
   const [rejected, setRejected] = useState<FileRejection[]>([]);
   const autoHint = [acceptLabel(accept), maxSize !== undefined && `tối đa ${formatBytes(maxSize)}`].filter(Boolean).join(' · ');
   const shownHint = hint ?? autoHint;
+  // toArray drops false / null, so `{files.length > 0 && <FileList>}` with no files keeps the plain box
+  const list = Children.toArray(children).length > 0;
 
   const take = (list: FileList | null) => {
     if (disabled || !list?.length) return;
@@ -59,16 +63,22 @@ export function FileDropzone({ onFiles, onReject, accept, maxSize, multiple = tr
     // drag handlers sit on the wrapper: a disabled button gets no drag events, and the drop must still be cancelled
     <div className={cx('dtx-field', className)} onDragEnter={onDragOver} onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
       {label && <span id={`${id}l`} className="dtx-field__label">{label}</span>}
-      <button type="button" className={cx('dtx-drop', compact && 'dtx-drop--compact')} disabled={disabled} data-over={over || undefined}
-        aria-label={label ? undefined : ariaLabel} aria-labelledby={label ? `${id}l ${id}t` : undefined} aria-describedby={describedBy}
-        aria-invalid={error || rejected.length ? true : undefined}
-        onClick={() => input.current?.click()}>
-        <Upload className="dtx-drop__icon" aria-hidden />
-        <span id={`${id}t`} className="dtx-drop__text">
-          {over ? 'Thả để thêm tệp' : <>Kéo thả {multiple ? 'tệp' : '1 tệp'} vào đây hoặc <span className="dtx-drop__cta">chọn từ máy</span></>}
-        </span>
-        {shownHint && <span id={`${id}h`} className="dtx-drop__hint">{shownHint}</span>}
-      </button>
+      {/* With a list, this box draws the dashed border around the pick button and the files (the rows have their own
+          buttons, so they cannot sit inside the pick <button>). Without one it is display: contents. Always rendered, so
+          the first file does not remount the button and drop the keyboard focus. */}
+      <div className={list ? 'dtx-drop-box' : 'dtx-drop-wrap'} data-over={list && over || undefined}>
+        <button type="button" className={cx('dtx-drop', compact && 'dtx-drop--compact')} disabled={disabled} data-over={!list && over || undefined}
+          aria-label={label ? undefined : ariaLabel} aria-labelledby={label ? `${id}l ${id}t` : undefined} aria-describedby={describedBy}
+          aria-invalid={error || rejected.length ? true : undefined}
+          onClick={() => input.current?.click()}>
+          <Upload className="dtx-drop__icon" aria-hidden />
+          <span id={`${id}t`} className="dtx-drop__text">
+            {over ? 'Thả để thêm tệp' : <>Kéo thả {!multiple ? '1 tệp' : list ? 'thêm tệp' : 'tệp'} vào đây hoặc <span className="dtx-drop__cta">chọn từ máy</span></>}
+          </span>
+          {shownHint && <span id={`${id}h`} className="dtx-drop__hint">{shownHint}</span>}
+        </button>
+        {children}
+      </div>
       {/* reset after each pick so choosing the same file again still fires change */}
       <input ref={input} type="file" hidden tabIndex={-1} accept={accept} multiple={multiple} onChange={e => { take(e.target.files); e.target.value = ''; }} />
       {description && <span id={`${id}d`} className="dtx-field__desc">{description}</span>}

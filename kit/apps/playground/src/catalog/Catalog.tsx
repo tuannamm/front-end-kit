@@ -24,7 +24,7 @@ export function CopyCode({ code }: { code: string }) {
   // min-w-0: a long import line scrolls inside the block instead of widening the page on phones
   return (
     <div className="relative min-w-0">
-      <pre className="pg-code">{code}</pre>
+      <pre className="pg-code" tabIndex={0}>{code}</pre>
       <Button size="sm" variant="ghost" icon aria-label={t('Sao chép', 'Copy')} className="!absolute top-1.5 right-1.5 !text-[#C9CBD1]"
         onClick={() => navigator.clipboard.writeText(code).then(() => { setDone(true); setTimeout(() => setDone(false), 1400); }, () => {})}>
         {done ? <Check /> : <Copy />}

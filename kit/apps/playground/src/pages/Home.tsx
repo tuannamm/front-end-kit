@@ -11,6 +11,7 @@ import { Tile } from '../catalog/overview';
 import { demoPair } from '../demo-pairs';
 import { aiThroughput, hours, invoiceFields, invoiceRows, manualThroughput } from '../data';
 import { useT } from '../i18n';
+import { setupSteps } from './Install';
 
 const ready = entries.filter(e => e.status === 'ready');
 const aiEntries = ready.filter(e => e.category.startsWith('AI'));
@@ -231,23 +232,7 @@ export function Home({ prefs }: { prefs: ReactNode }) {
     },
   ];
 
-  const steps = [
-    {
-      title: t('Thêm kit vào app', 'Add the kit to your app'),
-      text: t('App nằm trong kit/apps/ dùng chung workspace, rồi chạy npm install ở thư mục kit.', 'Apps live in kit/apps/ and share the workspace; then run npm install in kit.'),
-      code: '// kit/apps/<your-app>/package.json\n"dependencies": {\n  "@dgtx/ui-frek": "0.1.0"\n}',
-    },
-    {
-      title: t('Nạp CSS', 'Load the CSS'),
-      text: t('Kit nằm dưới các utility của Tailwind. Tailwind là tuỳ chọn.', 'The kit sits under Tailwind utilities. Tailwind is optional.'),
-      code: '@layer theme, base, dtx, components, utilities;\n@import "tailwindcss";               /* optional */\n@import "@dgtx/ui-frek/fonts.css";\n@import "@dgtx/ui-frek/styles.css";\n@import "@dgtx/ui-frek/tailwind.css";  /* optional */',
-    },
-    {
-      title: t('Dùng component', 'Use the components'),
-      text: t('Bọc app bằng hai provider một lần, sau đó import component cần dùng.', 'Wrap the app in the two providers once, then import what you need.'),
-      code: "import { Button, ToastProvider, TooltipProvider } from '@dgtx/ui-frek';\n\nexport function App() {\n  return (\n    <TooltipProvider><ToastProvider>\n      <Button>Tạo lô mới</Button>\n    </ToastProvider></TooltipProvider>\n  );\n}",
-    },
-  ];
+  const steps = setupSteps(t);
 
   return (
     <main ref={root} className="pg-home">
@@ -327,7 +312,7 @@ export function Home({ prefs }: { prefs: ReactNode }) {
 
       <section id="start" className="border-t border-border bg-surface" aria-labelledby="start-h">
         <div className="mx-auto max-w-[1240px] px-4 py-20">
-          <div data-reveal=""><SectionHeader id="start-h" title={t('Bắt đầu trong ba bước', 'Start in three steps')} description={t('Kit là workspace nội bộ, chưa phát hành lên npm.', 'The kit is an internal workspace, not published to npm.')} /></div>
+          <div data-reveal=""><SectionHeader id="start-h" title={t('Bắt đầu trong ba bước', 'Start in three steps')} description={t('Gói @dgtx/ui-frek nằm trên Nexus của công ty.', 'The @dgtx/ui-frek package is on the company Nexus.')} /></div>
           <ol className="m-0 mt-10 grid list-none gap-6 p-0 lg:grid-cols-3">
             {steps.map((s, i) => (
               <li key={s.title} data-reveal="" className="grid min-w-0 content-start gap-3" style={{ '--i': i } as CSSProperties}>
@@ -340,6 +325,7 @@ export function Home({ prefs }: { prefs: ReactNode }) {
               </li>
             ))}
           </ol>
+          <div data-reveal="" className="mt-8"><Button variant="secondary" href="#/install">{t('Hướng dẫn cài đặt đầy đủ', 'Full installation guide')}<ArrowRight /></Button></div>
         </div>
       </section>
 
