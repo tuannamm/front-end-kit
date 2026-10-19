@@ -6,6 +6,9 @@ services:
       # the repo root, for its .git: the changelog page is built from the history
       additional_contexts:
         repo: ..
+      args:
+        # NPM_REGISTRY=https://nexus.digi-texx.vn/repository/npm/ docker compose up -d --build
+        NPM_REGISTRY: ${NPM_REGISTRY:-}
     image: dtx-frek
     ports:
       - "${PORT:-8080}:80"
