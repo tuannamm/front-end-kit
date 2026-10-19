@@ -5,6 +5,7 @@ import { Skeleton } from '../../motion/primitives';
 import { Button } from '../button/button';
 import { Tooltip } from '../controls/controls';
 import { EmptyState } from '../empty-state/empty-state';
+import type { RenderPage } from '../pdf-viewer/pdf-viewer';
 import { ZOOM_MAX, ZOOM_MIN, stepZoom } from '../pdf-viewer/view';
 import { describeError, fitScale, turned, wheelZoom, zoomStops, type ImageError, type Size, type Turn } from './view';
 
@@ -21,6 +22,8 @@ export type ImageViewerProps = {
   defaultZoom?: number | 'fit';
   /** Show the download button. */
   download?: boolean;
+  /** Wraps the image, e.g. `page => <BoxOverlay boxes={lines}>{page}</BoxOverlay>`; the wrapper zooms and turns with it. */
+  renderPage?: RenderPage;
   className?: string;
 };
 
@@ -41,7 +44,7 @@ function Tool({ label, ...rest }: { label: string } & ComponentProps<'button'>) 
  * One image with zoom (buttons, ctrl + wheel, pinch, double-click), mouse-drag pan, quarter-turn rotation and download.
  * The scroller is native, so touch, trackpad and arrow keys pan without extra code. Loading, empty and error states built in.
  */
-export function ImageViewer({ src, alt, fileName, defaultZoom = 'fit', download = true, className }: ImageViewerProps) {
+export function ImageViewer({ src, alt, fileName, defaultZoom = 'fit', download = true, renderPage, className }: ImageViewerProps) {
   const [state, setState] = useState<State>({ status: 'empty' });
   const [attempt, setAttempt] = useState(0);
   const [zoom, setZoom] = useState(defaultZoom);
@@ -51,7 +54,7 @@ export function ImageViewer({ src, alt, fileName, defaultZoom = 'fit', download 
   const frame = useRef<HTMLDivElement>(null);
   // the image point (fractions of the frame) to keep under a viewport point through the next zoom or turn
   const anchor = useRef<{ fx: number; fy: number; px: number; py: number } | null>(null);
-  const drag = useRef<{ x: number; y: number; left: number; top: number } | null>(null);
+  const drag = useRef<{ x: number; y: number; left: number; top: number; id: number; on: boolean } | null>(null);
   // latest scale for wheel events that arrive faster than renders
   const live = useRef(1);
 
@@ -162,19 +165,25 @@ export function ImageViewer({ src, alt, fileName, defaultZoom = 'fit', download 
         onPointerDown={e => {
           // touch and pen pan natively; the mouse drags only when there is somewhere to go
           if (!ready || !pannable || e.pointerType !== 'mouse' || e.button !== 0) return;
-          e.currentTarget.setPointerCapture(e.pointerId);
-          drag.current = { x: e.clientX, y: e.clientY, left: e.currentTarget.scrollLeft, top: e.currentTarget.scrollTop };
+          drag.current = { x: e.clientX, y: e.clientY, left: e.currentTarget.scrollLeft, top: e.currentTarget.scrollTop, id: e.pointerId, on: false };
         }}
         onPointerMove={e => {
           const d = drag.current;
           if (!d) return;
-          e.currentTarget.scrollLeft = d.left - (e.clientX - d.x);
-          e.currentTarget.scrollTop = d.top - (e.clientY - d.y);
+          const dx = e.clientX - d.x, dy = e.clientY - d.y;
+          // captured only once it is a drag, so a click still reaches a box drawn over the image
+          if (!d.on) {
+            if (Math.hypot(dx, dy) < 4) return;
+            d.on = true;
+            e.currentTarget.setPointerCapture(d.id);
+          }
+          e.currentTarget.scrollLeft = d.left - dx;
+          e.currentTarget.scrollTop = d.top - dy;
         }}
         onPointerUp={() => { drag.current = null; }}
         onPointerCancel={() => { drag.current = null; }}
         onDoubleClick={e => {
-          if (!ready) return;
+          if (!ready || (e.target as Element).closest('button, a, input, [role="button"]')) return; // a box, not the image
           const s = e.currentTarget.getBoundingClientRect();
           if (zoom === 'fit') zoomTo(fit < 1 ? 1 : 2, e.clientX - s.left, e.clientY - s.top);
           else zoomTo('fit');
@@ -183,10 +192,13 @@ export function ImageViewer({ src, alt, fileName, defaultZoom = 'fit', download 
         {state.status === 'ready' ? (
           <div className="dtx-img__stage">
             <div ref={frame} className="dtx-img__frame" style={{ width: size.w * scale, height: size.h * scale }}>
-              <img
-                src={state.url} alt={alt ?? name} draggable={false}
-                style={{ width: state.size.w * scale, height: state.size.h * scale, transform: `translate(-50%, -50%) rotate(${rot}deg)` }}
-              />
+              {/* the page turns as a whole, so whatever renderPage draws over the image turns with it */}
+              <div className="dtx-img__page" style={{ width: state.size.w * scale, height: state.size.h * scale, transform: `translate(-50%, -50%) rotate(${rot}deg)` }}>
+                {(() => {
+                  const img = <img className="dtx-img__img" src={state.url} alt={alt ?? name} width={state.size.w} height={state.size.h} draggable={false} />;
+                  return renderPage ? renderPage(img, { index: 0, width: state.size.w, height: state.size.h }) : img;
+                })()}
+              </div>
             </div>
           </div>
         ) : state.status === 'loading' ? (

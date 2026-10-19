@@ -28,5 +28,5 @@ export { Alert, type AlertProps } from './alert/alert';
 export { Dialog, DialogClose, Drawer, DrawerClose, ToastProvider, useToast, type DrawerProps, type ToastOptions, type ToastTone } from './overlays/overlays';
 export { Notification, NotificationList, type NotificationItem, type NotificationProps, type NotificationListProps } from './notification/notification';
 export { CommandPalette, CommandList, type CommandItem, type CommandPaletteProps, type CommandListProps } from './command-palette/command-palette';
-export { PdfViewer, type PdfViewerProps, type PdfSource } from './pdf-viewer/pdf-viewer';
+export { PdfViewer, type PdfViewerProps, type PdfSource, type RenderPage, type PageInfo } from './pdf-viewer/pdf-viewer';
 export { ImageViewer, type ImageViewerProps, type ImageSource } from './image-viewer/image-viewer';

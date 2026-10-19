@@ -28,7 +28,9 @@
 .dtx-pdf__scroll:focus-visible { outline-offset: -2px; }
 .dtx-pdf__pages { display: flex; flex-direction: column; align-items: center; gap: 16px; width: max-content; min-width: 100%; padding: 16px; }
 .dtx-pdf__page { position: relative; flex: none; background: #FFFFFF; /* theme-fixed: paper */ box-shadow: 0 0 0 1px var(--dtx-border); }
-.dtx-pdf__canvas, .dtx-pdf__canvas > canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+/* fluid (width + aspect-ratio), so a wrapper such as BoxOverlay can size it, and draw it again larger in its lens */
+.dtx-pdf__canvas { position: relative; display: block; width: 100%; }
+.dtx-pdf__canvas > canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 .dtx-pdf__page-n { position: absolute; inset: 0; display: grid; place-items: center; font-size: var(--dtx-text-sm); color: #5F636B; /* theme-fixed: on paper */ }
 .dtx-pdf__page-err { position: absolute; inset: auto 0 50%; padding: 0 16px; text-align: center; font-size: var(--dtx-text-sm); color: #A12424; /* theme-fixed: on paper, the light --dtx-tone-err */ }
 

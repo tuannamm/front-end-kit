@@ -1,7 +1,8 @@
 // Interactive demo helpers used by catalog entries. Built only from @dgtx/ui-frek.
 import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
-import { Alert, Badge, BoxOverlay, ConfidenceBadge, FieldLink, SampleInvoice, sampleInvoiceInset, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dgtx/ui-frek';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Alert, Badge, BoxOverlay, ImageViewer,ConfidenceBadge, FieldLink, SampleInvoice, sampleInvoiceInset, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dgtx/ui-frek';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -435,11 +436,11 @@ export const polyBoxes: OcrBox[] = polyEngine.map(({ poly, ...b }) => ({ ...b, .
 function PolyPage() {
   const arc = useId();
   const ink = '#1B1A1F', red = '#C42B2B'; // theme-fixed: ink and stamp on white paper
-  const font = { fontFamily: 'var(--dtx-font)' };
+  const font = { fontFamily: 'var(--dtx-font, Roboto, Arial, sans-serif)' }; // the fallback serves the image-file copy
   const [cx, cy] = STAMP;
   const a = (deg: number, r = ARC_R) => `${cx + r * Math.cos((deg * Math.PI) / 180)} ${cy + r * Math.sin((deg * Math.PI) / 180)}`;
   return (
-    <svg viewBox={`0 0 ${PW} ${PH}`} className="block h-auto w-full" role="img" aria-label="Phiếu biên nhận chụp nghiêng, có con dấu tròn">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${PW} ${PH}`} width={PW} height={PH} className="block h-auto w-full" role="img" aria-label="Phiếu biên nhận chụp nghiêng, có con dấu tròn">
       <rect width={PW} height={PH} fill="#FFFFFF" /> {/* theme-fixed: paper */}
       <text x="40" y="54" fontSize="22" fontWeight="700" fill={ink} textLength="212" lengthAdjust="spacingAndGlyphs" style={font}>PHIẾU BIÊN NHẬN</text>
       <g transform={`rotate(${TILT} ${PIVOT[0]} ${PIVOT[1]})`}>
@@ -459,6 +460,18 @@ function PolyPage() {
 export function PolygonDemo({ scan, ...props }: { scan?: boolean; pinnedId?: string; selectedId?: string; colorBy?: 'confidence' | 'kind' }) {
   const overlay = <BoxOverlay boxes={polyBoxes} textInset={2} animate={!scan} {...props}><PolyPage /></BoxOverlay>;
   return <div className="w-full max-w-[640px]">{scan ? <ScanBeam>{overlay}</ScanBeam> : overlay}</div>;
+}
+
+/** The receipt as an image file. textLength fixes every line, so the polygons fit whatever font the image falls back to. */
+const polyPageFile = () => new Blob([renderToStaticMarkup(<PolyPage />)], { type: 'image/svg+xml' });
+
+/** The same polygons inside ImageViewer: they zoom, pan and turn with the photo. */
+export function PolygonViewerDemo(props: { pinnedId?: string }) {
+  const [file] = useState(polyPageFile);
+  return (
+    <ImageViewer src={file} fileName="phieu-bien-nhan.svg" className="h-[420px] w-full"
+      renderPage={(page, { width, height }) => <BoxOverlay boxes={polyEngine.map(({ poly, ...b }) => ({ ...b, ...toBox(poly, width, height) }))} textInset={2} {...props}>{page}</BoxOverlay>} />
+  );
 }
 
 const linkFields = [

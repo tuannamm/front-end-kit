@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ComponentProps, type RefObject } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ComponentProps, type ReactNode, type RefObject } from 'react';
 import { ChevronLeft, ChevronRight, Download, FileText, Minus, MoveHorizontal, Plus } from 'lucide-react';
 import type { PDFDocumentLoadingTask, PDFDocumentProxy, RenderTask } from 'pdfjs-dist';
 import { cx } from '../../cx';
@@ -19,8 +19,18 @@ export type PdfViewerProps = {
   defaultZoom?: number | 'fit';
   /** Show the download button. */
   download?: boolean;
+  /** Wraps each page, e.g. `(page, { index }) => <BoxOverlay boxes={lines[index]}>{page}</BoxOverlay>`. Called for pages near the view. */
+  renderPage?: RenderPage;
   className?: string;
 };
+
+/** What a viewer hands to `renderPage`: the page's index (0-based) and its natural size, PDF points or image pixels. */
+export type PageInfo = { index: number; width: number; height: number };
+/**
+ * Wraps a page in anything that draws over it in 0–1 page fractions (BoxOverlay, ScanBeam, FieldLink…). `page` fills
+ * the width it is given and keeps its aspect, so the wrapper follows zoom and rotation; it may be rendered twice.
+ */
+export type RenderPage = (page: ReactNode, info: PageInfo) => ReactNode;
 
 type Size = { w: number; h: number };
 type State =
@@ -69,7 +79,7 @@ function Tool({ label, ...rest }: { label: string } & ComponentProps<'button'>) 
  * Scrolling column of PDF pages with page and zoom controls. Pages near the viewport are drawn to a canvas
  * (and released when far away), so long files stay light. Loading, empty, error and per-page failure states built in.
  */
-export function PdfViewer({ src, fileName, defaultZoom = 'fit', download = true, className }: PdfViewerProps) {
+export function PdfViewer({ src, fileName, defaultZoom = 'fit', download = true, renderPage, className }: PdfViewerProps) {
   const [state, setState] = useState<State>({ status: 'empty' });
   const [attempt, setAttempt] = useState(0);
   const [zoom, setZoom] = useState(defaultZoom);
@@ -202,7 +212,7 @@ export function PdfViewer({ src, fileName, defaultZoom = 'fit', download = true,
           <div className="dtx-pdf__pages">
             {state.sizes.map((s, i) => {
               const k = scaleOf(s);
-              return <Page key={i} pdf={state.pdf} n={i + 1} count={count} width={s.w * k} height={s.h * k} scale={k} root={scroller} slot={el => { pages.current[i] = el; }} />;
+              return <Page key={i} pdf={state.pdf} n={i + 1} count={count} width={s.w * k} height={s.h * k} scale={k} points={{ w: s.w / PT_TO_PX, h: s.h / PT_TO_PX }} root={scroller} slot={el => { pages.current[i] = el; }} render={renderPage} />;
             })}
           </div>
         ) : state.status === 'loading' ? (
@@ -221,13 +231,16 @@ export function PdfViewer({ src, fileName, defaultZoom = 'fit', download = true,
   );
 }
 
-type PageProps = { pdf: PDFDocumentProxy; n: number; count: number; width: number; height: number; scale: number; root: RefObject<HTMLDivElement | null>; slot: (el: HTMLDivElement | null) => void };
+type PageProps = {
+  pdf: PDFDocumentProxy; n: number; count: number; width: number; height: number; scale: number; points: Size;
+  root: RefObject<HTMLDivElement | null>; slot: (el: HTMLDivElement | null) => void; render?: RenderPage;
+};
 
 /** One sheet. Draws while within a viewport of the visible area, releases the canvas when it scrolls further away. */
-function Page({ pdf, n, count, width, height, scale, root, slot }: PageProps) {
+function Page({ pdf, n, count, width, height, scale, points, root, slot, render }: PageProps) {
   const box = useRef<HTMLDivElement | null>(null);
-  const canvasBox = useRef<HTMLDivElement>(null);
   const [near, setNear] = useState(false);
+  const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
@@ -239,9 +252,7 @@ function Page({ pdf, n, count, width, height, scale, root, slot }: PageProps) {
   }, [root]);
 
   useEffect(() => {
-    const holder = canvasBox.current;
-    if (!holder) return;
-    if (!near) { holder.replaceChildren(); return; }
+    if (!near) { setCanvas(null); return; }
     let alive = true, task: RenderTask | undefined;
     pdf.getPage(n).then(p => {
       if (!alive) return;
@@ -253,18 +264,42 @@ function Page({ pdf, n, count, width, height, scale, root, slot }: PageProps) {
       canvas.height = Math.floor(viewport.height);
       task = p.render({ canvas, viewport });
       // drawn off-screen and swapped in, so a zoom never flashes a blank page
-      return task.promise.then(() => { if (alive) { holder.replaceChildren(canvas); setFailed(false); } });
+      return task.promise.then(() => { if (alive) { setCanvas(canvas); setFailed(false); } });
     }).catch((e: unknown) => {
       if (alive && (e as Error)?.name !== 'RenderingCancelledException') setFailed(true);
     });
     return () => { alive = false; task?.cancel(); };
   }, [near, scale, pdf, n]);
 
+  const sheet = <Sheet canvas={canvas} ratio={`${width} / ${height}`} label={failed ? `Trang ${n} / ${count}: không hiển thị được` : `Trang ${n} / ${count}`} />;
   return (
-    <div ref={el => { box.current = el; slot(el); }} className="dtx-pdf__page" style={{ width, height }} role="img" aria-label={failed ? `Trang ${n} / ${count}: không hiển thị được` : `Trang ${n} / ${count}`}>
+    <div ref={el => { box.current = el; slot(el); }} className="dtx-pdf__page" style={{ width, height }}>
       <span className="dtx-pdf__page-n dtx-num" aria-hidden>{n}</span>
-      <div ref={canvasBox} className="dtx-pdf__canvas" />
+      {/* far pages skip the overlay too, so a long file with boxes on every page stays light */}
+      {render && near ? render(sheet, { index: n - 1, width: points.w, height: points.h }) : sheet}
       {failed && <span className="dtx-pdf__page-err">Không hiển thị được trang {n}.</span>}
     </div>
   );
+}
+
+/**
+ * The drawn page, fluid to its parent's width. A wrapper may render it twice (BoxOverlay's lens does): the first copy
+ * on screen takes the canvas, any other gets a blit of it.
+ */
+function Sheet({ canvas, ratio, label }: { canvas: HTMLCanvasElement | null; ratio: string; label: string }) {
+  const holder = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const el = holder.current;
+    if (!el || canvas?.parentElement === el) return;
+    if (!canvas) { el.replaceChildren(); return; }
+    let c = canvas;
+    if (canvas.isConnected) {
+      c = document.createElement('canvas');
+      c.width = canvas.width;
+      c.height = canvas.height;
+      c.getContext('2d')?.drawImage(canvas, 0, 0);
+    }
+    el.replaceChildren(c);
+  }, [canvas]);
+  return <div ref={holder} className="dtx-pdf__canvas" style={{ aspectRatio: ratio }} role="img" aria-label={label} />;
 }

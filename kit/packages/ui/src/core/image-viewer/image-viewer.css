@@ -24,9 +24,10 @@
 /* centred while smaller than the view, scrollable on every side once larger */
 .dtx-img__stage { display: grid; place-items: center; width: max-content; height: max-content; min-width: 100%; min-height: 100%; padding: 16px; user-select: none; }
 .dtx-img__frame { position: relative; }
-.dtx-img__frame > img {
-  position: absolute; left: 50%; top: 50%; display: block; max-width: none; max-height: none;
-  box-shadow: 0 0 0 1px var(--dtx-border);
+.dtx-img__page { position: absolute; left: 50%; top: 50%; box-shadow: 0 0 0 1px var(--dtx-border); }
+/* fluid, so a wrapper such as BoxOverlay can size it, and draw it again larger in its lens */
+.dtx-img__img {
+  display: block; width: 100%; height: auto; max-width: none;
   /* transparency shows as the usual checkerboard, light in both themes so dark ink stays visible */
   background: repeating-conic-gradient(#E9EBEF 0 25%, #FFFFFF 0 50%) 0 0 / 16px 16px; /* theme-fixed: transparency grid */
 }

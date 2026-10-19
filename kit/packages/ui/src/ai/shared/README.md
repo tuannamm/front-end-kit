@@ -10,6 +10,9 @@ import { BoxOverlay, ScanBeam, CompareSlider, ConfidenceBadge } from '@dgtx/ui-f
 <CompareSlider before={<img src={raw} alt="Bản gốc" />} after={<img src={clean} alt="Đã xử lý" />} />
 ```
 
+Inside PdfViewer or ImageViewer, pass the overlay through their `renderPage`; it then zooms, pans and turns with the
+page: `<PdfViewer src={url} renderPage={(page, { index }) => <BoxOverlay boxes={lines[index]}>{page}</BoxOverlay>} />`.
+
 ### Polygon boxes
 
 Engines such as PaddleOCR, EasyOCR or CRAFT emit text regions as polygons: quads for rotated or skewed lines, many

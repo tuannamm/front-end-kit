@@ -11,6 +11,21 @@ import { PdfViewer } from '@dgtx/ui-frek';
 <PdfViewer src={file} fileName={file?.name} className="h-[70vh]" />
 ```
 
+### Boxes over the pages
+
+`renderPage` wraps each page in any component that draws in 0–1 page fractions: BoxOverlay (rectangles and polygons),
+ScanBeam, FieldLink. The wrapper zooms with the page; `index` picks that page's boxes.
+
+```tsx
+<PdfViewer src={url} renderPage={(page, { index }) => <BoxOverlay boxes={linesByPage[index] ?? []}>{page}</BoxOverlay>} />
+```
+
+- It is called only for pages near the view, like the drawing, so 500 pages of boxes stay light.
+- `page` fills the width it is given and keeps the page's aspect; a wrapper may render it twice (BoxOverlay's lens
+  does): the second copy is a blit of the same canvas.
+- `width`/`height` in the second argument are the page size in PDF points, for engines that report boxes in points
+  (`toBox(b, width, height)`).
+
 ## Notes
 
 - **Sources:** a URL (same origin, or a server that sends CORS headers), a `File`/`Blob`, an `ArrayBuffer` or a
@@ -45,11 +60,12 @@ import { PdfViewer } from '@dgtx/ui-frek';
 | `fileName` | `string` |  | Toolbar title, name of the page region and of the downloaded file |
 | `defaultZoom` | `number \| 'fit'` | `'fit'` | `'fit'` = every page fills the width; a number is a scale (1 = 100%) |
 | `download` | `boolean` | `true` | Show the download button |
+| `renderPage` | `(page: ReactNode, info: { index, width, height }) => ReactNode` |  | Wraps each page (BoxOverlay, ScanBeam…); `index` is 0-based, size in PDF points |
 | `className` | `string` |  | Extra classes, e.g. a height |
 
 ## Files
 
-- `pdf-viewer.tsx`: PdfViewer and its Page. Uses Button, Tooltip and Skeleton.
+- `pdf-viewer.tsx`: PdfViewer, its Page and Sheet, and the `RenderPage` type ImageViewer shares. Uses Button, Tooltip and Skeleton.
 - `pdf-viewer.css`: `.dtx-pdf*`. Load it after `field.css` (it narrows `.dtx-input` for the page box).
 - `pdf.worker.ts`: the pdf.js worker entry.
 - `view.ts` + `view.check.ts`: zoom steps, page-at-scroll, page box parsing, error messages, and their node check.

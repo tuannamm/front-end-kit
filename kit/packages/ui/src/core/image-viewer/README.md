@@ -11,6 +11,21 @@ import { ImageViewer } from '@dgtx/ui-frek';
 <ImageViewer src={file} fileName={file?.name} className="h-[70vh]" />
 ```
 
+### Boxes over the image
+
+`renderPage` wraps the image in any component that draws in 0–1 image fractions: BoxOverlay (rectangles and polygons),
+ScanBeam, FieldLink. Same prop as PdfViewer, so swapping viewers keeps the overlay.
+
+```tsx
+<ImageViewer src={scan} renderPage={(page, { width, height }) => (
+  <BoxOverlay boxes={lines.map(l => ({ id: l.id, text: l.text, ...toBox(l.poly, width, height) }))}>{page}</BoxOverlay>
+)} />
+```
+
+- The wrapper zooms, pans and turns with the image. `width`/`height` are the image's natural pixels.
+- A click on a box selects it; a mouse drag that starts on a box still pans. Double-click on a box does not zoom.
+- BoxOverlay's lens turns with the page, so after a quarter turn the magnified crop is sideways too.
+
 ## Notes
 
 - **Formats:** whatever the browser draws: PNG, JPEG, WebP, GIF (animated), AVIF, SVG, BMP, ICO. TIFF and HEIC draw
@@ -46,6 +61,7 @@ import { ImageViewer } from '@dgtx/ui-frek';
 | `fileName` | `string` |  | Toolbar title, name of the image region and of the downloaded file |
 | `defaultZoom` | `number \| 'fit'` | `'fit'` | `'fit'` = whole image in view; a number is a scale (1 = 100%) |
 | `download` | `boolean` | `true` | Show the download button |
+| `renderPage` | `(page: ReactNode, info: { index, width, height }) => ReactNode` |  | Wraps the image (BoxOverlay, ScanBeam…); size in natural pixels, `index` is 0 |
 | `className` | `string` |  | Extra classes, e.g. a height |
 
 ## Files
