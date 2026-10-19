@@ -6,8 +6,8 @@ import { cx } from '../../cx';
 import { Button } from '../button/button';
 import { DEFAULT_DATE_FORMAT, addDays, addMonths, clampDate, formatDate, monthGrid, parseDate, todayIso, toIso, weekday } from './date';
 
-const WEEKDAYS: [string, string][] = [['T2', 'Thứ Hai'], ['T3', 'Thứ Ba'], ['T4', 'Thứ Tư'], ['T5', 'Thứ Năm'], ['T6', 'Thứ Sáu'], ['T7', 'Thứ Bảy'], ['CN', 'Chủ Nhật']];
-const longDate = new Intl.DateTimeFormat('vi-VN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const WEEKDAYS: [string, string][] = [['Mo', 'Monday'], ['Tu', 'Tuesday'], ['We', 'Wednesday'], ['Th', 'Thursday'], ['Fr', 'Friday'], ['Sa', 'Saturday'], ['Su', 'Sunday']];
+const longDate = new Intl.DateTimeFormat('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 const inRange = (iso: string | null, min?: string, max?: string): iso is string => !!iso && (!min || iso >= min) && (!max || iso <= max);
 
 export type DateRange = { from: string | null; to: string | null };
@@ -66,9 +66,9 @@ export function Calendar({ value, range, onValueChange, min, max, autoFocus, cla
   return (
     <div className={cx('dtx-cal', className)}>
       <div className="dtx-cal__head">
-        <button type="button" className="dtx-cal__nav" aria-label="Tháng trước" disabled={!!min && toIso(y, m, 0) < min} onClick={() => setFocus(clampDate(addMonths(focus, -1), min, max))}><ChevronLeft aria-hidden /></button>
-        <span className="dtx-cal__title" id={titleId} aria-live="polite">Tháng {m + 1}, {y}</span>
-        <button type="button" className="dtx-cal__nav" aria-label="Tháng sau" disabled={!!max && toIso(y, m + 1, 1) > max} onClick={() => setFocus(clampDate(addMonths(focus, 1), min, max))}><ChevronRight aria-hidden /></button>
+        <button type="button" className="dtx-cal__nav" aria-label="Previous month" disabled={!!min && toIso(y, m, 0) < min} onClick={() => setFocus(clampDate(addMonths(focus, -1), min, max))}><ChevronLeft aria-hidden /></button>
+        <span className="dtx-cal__title" id={titleId} aria-live="polite">Month {m + 1}, {y}</span>
+        <button type="button" className="dtx-cal__nav" aria-label="Next month" disabled={!!max && toIso(y, m + 1, 1) > max} onClick={() => setFocus(clampDate(addMonths(focus, 1), min, max))}><ChevronRight aria-hidden /></button>
       </div>
       <table role="grid" ref={gridRef} aria-labelledby={titleId} aria-multiselectable={range ? true : undefined} data-preview={preview || undefined} onKeyDown={onKeyDown}>
         <thead><tr>{WEEKDAYS.map(([s, full]) => <th key={s} scope="col" abbr={full}>{s}</th>)}</tr></thead>
@@ -139,16 +139,16 @@ export function DatePicker({ value, defaultValue = null, onValueChange, min, max
           onBlur={settle}
           onKeyDown={e => { if (e.key === 'Enter') settle(); if (e.key === 'ArrowDown' && e.altKey) { e.preventDefault(); setOpen(true); } }}
         />
-        <Popover.Trigger className="dtx-date__btn" disabled={disabled} aria-label="Mở lịch"><CalendarDays aria-hidden /></Popover.Trigger>
+        <Popover.Trigger className="dtx-date__btn" disabled={disabled} aria-label="Open calendar"><CalendarDays aria-hidden /></Popover.Trigger>
         {name && <input type="hidden" name={name} value={current ?? ''} />}
       </div>
       <Popover.Portal>
         <Popover.Positioner anchor={wrapRef} sideOffset={6} align="start" collisionPadding={16} className="dtx-select-positioner">
-          <Popover.Popup className="dtx-select-popup dtx-date__popup" initialFocus={false} aria-label="Chọn ngày">
+          <Popover.Popup className="dtx-select-popup dtx-date__popup" initialFocus={false} aria-label="Pick date">
             <Calendar value={current} min={min} max={max} autoFocus onValueChange={pick} />
             <div className="dtx-cal__foot">
-              <Button variant="ghost" size="sm" disabled={!current} onClick={() => pick(null)}>Xoá</Button>
-              <Button variant="ghost" size="sm" disabled={!inRange(today, min, max)} onClick={() => pick(today)}>Hôm nay</Button>
+              <Button variant="ghost" size="sm" disabled={!current} onClick={() => pick(null)}>Clear</Button>
+              <Button variant="ghost" size="sm" disabled={!inRange(today, min, max)} onClick={() => pick(today)}>Today</Button>
             </div>
           </Popover.Popup>
         </Popover.Positioner>
@@ -183,7 +183,7 @@ export type DateRangePickerProps = {
 };
 
 /** One bar showing “from – to”. In the calendar, the first click sets the start, the second the end (either order). */
-export function DateRangePicker({ value, defaultValue = EMPTY, onValueChange, min, max, format = DEFAULT_DATE_FORMAT, placeholder = 'Chọn khoảng ngày', size = 'md', disabled, label, 'aria-label': ariaLabel, description, error, name, className }: DateRangePickerProps) {
+export function DateRangePicker({ value, defaultValue = EMPTY, onValueChange, min, max, format = DEFAULT_DATE_FORMAT, placeholder = 'Pick date range', size = 'md', disabled, label, 'aria-label': ariaLabel, description, error, name, className }: DateRangePickerProps) {
   const [inner, setInner] = useState(defaultValue);
   const range = value ?? inner;
   const [open, setOpen] = useState(false);
@@ -214,11 +214,11 @@ export function DateRangePicker({ value, defaultValue = EMPTY, onValueChange, mi
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Positioner sideOffset={6} align="start" collisionPadding={16} className="dtx-select-positioner">
-            <Popover.Popup className="dtx-select-popup dtx-date__popup" initialFocus={false} aria-label="Chọn khoảng ngày">
+            <Popover.Popup className="dtx-select-popup dtx-date__popup" initialFocus={false} aria-label="Pick date range">
               <Calendar range={anchor ? { from: anchor, to: null } : range} min={min} max={max} autoFocus onValueChange={pick} />
               <div className="dtx-cal__foot">
-                <Button variant="ghost" size="sm" disabled={!range.from && !anchor} onClick={() => { commit(EMPTY); onOpenChange(false); }}>Xoá</Button>
-                <span className="dtx-cal__hint" aria-live="polite">{anchor ? 'Chọn ngày kết thúc' : 'Chọn ngày bắt đầu'}</span>
+                <Button variant="ghost" size="sm" disabled={!range.from && !anchor} onClick={() => { commit(EMPTY); onOpenChange(false); }}>Clear</Button>
+                <span className="dtx-cal__hint" aria-live="polite">{anchor ? 'Pick end date' : 'Pick start date'}</span>
               </div>
             </Popover.Popup>
           </Popover.Positioner>

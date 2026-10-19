@@ -173,34 +173,34 @@ export function PdfViewer({ src, fileName, defaultZoom = 'fit', download = true,
   };
 
   const ready = state.status === 'ready';
-  const name = fileName ?? 'Tài liệu PDF';
+  const name = fileName ?? 'PDF document';
   return (
     <div className={cx('dtx-pdf', className)}>
-      <div className="dtx-pdf__bar" role="toolbar" aria-label={`Điều khiển ${name}`}>
+      <div className="dtx-pdf__bar" role="toolbar" aria-label={`Controls for ${name}`}>
         {fileName && <span className="dtx-pdf__name" title={fileName}><FileText aria-hidden /><span>{fileName}</span></span>}
         <div className="dtx-pdf__group dtx-pdf__nav">
-          <Tool label="Trang trước" onClick={() => goTo(page - 1)} disabled={!ready || page <= 1}><ChevronLeft aria-hidden /></Tool>
+          <Tool label="Previous page" onClick={() => goTo(page - 1)} disabled={!ready || page <= 1}><ChevronLeft aria-hidden /></Tool>
           <input
             className="dtx-input dtx-pdf__page-input dtx-num" inputMode="numeric" enterKeyHint="go" disabled={!ready}
-            aria-label={ready ? `Trang, trên tổng ${count}` : 'Trang'} value={ready ? draft ?? String(page) : ''}
+            aria-label={ready ? `Page, of ${count}` : 'Page'} value={ready ? draft ?? String(page) : ''}
             onFocus={e => { setDraft(String(page)); e.currentTarget.select(); }}
             onChange={e => setDraft(e.target.value.replace(/\D/g, ''))}
             onKeyDown={e => { if (e.key === 'Enter') { commitDraft(); e.currentTarget.select(); } else if (e.key === 'Escape') setDraft(String(page)); }}
             onBlur={() => { commitDraft(); setDraft(null); }}
           />
           <span className="dtx-pdf__of dtx-num" aria-hidden>/ {ready ? count : '–'}</span>
-          <Tool label="Trang sau" onClick={() => goTo(page + 1)} disabled={!ready || page >= count}><ChevronRight aria-hidden /></Tool>
+          <Tool label="Next page" onClick={() => goTo(page + 1)} disabled={!ready || page >= count}><ChevronRight aria-hidden /></Tool>
         </div>
         <i className="dtx-pdf__sep" aria-hidden />
         <div className="dtx-pdf__group">
-          <Tool label="Thu nhỏ" onClick={() => setZoom(stepZoom(scale, -1))} disabled={!ready || scale <= ZOOM_MIN}><Minus aria-hidden /></Tool>
+          <Tool label="Zoom out" onClick={() => setZoom(stepZoom(scale, -1))} disabled={!ready || scale <= ZOOM_MIN}><Minus aria-hidden /></Tool>
           <span className="dtx-pdf__zoom dtx-num">{ready ? `${Math.round(scale * 100)}%` : '–'}</span>
-          <Tool label="Phóng to" onClick={() => setZoom(stepZoom(scale, 1))} disabled={!ready || scale >= ZOOM_MAX}><Plus aria-hidden /></Tool>
-          <Tool label="Vừa chiều rộng" aria-pressed={zoom === 'fit'} onClick={() => setZoom(zoom === 'fit' ? 1 : 'fit')} disabled={!ready}><MoveHorizontal aria-hidden /></Tool>
+          <Tool label="Zoom in" onClick={() => setZoom(stepZoom(scale, 1))} disabled={!ready || scale >= ZOOM_MAX}><Plus aria-hidden /></Tool>
+          <Tool label="Fit width" aria-pressed={zoom === 'fit'} onClick={() => setZoom(zoom === 'fit' ? 1 : 'fit')} disabled={!ready}><MoveHorizontal aria-hidden /></Tool>
         </div>
         {download && ready && href && <>
           <i className="dtx-pdf__sep" aria-hidden />
-          <Tooltip content="Tải xuống"><Button variant="ghost" size="sm" icon href={href} download={fileName ?? ''} aria-label={`Tải xuống ${name}`}><Download aria-hidden /></Button></Tooltip>
+          <Tooltip content="Download"><Button variant="ghost" size="sm" icon href={href} download={fileName ?? ''} aria-label={`Download ${name}`}><Download aria-hidden /></Button></Tooltip>
         </>}
       </div>
       <div
@@ -217,14 +217,14 @@ export function PdfViewer({ src, fileName, defaultZoom = 'fit', download = true,
           </div>
         ) : state.status === 'loading' ? (
           <div className="dtx-pdf__state" role="status">
-            <span>Đang mở tài liệu…{state.progress !== undefined && <span className="dtx-num"> {Math.round(state.progress * 100)}%</span>}</span>
+            <span>Opening document…{state.progress !== undefined && <span className="dtx-num"> {Math.round(state.progress * 100)}%</span>}</span>
             <Skeleton width={Math.max(0, Math.min(width - 2 * PAD, 480))} height={Math.max(0, Math.min(width - 2 * PAD, 480)) * 1.414} radius={2} />
           </div>
         ) : state.status === 'error' ? (
           <EmptyState size="sm" tone="err" title={state.error.title}
-            action={state.error.retry && <Button variant="secondary" size="sm" onClick={() => setAttempt(a => a + 1)}>Thử lại</Button>}>{state.error.hint}</EmptyState>
+            action={state.error.retry && <Button variant="secondary" size="sm" onClick={() => setAttempt(a => a + 1)}>Retry</Button>}>{state.error.hint}</EmptyState>
         ) : (
-          <EmptyState size="sm" icon={<FileText />} title="Chưa có tài liệu">Chọn một file PDF để xem tại đây.</EmptyState>
+          <EmptyState size="sm" icon={<FileText />} title="No document yet">Choose a PDF file to view it here.</EmptyState>
         )}
       </div>
     </div>
@@ -271,13 +271,13 @@ function Page({ pdf, n, count, width, height, scale, points, root, slot, render 
     return () => { alive = false; task?.cancel(); };
   }, [near, scale, pdf, n]);
 
-  const sheet = <Sheet canvas={canvas} ratio={`${width} / ${height}`} label={failed ? `Trang ${n} / ${count}: không hiển thị được` : `Trang ${n} / ${count}`} />;
+  const sheet = <Sheet canvas={canvas} ratio={`${width} / ${height}`} label={failed ? `Page ${n} / ${count}: could not be displayed` : `Page ${n} / ${count}`} />;
   return (
     <div ref={el => { box.current = el; slot(el); }} className="dtx-pdf__page" style={{ width, height }}>
       <span className="dtx-pdf__page-n dtx-num" aria-hidden>{n}</span>
       {/* far pages skip the overlay too, so a long file with boxes on every page stays light */}
       {render && near ? render(sheet, { index: n - 1, width: points.w, height: points.h }) : sheet}
-      {failed && <span className="dtx-pdf__page-err">Không hiển thị được trang {n}.</span>}
+      {failed && <span className="dtx-pdf__page-err">Could not display page {n}.</span>}
     </div>
   );
 }

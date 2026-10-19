@@ -18,7 +18,7 @@ export type FileDropzoneProps = {
   multiple?: boolean;
   disabled?: boolean;
   label?: ReactNode;
-  /** Defaults to the accepted formats and size limit, e.g. "PDF, ảnh · tối đa 20 MB". */
+  /** Defaults to the accepted formats and size limit, e.g. "PDF, image · up to 20 MB". */
   hint?: ReactNode;
   description?: ReactNode;
   error?: ReactNode;
@@ -36,7 +36,7 @@ export function FileDropzone({ onFiles, onReject, accept, maxSize, multiple = tr
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
   const [rejected, setRejected] = useState<FileRejection[]>([]);
-  const autoHint = [acceptLabel(accept), maxSize !== undefined && `tối đa ${formatBytes(maxSize)}`].filter(Boolean).join(' · ');
+  const autoHint = [acceptLabel(accept), maxSize !== undefined && `up to ${formatBytes(maxSize)}`].filter(Boolean).join(' · ');
   const shownHint = hint ?? autoHint;
   // toArray drops false / null, so `{files.length > 0 && <FileList>}` with no files keeps the plain box
   const list = Children.toArray(children).length > 0;
@@ -73,7 +73,7 @@ export function FileDropzone({ onFiles, onReject, accept, maxSize, multiple = tr
           onClick={() => input.current?.click()}>
           <Upload className="dtx-drop__icon" aria-hidden />
           <span id={`${id}t`} className="dtx-drop__text">
-            {over ? 'Thả để thêm tệp' : <>Kéo thả {!multiple ? '1 tệp' : list ? 'thêm tệp' : 'tệp'} vào đây hoặc <span className="dtx-drop__cta">chọn từ máy</span></>}
+            {over ? 'Drop to add files' : <>Drag and drop {!multiple ? '1 file' : list ? 'more files' : 'files'} here or <span className="dtx-drop__cta">browse your computer</span></>}
           </span>
           {shownHint && <span id={`${id}h`} className="dtx-drop__hint">{shownHint}</span>}
         </button>
@@ -107,7 +107,7 @@ export type FileItemProps = {
   error?: ReactNode;
   /** Thumbnail URL (e.g. URL.createObjectURL(file)) for images. */
   thumb?: string;
-  /** Remove; while uploading it reads "Huỷ tải". */
+  /** Remove; while uploading it reads "Cancel upload". */
   onRemove?: () => void;
   onRetry?: () => void;
 };
@@ -122,7 +122,7 @@ export function FileItem({ name, size, status = 'done', progress = 0, error, thu
   const [broken, setBroken] = useState(false);
   useEffect(() => setBroken(false), [thumb]);
   const pct = Math.round(Math.min(100, Math.max(0, progress)));
-  const state = { queued: 'Đang chờ', uploading: 'Đang tải lên', done: 'Đã tải lên', error: error ?? 'Tải lên thất bại' }[status];
+  const state = { queued: 'Queued', uploading: 'Uploading', done: 'Uploaded', error: error ?? 'Upload failed' }[status];
   return (
     <li className="dtx-file" data-status={status}>
       <span className="dtx-file__icon">{thumb && !broken ? <img src={thumb} alt="" width={36} height={36} onError={() => setBroken(true)} /> : <Icon aria-hidden />}</span>
@@ -135,15 +135,15 @@ export function FileItem({ name, size, status = 'done', progress = 0, error, thu
           {status === 'uploading' && <span className="dtx-num" aria-hidden>{pct}%</span>}
         </span>
         {status === 'uploading' && (
-          <div className="dtx-file__bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`Đang tải ${name}`}>
+          <div className="dtx-file__bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`Uploading ${name}`}>
             <i style={{ transform: `scaleX(${pct / 100})` }} />
           </div>
         )}
       </div>
       {(onRetry && status === 'error' || onRemove) && (
         <div className="dtx-file__actions">
-          {onRetry && status === 'error' && <Button variant="ghost" size="sm" icon aria-label={`Thử lại ${name}`} onClick={onRetry}><RotateCw /></Button>}
-          {onRemove && <Button variant="ghost" size="sm" icon aria-label={`${status === 'uploading' ? 'Huỷ tải' : 'Xoá'} ${name}`} onClick={onRemove}><X /></Button>}
+          {onRetry && status === 'error' && <Button variant="ghost" size="sm" icon aria-label={`Retry ${name}`} onClick={onRetry}><RotateCw /></Button>}
+          {onRemove && <Button variant="ghost" size="sm" icon aria-label={`${status === 'uploading' ? 'Cancel upload' : 'Remove'} ${name}`} onClick={onRemove}><X /></Button>}
         </div>
       )}
     </li>
@@ -182,8 +182,8 @@ export function UploadToast({ items }: { items: UploadToastItem[] }) {
     const done = items.filter(i => i.status === 'done').length, failed = items.filter(i => i.status === 'error').length;
     const next: Phase = done + failed < n ? 'active' : failed ? 'failed' : 'done';
     const opts = {
-      title: next === 'active' ? `Đang tải lên ${done}/${n} tệp` : next === 'failed' ? `${failed}/${n} tệp tải lên thất bại` : `Đã tải lên ${n} tệp`,
-      description: next === 'active' ? (failed ? `${failed} tệp lỗi` : undefined) : next === 'failed' ? 'Thử lại hoặc xoá từng tệp.' : undefined,
+      title: next === 'active' ? `Uploading ${done}/${n} files` : next === 'failed' ? `${failed}/${n} files failed to upload` : `Uploaded ${n} files`,
+      description: next === 'active' ? (failed ? `${failed} failed` : undefined) : next === 'failed' ? 'Retry or remove each file.' : undefined,
       data: {
         icon: next === 'active' ? <Badge size="sm" live /> : next === 'failed' ? <Badge tone="err" size="sm" icon={<CircleAlert />} /> : <Badge tone="ok" size="sm" icon={<CheckCircle2 />} />,
         body: <UploadToastBody items={items} active={next === 'active'} />,
@@ -208,12 +208,12 @@ function UploadToastBody({ items, active }: { items: UploadToastItem[]; active: 
   const pct = Math.round(items.reduce((s, i) => s + (i.status === 'done' ? 100 : i.status === 'uploading' ? i.progress ?? 0 : 0), 0) / items.length);
   return (
     <div className="dtx-toast__body">
-      {active && <div className="dtx-file__bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Tiến độ tải lên"><i style={{ transform: `scaleX(${pct / 100})` }} /></div>}
+      {active && <div className="dtx-file__bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label="Upload progress"><i style={{ transform: `scaleX(${pct / 100})` }} /></div>}
       <button type="button" className="dtx-toast__toggle" aria-expanded={open} aria-controls={listId} onClick={() => setOpen(o => !o)}>
-        {open ? 'Ẩn danh sách' : `Xem ${items.length} tệp`}<ChevronDown aria-hidden />
+        {open ? 'Hide list' : `Show ${items.length} files`}<ChevronDown aria-hidden />
       </button>
       <div id={listId} hidden={!open}>
-        <FileList aria-label="Tệp đang tải lên">{shown.map(({ id, ...item }) => <FileItem key={id} {...item} />)}</FileList>
+        <FileList aria-label="Files uploading">{shown.map(({ id, ...item }) => <FileItem key={id} {...item} />)}</FileList>
       </div>
     </div>
   );

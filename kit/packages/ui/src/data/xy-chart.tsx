@@ -20,7 +20,7 @@ type XYProps = {
   className?: string;
 };
 
-const LOCALE = 'vi-VN';
+const LOCALE = 'en-US';
 /** Theme-aware and at least 3:1 on the page in both themes. Blue leads; the brand accents follow it. */
 const PALETTE = ['var(--dtx-primary)', 'var(--dtx-tone-ok)', 'var(--dtx-tone-violet)', 'var(--dtx-tone-warn)', 'var(--dtx-tone-err)'];
 /** Second channel beside colour: every series after the first has its own dash, in the lines and the legend. */
@@ -41,7 +41,7 @@ function Swatch({ color, dash }: { color: string; dash?: string }) {
   return <svg className="dtx-xy__swatch" viewBox="0 0 18 8" aria-hidden><line x1="1" x2="17" y1="4" y2="4" stroke={color} strokeWidth="2.5" strokeDasharray={dash} strokeLinecap="round" /></svg>;
 }
 
-function XYChart({ kind, stacked = false, labels, series, label, height = 240, min, max, format, curve, legend = series.length > 1, defaultActive, empty = 'Chưa có dữ liệu', className }: XYProps & { kind: 'line' | 'area'; stacked?: boolean }) {
+function XYChart({ kind, stacked = false, labels, series, label, height = 240, min, max, format, curve, legend = series.length > 1, defaultActive, empty = 'No data yet', className }: XYProps & { kind: 'line' | 'area'; stacked?: boolean }) {
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   // the readout rests on defaultActive (e.g. the latest value) and returns there when the pointer or focus leaves
@@ -155,12 +155,12 @@ function XYChart({ kind, stacked = false, labels, series, label, height = 240, m
             {list.map(s => (
               <span key={s.name} className="dtx-xy__row"><Swatch color={s.color} dash={s.dash} /><span>{s.name}</span><span className="dtx-num">{s.data[active] == null ? '–' : full.format(s.data[active]!)}</span></span>
             ))}
-            {stacked && list.length > 1 && <span className="dtx-xy__row dtx-xy__total"><span /><span>Tổng</span><span className="dtx-num">{full.format(tops[tops.length - 1][active]!)}</span></span>}
+            {stacked && list.length > 1 && <span className="dtx-xy__row dtx-xy__total"><span /><span>Total</span><span className="dtx-num">{full.format(tops[tops.length - 1][active]!)}</span></span>}
           </div>
         )}
       </div>
       {legend && <div className="dtx-legend dtx-xy__legend" aria-hidden>{list.map(s => <span key={s.name}><Swatch color={s.color} dash={s.dash} />{s.name}</span>)}</div>}
-      <span id={`${id}-hint`} className="dtx-sr">Dùng phím mũi tên trái, phải để đọc từng điểm.</span>
+      <span id={`${id}-hint`} className="dtx-sr">Use the left and right arrow keys to read each point.</span>
       <p className="dtx-sr" aria-live="polite">{live}</p>
       {/* the wrapper hides it: a table ignores the 1px box of .dtx-sr and would widen the page */}
       <div className="dtx-sr"><table>

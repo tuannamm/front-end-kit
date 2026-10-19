@@ -8,7 +8,7 @@ import { PageLook, pixelStepLooks, type PixelStep } from './page-look';
 
 export type PreprocessEffect = 'crop' | 'unwarp' | 'deskew' | 'denoise' | 'binarize' | 'grayscale';
 export const preprocessLabels: Record<PreprocessEffect, string> = {
-  crop: 'Cắt viền', unwarp: 'Làm phẳng', deskew: 'Chống nghiêng', denoise: 'Khử nhiễu', binarize: 'Nhị phân hoá', grayscale: 'Thang xám',
+  crop: 'Crop', unwarp: 'Unwarp', deskew: 'Deskew', denoise: 'Denoise', binarize: 'Binarize', grayscale: 'Grayscale',
 };
 
 export type GeometryStep = 'crop' | 'unwarp' | 'deskew';
@@ -84,7 +84,7 @@ export function PreprocessPipeline({ steps = ['crop', 'unwarp', 'deskew', 'denoi
   const page = <PreprocessStack steps={steps} isDone={e => steps.indexOf(e) < step} current={step > 0 ? steps[step - 1] : null} scanMs={interval * .75}>{children}</PreprocessStack>;
   return (
     <div className="dtx-pipeline">
-      <ol className="dtx-pipeline__steps" aria-label="Các bước tiền xử lý">
+      <ol className="dtx-pipeline__steps" aria-label="Preprocessing steps">
         {steps.map((s, i) => (
           <li key={s} data-state={step > i ? 'done' : step === i ? 'current' : 'todo'}>
             <span className="dtx-pipeline__num">{step > i ? <Check size={11} strokeWidth={3} /> : i + 1}</span>{preprocessLabels[s]}

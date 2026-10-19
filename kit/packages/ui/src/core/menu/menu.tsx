@@ -14,7 +14,7 @@ export type MenuAction = {
   description?: string;
   /** Key hint on the right. Display only: the menu does not bind the keys. */
   shortcut?: string;
-  /** Destructive action, in red. Name the object in the label ("Xoá lô HD-5517"). */
+  /** Destructive action, in red. Name the object in the label ("Delete batch HD-5517"). */
   danger?: boolean;
   disabled?: boolean;
 };

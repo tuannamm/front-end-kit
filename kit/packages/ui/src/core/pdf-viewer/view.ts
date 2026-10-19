@@ -31,12 +31,12 @@ export type PdfError = { title: string; hint: string; retry: boolean };
 /** pdf.js exceptions are matched by name, so this file needs no pdf.js import. */
 export function describeError(e: unknown): PdfError {
   const { name, status } = (e ?? {}) as { name?: string; status?: number };
-  if (name === 'PasswordException') return { title: 'File PDF này có mật khẩu.', hint: 'Gỡ mật khẩu trong phần mềm đã tạo file rồi mở lại.', retry: false };
-  if (name === 'InvalidPDFException') return { title: 'File không phải PDF hợp lệ hoặc đã bị hỏng.', hint: 'Mở thử file gốc trên máy, hoặc xuất lại file PDF.', retry: false };
+  if (name === 'PasswordException') return { title: 'This PDF is password protected.', hint: 'Remove the password in the app that created the file, then open it again.', retry: false };
+  if (name === 'InvalidPDFException') return { title: 'The file is not a valid PDF or is corrupted.', hint: 'Open the original file on your computer, or export the PDF again.', retry: false };
   if (name === 'ResponseException' || name === 'MissingPDFException') {
     return status === 404 || name === 'MissingPDFException'
-      ? { title: 'Không tìm thấy file (HTTP 404).', hint: 'Kiểm tra lại đường dẫn hoặc quyền truy cập file.', retry: true }
-      : { title: `Máy chủ trả lỗi${status ? ` HTTP ${status}` : ''} khi tải file.`, hint: 'Thử lại sau ít phút.', retry: true };
+      ? { title: 'File not found (HTTP 404).', hint: 'Check the path or the file access permissions.', retry: true }
+      : { title: `The server returned an error${status ? ` HTTP ${status}` : ''} while loading the file.`, hint: 'Try again in a few minutes.', retry: true };
   }
-  return { title: 'Không mở được tài liệu.', hint: 'Kiểm tra kết nối mạng rồi thử lại.', retry: true };
+  return { title: 'Could not open the document.', hint: 'Check your network connection, then try again.', retry: true };
 }

@@ -28,13 +28,13 @@ export type SliderProps<V extends number | number[]> = {
   className?: string;
 };
 
-const LOCALE = 'vi-VN';
+const LOCALE = 'en-US';
 
 /**
  * One value or a range on a track. Arrow keys step, Page Up/Down and Shift+arrow take `largeStep`, Home/End jump
  * to the ends. Inside <Field> the label names it. The value readout keeps a fixed width so the track never resizes.
  */
-export function Slider<V extends number | number[]>({ value, defaultValue, onValueChange, onValueCommitted, min = 0, max = 100, step = 1, largeStep, format, showValue = true, thumbLabels = ['Từ', 'Đến'], disabled, name, 'aria-label': label, className }: SliderProps<V>) {
+export function Slider<V extends number | number[]>({ value, defaultValue, onValueChange, onValueCommitted, min = 0, max = 100, step = 1, largeStep, format, showValue = true, thumbLabels = ['From', 'To'], disabled, name, 'aria-label': label, className }: SliderProps<V>) {
   const current = value ?? defaultValue ?? min;
   const count = Array.isArray(current) ? current.length : 1;
   // widest formatted end, in ch: tabular digits are 1ch, so the readout never changes width

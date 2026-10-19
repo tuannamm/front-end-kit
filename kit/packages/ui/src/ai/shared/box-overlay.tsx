@@ -22,7 +22,7 @@ export type BoxHover = 'lens' | 'blink';
 // Outline ≥ 3:1 on white paper (WCAG 1.4.11) and white 10px tag text ≥ 4.5:1 on the fill (checked by test:a11y).
 const KIND_RGB: Record<RegionKind, string> = { title: '26 111 191', text: '19 123 182', table: '145 39 214', figure: '94 118 0', stamp: '148 96 0', signature: '196 43 43', field: '26 111 191' };
 const LEVEL_RGB = { high: '37 130 215', medium: '148 96 0', low: '196 43 43' };
-export const regionLabels: Record<RegionKind, string> = { title: 'Tiêu đề', text: 'Văn bản', table: 'Bảng', figure: 'Hình', stamp: 'Con dấu', signature: 'Chữ ký', field: 'Trường' };
+export const regionLabels: Record<RegionKind, string> = { title: 'Title', text: 'Text', table: 'Table', figure: 'Figure', stamp: 'Stamp', signature: 'Signature', field: 'Field' };
 
 export type BoxOverlayProps = {
   boxes: OcrBox[];
@@ -93,7 +93,7 @@ function Lens({ b, page, size, rgb, thresholds, inset, children }: { b: OcrBox; 
   return (
     <div className="dtx-ocr__lens" style={style} data-below={below ? '' : undefined} aria-hidden>
       <div className="dtx-ocr__lens-row">
-        <span className="dtx-ocr__lens-tag">Gốc</span>
+        <span className="dtx-ocr__lens-tag">Original</span>
         {/* exactly the box, magnified: a 2-character box shows those 2 characters, not its neighbours */}
         <div className="dtx-ocr__lens-crop" style={{ width: Math.min(bw * k, lensW - TAG - PAD), height: bh * k, marginLeft: PAD }}>
           <div inert style={{ position: 'absolute', width: size.w * k, left: 0, top: 0, transformOrigin: '0 0', transform: `rotate(${-angle}rad) translate(${-ox * k}px, ${-oy * k}px)` }}>{page}</div>
@@ -163,7 +163,7 @@ export function BoxOverlay({ boxes: input, children, colorBy = 'confidence', hov
                 data-selected={selectedId === b.id ? '' : undefined}
                 data-active={isActive ? '' : undefined}
                 data-shape={b.points && b.points.length > 2 ? 'poly' : undefined}
-                aria-label={(hideText ? [labelOf(b) ?? 'Vùng chữ'] : [labelOf(b), b.text, b.confidence !== undefined && `${b.confidence.toFixed(1)}%`]).filter(Boolean).join(' · ')}
+                aria-label={(hideText ? [labelOf(b) ?? 'Text region'] : [labelOf(b), b.text, b.confidence !== undefined && `${b.confidence.toFixed(1)}%`]).filter(Boolean).join(' · ')}
                 onClick={() => onSelect?.(b)}
                 onPointerEnter={() => setHovered(b.id)} onPointerLeave={() => setHovered(null)}
                 onFocus={() => setHovered(b.id)} onBlur={() => setHovered(null)}
@@ -179,7 +179,7 @@ export function BoxOverlay({ boxes: input, children, colorBy = 'confidence', hov
                 {mode === 'blink' && isActive && comparing && (
                   <>
                     <span className="dtx-ocr__blink" data-on={showAi ? '' : undefined}>{b.text}</span>
-                    <span className="dtx-ocr__blink-tag">{showAi ? 'AI' : 'Gốc'}{b.confidence !== undefined && <> · <span className="dtx-num">{b.confidence.toFixed(1)}%</span></>}</span>
+                    <span className="dtx-ocr__blink-tag">{showAi ? 'AI' : 'Original'}{b.confidence !== undefined && <> · <span className="dtx-num">{b.confidence.toFixed(1)}%</span></>}</span>
                   </>
                 )}
               </button>

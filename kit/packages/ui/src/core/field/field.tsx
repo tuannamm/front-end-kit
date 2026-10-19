@@ -50,7 +50,7 @@ export function Textarea({ rows = 3, maxRows = 12, maxLength, value, defaultValu
       {control}
       <span className="dtx-textarea__count dtx-num" data-near={left <= Math.max(10, maxLength * .1) ? '' : undefined} aria-hidden>{length} / {maxLength}</span>
       {/* announced only near the limit, not on every keystroke */}
-      <span className="dtx-sr" aria-live="polite">{left <= 0 ? `Đã đạt giới hạn ${maxLength} ký tự` : left <= 20 ? `Còn ${left} ký tự` : ''}</span>
+      <span className="dtx-sr" aria-live="polite">{left <= 0 ? `Limit of ${maxLength} characters reached` : left <= 20 ? `${left} characters left` : ''}</span>
     </div>
   );
 }

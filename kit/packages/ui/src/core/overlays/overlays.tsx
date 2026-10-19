@@ -58,7 +58,7 @@ export function Drawer({ trigger, title, description, children, footer, side = '
                 <BDrawer.Title className="dtx-dialog__title">{title}</BDrawer.Title>
                 {description && <BDrawer.Description className="dtx-dialog__desc">{description}</BDrawer.Description>}
               </div>
-              <BDrawer.Close render={<Button variant="ghost" size="sm" icon aria-label="Đóng" />}><X size={18} /></BDrawer.Close>
+              <BDrawer.Close render={<Button variant="ghost" size="sm" icon aria-label="Close" />}><X size={18} /></BDrawer.Close>
             </div>
             <BDrawer.Content className="dtx-drawer__body">{children}</BDrawer.Content>
             {footer && <div className="dtx-drawer__foot">{footer}</div>}
@@ -96,7 +96,7 @@ function ToastList() {
           <Toast.Title className="dtx-toast__title" />
           <Toast.Description className="dtx-toast__desc" />
         </div>
-        <Toast.Close className="dtx-toast__close" aria-label="Đóng"><X size={14} /></Toast.Close>
+        <Toast.Close className="dtx-toast__close" aria-label="Close"><X size={14} /></Toast.Close>
         {(t.data as ToastData | undefined)?.body}
       </Toast.Content>
     </Toast.Root>

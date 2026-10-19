@@ -19,13 +19,13 @@ export type TimelineItem = {
 
 export type TimelineProps = {
   items: TimelineItem[];
-  /** relative: "5 phút trước". absolute: "14:32 · 07/10/2026". The full time is in the hover title either way. */
+  /** relative: "5 minutes ago". absolute: "14:32 · 10/07/2026". The full time is in the hover title either way. */
   timeStyle?: 'relative' | 'absolute';
   'aria-label'?: string;
   className?: string;
 };
 
-const statusWord = { current: 'Đang thực hiện', pending: 'Chưa thực hiện' };
+const statusWord = { current: 'In progress', pending: 'Not started' };
 
 /** Events in order down a rail: an activity log, an audit trail, the steps of a batch. */
 export function Timeline({ items, timeStyle = 'relative', 'aria-label': label, className }: TimelineProps) {

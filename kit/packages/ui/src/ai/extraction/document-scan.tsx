@@ -53,12 +53,12 @@ export function DocumentScan({ fileName, title, rows, fields, engine = 'DIGI-XTR
   }, [auto, controlled, loop, reduced]);
 
   const hitKeys = new Set(fields.slice(0, revealed).map(f => f.key));
-  const status = phase === 'idle' ? <Badge tone="neutral" size="sm">Chờ xử lý</Badge>
-    : phase === 'scanning' ? <Badge tone="brand" size="sm" live>Đang trích xuất</Badge>
-    : <Badge tone="ok" size="sm" variant="surface">Hoàn tất · {fields.length} trường</Badge>;
+  const status = phase === 'idle' ? <Badge tone="neutral" size="sm">Waiting</Badge>
+    : phase === 'scanning' ? <Badge tone="brand" size="sm" live>Extracting</Badge>
+    : <Badge tone="ok" size="sm" variant="surface">Done · {fields.length} fields</Badge>;
 
   return (
-    <div className="dtx-scan" data-phase={phase} role="img" aria-label={`${engine} trích xuất ${fields.length} trường từ ${fileName}`}>
+    <div className="dtx-scan" data-phase={phase} role="img" aria-label={`${engine} extracted ${fields.length} fields from ${fileName}`}>
       <div className="dtx-scan__head"><b>{engine}</b>{fileName}{status}</div>
       <div className="dtx-scan__body">
         <ScanBeam key={run} className="dtx-scan__doc" active={phase === 'scanning'} duration={scanMs} band={36}>

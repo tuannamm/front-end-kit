@@ -35,7 +35,7 @@ export type StepsProps = {
   className?: string;
 };
 
-const statusWord: Record<StepStatus, string> = { finish: 'Đã xong', process: 'Đang thực hiện', error: 'Lỗi', wait: 'Chưa thực hiện' };
+const statusWord: Record<StepStatus, string> = { finish: 'Done', process: 'In progress', error: 'Error', wait: 'Not started' };
 
 /** Where the user is in a sequence: a wizard, a checkout, the stages a batch goes through. */
 export function Steps({ items, current = 0, status = 'process', onChange, orientation = 'horizontal', size = 'md', variant = 'filled', 'aria-label': label, className }: StepsProps) {

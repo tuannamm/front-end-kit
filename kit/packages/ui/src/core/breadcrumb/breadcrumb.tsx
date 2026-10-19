@@ -34,7 +34,7 @@ function Crumb({ item, current }: { item: BreadcrumbItem; current: boolean }) {
 }
 
 /** Where this page sits: root → … → current page. Long labels truncate; long trails fold their middle into "…". */
-export function Breadcrumb({ items, maxItems = 4, 'aria-label': label = 'Đường dẫn', className }: BreadcrumbProps) {
+export function Breadcrumb({ items, maxItems = 4, 'aria-label': label = 'Breadcrumb', className }: BreadcrumbProps) {
   const [expanded, setExpanded] = useState(false);
   const list = useRef<HTMLOListElement>(null);
   const shown = expanded ? items.map((_, i) => i) : visibleCrumbs(items.length, maxItems);
@@ -54,7 +54,7 @@ export function Breadcrumb({ items, maxItems = 4, 'aria-label': label = 'Đườ
           <li key={i ?? 'gap'}>
             {k > 0 && <ChevronRight className="dtx-crumbs__sep" aria-hidden />}
             {i === null
-              ? <button type="button" className="dtx-crumbs__item dtx-crumbs__link dtx-crumbs__more" aria-label={`Hiện ${hidden} mục bị ẩn`} onClick={() => setExpanded(true)}>…</button>
+              ? <button type="button" className="dtx-crumbs__item dtx-crumbs__link dtx-crumbs__more" aria-label={`Show ${hidden} hidden items`} onClick={() => setExpanded(true)}>…</button>
               : <Crumb item={items[i]} current={i === items.length - 1} />}
           </li>
         ))}

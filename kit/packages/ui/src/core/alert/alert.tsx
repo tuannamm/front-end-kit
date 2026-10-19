@@ -12,7 +12,7 @@ export type AlertProps = Omit<ComponentProps<'div'>, 'title'> & {
   children?: ReactNode;
   /** Replaces the tone's icon; `false` hides it. */
   icon?: ReactNode | false;
-  /** Buttons under the text, e.g. "Lưu lại". */
+  /** Buttons under the text, e.g. "Save". */
   action?: ReactNode;
   /** Shows a close button. Hiding the alert is the app's job. */
   onClose?: () => void;
@@ -23,7 +23,7 @@ export type AlertProps = Omit<ComponentProps<'div'>, 'title'> & {
  * Message that stays in the page until its cause is gone: a form that failed as a whole, a locked batch, maintenance.
  * Field errors belong to Field; something that happened a moment ago belongs to a toast.
  */
-export function Alert({ tone = 'brand', title, children, icon, action, onClose, closeLabel = 'Đóng', className, ...rest }: AlertProps) {
+export function Alert({ tone = 'brand', title, children, icon, action, onClose, closeLabel = 'Close', className, ...rest }: AlertProps) {
   return (
     // an error interrupts the screen reader; the other tones wait their turn
     <div role={tone === 'err' ? 'alert' : 'status'} className={cx('dtx-alert', `dtx-tone-${tone}`, className)} {...rest}>

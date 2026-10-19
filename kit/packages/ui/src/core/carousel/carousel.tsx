@@ -7,7 +7,7 @@ import { Button } from '../button/button';
 export type CarouselProps = {
   /** One child per slide. */
   children: ReactNode;
-  /** Names the carousel, e.g. "Tin mới". Required: a page can hold several. */
+  /** Names the carousel, e.g. "News". Required: a page can hold several. */
   'aria-label': string;
   /** Any CSS width. '100%' shows one slide at a time; 'min(260px, 80%)' shows a row of cards with the next one peeking. */
   slideWidth?: string;
@@ -66,7 +66,7 @@ export function Carousel({ children, 'aria-label': label, slideWidth = '100%', g
   // a smooth scroll passes through the slides in between
   useEffect(() => {
     if (!announce.current || !visible.length) return;
-    const id = setTimeout(() => { setLive(`Đang xem ${range} / ${n}`); announce.current = false; }, 300);
+    const id = setTimeout(() => { setLive(`Showing ${range} / ${n}`); announce.current = false; }, 300);
     return () => clearTimeout(id);
   }, [range, n, visible.length]);
 
@@ -105,7 +105,7 @@ export function Carousel({ children, 'aria-label': label, slideWidth = '100%', g
   return (
     <section ref={root} className={cx('dtx-carousel', className)} aria-roledescription="carousel" aria-label={label}
       onPointerEnter={e => { if (e.pointerType === 'mouse') setHover(true); }} onPointerLeave={() => setHover(false)}>
-      <div ref={track} className="dtx-carousel__track" tabIndex={0} role="group" aria-label="Các slide"
+      <div ref={track} className="dtx-carousel__track" tabIndex={0} role="group" aria-label="Slides"
         onFocus={e => { reveal(e.target); if (autoPlay && e.target.matches(':focus-visible')) setPaused(true); }} style={{ '--slide-w': slideWidth, '--gap': `${gap}px` } as CSSProperties}>
         {slides.map((s, i) => (
           <div key={i} data-index={i} className="dtx-carousel__slide" role="group" aria-roledescription="slide" aria-label={`${i + 1} / ${n}`}>{s}</div>
@@ -115,14 +115,14 @@ export function Carousel({ children, 'aria-label': label, slideWidth = '100%', g
         <div className="dtx-carousel__bar">
           {indicators && (n <= MAX_DOTS
             ? <div className="dtx-carousel__dots">
-                {slides.map((_, i) => <button key={i} type="button" className="dtx-carousel__dot" aria-label={`Tới slide ${i + 1}`} aria-current={visible.includes(i) || undefined} onClick={() => show(i, 'start')} />)}
+                {slides.map((_, i) => <button key={i} type="button" className="dtx-carousel__dot" aria-label={`Go to slide ${i + 1}`} aria-current={visible.includes(i) || undefined} onClick={() => show(i, 'start')} />)}
               </div>
             : <span className="dtx-carousel__count dtx-num" aria-hidden>{range} / {n}</span>)}
           {/* aria-disabled, not disabled: the button keeps focus when the row reaches its end */}
           <div className="dtx-carousel__nav">
-            {autoPlay && <Button variant="ghost" size="sm" icon aria-label={playing ? 'Dừng tự chạy' : 'Tự chạy slide'} onClick={() => setPaused(playing)}>{playing ? <Pause aria-hidden /> : <Play aria-hidden />}</Button>}
-            <Button variant="secondary" size="sm" icon aria-label="Slide trước" aria-disabled={atStart || undefined} onClick={() => { if (!atStart) show(first - 1, 'end'); }}><ChevronLeft aria-hidden /></Button>
-            <Button variant="secondary" size="sm" icon aria-label="Slide tiếp" aria-disabled={atEnd || undefined} onClick={() => { if (!atEnd) show(last + 1, 'start'); }}><ChevronRight aria-hidden /></Button>
+            {autoPlay && <Button variant="ghost" size="sm" icon aria-label={playing ? 'Stop autoplay' : 'Start autoplay'} onClick={() => setPaused(playing)}>{playing ? <Pause aria-hidden /> : <Play aria-hidden />}</Button>}
+            <Button variant="secondary" size="sm" icon aria-label="Previous slide" aria-disabled={atStart || undefined} onClick={() => { if (!atStart) show(first - 1, 'end'); }}><ChevronLeft aria-hidden /></Button>
+            <Button variant="secondary" size="sm" icon aria-label="Next slide" aria-disabled={atEnd || undefined} onClick={() => { if (!atEnd) show(last + 1, 'start'); }}><ChevronRight aria-hidden /></Button>
           </div>
         </div>
       )}

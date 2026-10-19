@@ -19,7 +19,7 @@ export function AppShell({ sidebar, rail = false, fill, children, className }: {
   );
 }
 
-export function Sidebar({ children, 'aria-label': label = 'Điều hướng' }: { children: ReactNode; 'aria-label'?: string }) {
+export function Sidebar({ children, 'aria-label': label = 'Navigation' }: { children: ReactNode; 'aria-label'?: string }) {
   return <nav className="dtx-sidebar" aria-label={label}>{children}</nav>;
 }
 
@@ -82,6 +82,6 @@ export function Topbar({ children }: { children: ReactNode }) {
 const mac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
 /** Search box look-alike that opens a CommandPalette: pass it as the palette's `trigger`. */
-export function CommandButton({ placeholder = 'Tìm kiếm…', shortcut = mac ? '⌘ K' : 'Ctrl K', className, ...rest }: { placeholder?: string; shortcut?: string } & ComponentProps<'button'>) {
+export function CommandButton({ placeholder = 'Search…', shortcut = mac ? '⌘ K' : 'Ctrl K', className, ...rest }: { placeholder?: string; shortcut?: string } & ComponentProps<'button'>) {
   return <button type="button" className={cx('dtx-cmdk', className)} {...rest}><Search aria-hidden /><span className="dtx-cmdk__text">{placeholder}</span><Kbd>{shortcut}</Kbd></button>;
 }

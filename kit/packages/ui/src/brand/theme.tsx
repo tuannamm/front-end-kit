@@ -18,5 +18,5 @@ export function ThemeToggle() {
   const [mode, setMode] = useTheme();
   const next: Record<ThemeMode, ThemeMode> = { system: 'light', light: 'dark', dark: 'system' };
   const icon = { system: <Monitor />, light: <Sun />, dark: <Moon /> }[mode];
-  return <Button variant="secondary" icon aria-label={`Giao diện: ${mode}`} title={`Giao diện: ${mode}`} onClick={() => setMode(next[mode])}>{icon}</Button>;
+  return <Button variant="secondary" icon aria-label={`Theme: ${mode}`} title={`Theme: ${mode}`} onClick={() => setMode(next[mode])}>{icon}</Button>;
 }

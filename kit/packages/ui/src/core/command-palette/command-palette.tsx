@@ -43,8 +43,8 @@ function Panel({ items, placeholder, onPick, close }: { items: CommandItem[]; pl
       </div>
       <Autocomplete.Empty className="dtx-cmdp__empty">
         {/* role: Autocomplete.Empty is the live region already */}
-        {q ? <EmptyState size="sm" role={undefined} icon={<Search />} title={`Không tìm thấy “${q}”`}>Thử từ khoá khác hoặc ngắn hơn.</EmptyState>
-          : <EmptyState size="sm" role={undefined} title="Chưa có mục nào" />}
+        {q ? <EmptyState size="sm" role={undefined} icon={<Search />} title={`No results for “${q}”`}>Try a different or shorter keyword.</EmptyState>
+          : <EmptyState size="sm" role={undefined} title="No items yet" />}
       </Autocomplete.Empty>
       <Autocomplete.List className="dtx-cmdp__list">
         {(g: Group) => (
@@ -68,9 +68,9 @@ function Panel({ items, placeholder, onPick, close }: { items: CommandItem[]; pl
         )}
       </Autocomplete.List>
       <div className="dtx-cmdp__foot" id={hint}>
-        <span><Kbd>↑</Kbd><Kbd>↓</Kbd> chọn</span>
-        <span><Kbd>Enter</Kbd> mở</span>
-        {close && <span><Kbd>Esc</Kbd> đóng</span>}
+        <span><Kbd>↑</Kbd><Kbd>↓</Kbd> select</span>
+        <span><Kbd>Enter</Kbd> open</span>
+        {close && <span><Kbd>Esc</Kbd> close</span>}
       </div>
     </Autocomplete.Root>
   );
@@ -93,7 +93,7 @@ export type CommandPaletteProps = {
  * Ctrl/⌘+K search over pages, records and actions. Typing filters (accent-insensitive, words in any order),
  * ↑/↓ move, Enter runs the item and closes the palette.
  */
-export function CommandPalette({ items, trigger, open, defaultOpen = false, onOpenChange, placeholder = 'Tìm trang, hồ sơ, lệnh…', hotkey = true, className }: CommandPaletteProps) {
+export function CommandPalette({ items, trigger, open, defaultOpen = false, onOpenChange, placeholder = 'Search pages, records, commands…', hotkey = true, className }: CommandPaletteProps) {
   const [inner, setInner] = useState(defaultOpen);
   const isOpen = open ?? inner;
   const setOpen = (o: boolean) => { setInner(o); onOpenChange?.(o); };
@@ -114,9 +114,9 @@ export function CommandPalette({ items, trigger, open, defaultOpen = false, onOp
       {trigger && <Dialog.Trigger render={trigger} />}
       <Dialog.Portal>
         <Dialog.Backdrop className="dtx-backdrop" />
-        <Dialog.Popup className={cx('dtx-cmdp', 'dtx-cmdp--dialog', className)} aria-label="Bảng lệnh">
+        <Dialog.Popup className={cx('dtx-cmdp', 'dtx-cmdp--dialog', className)} aria-label="Command palette">
           <Panel items={items} placeholder={placeholder} onPick={() => setOpen(false)}
-            close={<Dialog.Close render={<Button variant="ghost" size="sm" icon aria-label="Đóng" />}><X aria-hidden /></Dialog.Close>} />
+            close={<Dialog.Close render={<Button variant="ghost" size="sm" icon aria-label="Close" />}><X aria-hidden /></Dialog.Close>} />
         </Dialog.Popup>
       </Dialog.Portal>
     </Dialog.Root>
@@ -126,6 +126,6 @@ export function CommandPalette({ items, trigger, open, defaultOpen = false, onOp
 export type CommandListProps = { items: CommandItem[]; placeholder?: string; className?: string };
 
 /** The palette's search and list without the dialog: a quick-jump panel on a page, or docs. */
-export function CommandList({ items, placeholder = 'Tìm trang, hồ sơ, lệnh…', className }: CommandListProps) {
+export function CommandList({ items, placeholder = 'Search pages, records, commands…', className }: CommandListProps) {
   return <div className={cx('dtx-cmdp', className)}><Panel items={items} placeholder={placeholder} /></div>;
 }

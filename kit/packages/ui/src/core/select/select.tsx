@@ -73,7 +73,7 @@ function ValueBody({ o, placeholder }: { o?: SelectOption; placeholder?: string 
  * Plain: Base UI Select (typeahead). searchable: Base UI Combobox with the input inside the popup.
  */
 export function Select(props: SelectProps) {
-  const { items, placeholder = 'Chọn…', size = 'md', className } = props;
+  const { items, placeholder = 'Select…', size = 'md', className } = props;
   const { groups, flat, byValue, itemCls } = useOptions(items);
   const trigCls = cx('dtx-select-trigger', size === 'sm' && 'dtx-select-trigger--sm', className);
   const chev = <ChevronDown className="dtx-select-chev" aria-hidden />;
@@ -130,7 +130,7 @@ export function Select(props: SelectProps) {
         {chev}
       </Combobox.Trigger>
       <ComboPopup grouped={isGroups(items)} itemCls={itemCls} label={props['aria-label'] ?? placeholder} emptyText={props.emptyText}>
-        <div className="dtx-select-search"><Search aria-hidden /><Combobox.Input placeholder={props.searchPlaceholder ?? 'Tìm…'} /></div>
+        <div className="dtx-select-search"><Search aria-hidden /><Combobox.Input placeholder={props.searchPlaceholder ?? 'Search…'} /></div>
       </ComboPopup>
     </Combobox.Root>
   );
@@ -147,7 +147,7 @@ export type MultiSelectProps = Omit<SelectProps, 'value' | 'defaultValue' | 'onV
  * Typing in the box filters accent-insensitively; Backspace removes the last chip, ←/→ move between chips.
  */
 export function MultiSelect(props: MultiSelectProps) {
-  const { items, placeholder = 'Chọn…', size = 'md', className } = props;
+  const { items, placeholder = 'Select…', size = 'md', className } = props;
   const { groups, flat, byValue, itemCls } = useOptions(items);
   const toOptions = (vs?: string[]) => vs?.flatMap(v => byValue.get(v) ?? []);
   return (
@@ -166,18 +166,18 @@ export function MultiSelect(props: MultiSelectProps) {
       <Combobox.InputGroup className={cx('dtx-select-trigger dtx-ms', size === 'sm' && 'dtx-select-trigger--sm', className)}>
         <Combobox.Value>
           {(v: SelectOption[]) => (
-            <Combobox.Chips className="dtx-chips" aria-label={v.length ? 'Đã chọn' : undefined}>
+            <Combobox.Chips className="dtx-chips" aria-label={v.length ? 'Selected' : undefined}>
               {v.map(o => (
                 <Combobox.Chip key={o.value} className="dtx-badge dtx-badge--surface dtx-badge--lg dtx-tone-neutral dtx-ms__chip" aria-label={o.label}>
                   <span>{o.label}</span>
-                  <Combobox.ChipRemove className="dtx-badge__remove" aria-label={`Bỏ chọn ${o.label}`}><X size={10} strokeWidth={2.5} /></Combobox.ChipRemove>
+                  <Combobox.ChipRemove className="dtx-badge__remove" aria-label={`Remove ${o.label}`}><X size={10} strokeWidth={2.5} /></Combobox.ChipRemove>
                 </Combobox.Chip>
               ))}
               <Combobox.Input className="dtx-ms__input" placeholder={v.length ? undefined : placeholder} aria-label={props['aria-label']} />
             </Combobox.Chips>
           )}
         </Combobox.Value>
-        <Combobox.Trigger className="dtx-ms__toggle" aria-label="Mở danh sách"><ChevronDown className="dtx-select-chev" aria-hidden /></Combobox.Trigger>
+        <Combobox.Trigger className="dtx-ms__toggle" aria-label="Open list"><ChevronDown className="dtx-select-chev" aria-hidden /></Combobox.Trigger>
       </Combobox.InputGroup>
       <ComboPopup grouped={isGroups(items)} itemCls={itemCls} label={props['aria-label'] ?? placeholder} emptyText={props.emptyText} />
     </Combobox.Root>
@@ -191,7 +191,7 @@ function ComboPopup({ grouped, itemCls, label, emptyText, children }: { grouped:
       <Combobox.Positioner className="dtx-select-positioner" sideOffset={6} align="start">
         <Combobox.Popup className="dtx-select-popup" aria-label={label}>
           {children}
-          <Combobox.Empty className="dtx-select-empty">{emptyText ?? 'Không tìm thấy kết quả'}</Combobox.Empty>
+          <Combobox.Empty className="dtx-select-empty">{emptyText ?? 'No results found'}</Combobox.Empty>
           <Combobox.List>
             {grouped
               ? (g: { value: string; items: SelectOption[] }) => (

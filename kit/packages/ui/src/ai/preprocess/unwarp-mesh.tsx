@@ -110,7 +110,7 @@ function rectToQuad(w: number, h: number, [p0, p1, p2, p3]: [P, P, P, P]) {
  * regular place) while the points travel with it. Ends exactly on the unwarped image; the aligned points hold, then fade.
  * `grid` is the /unwarp lattice on the raw image.
  */
-export function UnwarpView({ raw, unwarped, grid, applied, duration = 1800, hold = 500, alt = 'Trang tài liệu' }: {
+export function UnwarpView({ raw, unwarped, grid, applied, duration = 1800, hold = 500, alt = 'Document page' }: {
   raw: Img; unwarped: Img; grid: UnwarpGrid; applied: boolean; duration?: number;
   /** ms the complete lattice stays on the raw page before the stretch starts, even if `applied` turns true earlier */
   hold?: number; alt?: string;

@@ -11,7 +11,7 @@ import { normalizeOcr, type NormalizedOcr, type OcrDocument } from './types';
 
 export type OcrStage = PreprocessEffect | 'detect' | 'recognize' | 'layout' | 'extract';
 export const ocrStageLabels: Record<OcrStage, string> = {
-  ...preprocessLabels, detect: 'Phát hiện chữ (OCR_det)', recognize: 'Nhận dạng (OCR_rec)', layout: 'Phân tích bố cục', extract: 'Trích xuất trường',
+  ...preprocessLabels, detect: 'Detect text (OCR_det)', recognize: 'Recognize text (OCR_rec)', layout: 'Layout analysis', extract: 'Extract fields',
 };
 const PRE: PreprocessEffect[] = ['crop', 'unwarp', 'deskew', 'denoise', 'binarize', 'grayscale'];
 const isPre = (s: OcrStage): s is PreprocessEffect => (PRE as string[]).includes(s);
@@ -65,7 +65,7 @@ export function OcrShowcase({ data, page, stages = ['unwarp', 'binarize', 'detec
   const linked = new Set(norm.fields.map(f => f.lineId).filter(Boolean) as string[]);
   const selected = hover ?? null;
 
-  const pageEl = doc?.image ? <img src={doc.image.src} alt={doc.fileName ?? 'Trang tài liệu'} width={doc.image.width} height={doc.image.height} style={{ display: 'block', width: '100%', height: 'auto' }} /> : page;
+  const pageEl = doc?.image ? <img src={doc.image.src} alt={doc.fileName ?? 'Document page'} width={doc.image.width} height={doc.image.height} style={{ display: 'block', width: '100%', height: 'auto' }} /> : page;
   const boxes = layoutOn ? norm.regions : extracted ? norm.lines.filter(l => linked.has(l.id) || !linked.size) : norm.lines;
   const overlay = detected || layoutOn
     ? <BoxOverlay key={`${current}-${i}`} boxes={boxes} colorBy={layoutOn ? 'kind' : recognized ? 'confidence' : 'plain'} showLabels={layoutOn} hideText={!recognized} thresholds={thresholds} selectedId={selected} animate={!reduced}>{pageEl}</BoxOverlay>
@@ -73,8 +73,8 @@ export function OcrShowcase({ data, page, stages = ['unwarp', 'binarize', 'detec
   const pre = stages.filter(isPre);
   const pagePipeline = <PreprocessStack steps={pre} isDone={done} current={current && isPre(current) ? current : null} scan={scan && !reduced} scanMs={interval * .8}>{overlay}</PreprocessStack>;
   const scanning = scan && current === 'detect' && !reduced;
-  const status = i === 0 ? <Badge tone="neutral" size="sm">Ảnh gốc</Badge>
-    : i >= stages.length ? <Badge tone="ok" size="sm" variant="surface">Hoàn tất</Badge>
+  const status = i === 0 ? <Badge tone="neutral" size="sm">Original</Badge>
+    : i >= stages.length ? <Badge tone="ok" size="sm" variant="surface">Done</Badge>
     : <Badge size="sm" live>{ocrStageLabels[stages[i]]}</Badge>;
 
   return (
@@ -83,14 +83,14 @@ export function OcrShowcase({ data, page, stages = ['unwarp', 'binarize', 'detec
         <div className="dtx-showcase__title"><b>{title ?? doc?.engine ?? 'DIGI-XTRACT'}</b><span>{doc?.fileName}</span></div>
         {status}
         <div className="dtx-showcase__ctrl">
-          <Button variant="ghost" size="sm" icon aria-label="Bước trước" onClick={() => { setPlaying(false); set(i - 1); }} disabled={i === 0}><ChevronLeft /></Button>
-          <Button variant="secondary" size="sm" icon aria-label={playing ? 'Tạm dừng' : 'Phát'} onClick={() => { if (i >= stages.length) set(0); setPlaying(p => !p); }} disabled={controlled !== undefined}>{playing ? <Pause /> : <Play />}</Button>
-          <Button variant="ghost" size="sm" icon aria-label="Bước sau" onClick={() => { setPlaying(false); set(i + 1); }} disabled={i >= stages.length}><ChevronRight /></Button>
-          <Button variant="ghost" size="sm" icon aria-label="Về ảnh gốc" onClick={() => { setPlaying(false); set(0); }}><RotateCcw /></Button>
+          <Button variant="ghost" size="sm" icon aria-label="Previous step" onClick={() => { setPlaying(false); set(i - 1); }} disabled={i === 0}><ChevronLeft /></Button>
+          <Button variant="secondary" size="sm" icon aria-label={playing ? 'Pause' : 'Play'} onClick={() => { if (i >= stages.length) set(0); setPlaying(p => !p); }} disabled={controlled !== undefined}>{playing ? <Pause /> : <Play />}</Button>
+          <Button variant="ghost" size="sm" icon aria-label="Next step" onClick={() => { setPlaying(false); set(i + 1); }} disabled={i >= stages.length}><ChevronRight /></Button>
+          <Button variant="ghost" size="sm" icon aria-label="Back to original" onClick={() => { setPlaying(false); set(0); }}><RotateCcw /></Button>
         </div>
       </div>
-      <ol className="dtx-showcase__steps" aria-label="Các bước xử lý">
-        <li data-state={i === 0 ? 'current' : 'done'}><button type="button" onClick={() => { setPlaying(false); set(0); }}>Ảnh gốc</button></li>
+      <ol className="dtx-showcase__steps" aria-label="Processing steps">
+        <li data-state={i === 0 ? 'current' : 'done'}><button type="button" onClick={() => { setPlaying(false); set(0); }}>Original</button></li>
         {stages.map((s, n) => (
           <li key={s} data-state={n < i ? 'done' : n === i ? 'next' : 'todo'} aria-current={n === i - 1 ? 'step' : undefined}>
             <button type="button" onClick={() => { setPlaying(false); set(n + 1); }}>{n < i && <Check size={11} strokeWidth={3} />}{ocrStageLabels[s]}</button>
@@ -102,10 +102,10 @@ export function OcrShowcase({ data, page, stages = ['unwarp', 'binarize', 'detec
           <ScanBeam key={i} active={scanning} duration={interval}>{pagePipeline}</ScanBeam>
         </div>
         <aside className="dtx-showcase__panel" aria-live="polite">
-          {i === 0 && <p className="dtx-showcase__hint">Ảnh đầu vào. Nhấn Phát hoặc chọn một bước.</p>}
-          {current && isPre(current) && <p className="dtx-showcase__hint">{ocrStageLabels[current]}: chuẩn hoá ảnh trước khi nhận dạng.</p>}
-          {current === 'detect' && <p className="dtx-showcase__hint"><b>{norm.lines.length}</b> vùng chữ được phát hiện.</p>}
-          {current === 'layout' && <p className="dtx-showcase__hint"><b>{norm.regions.length}</b> vùng bố cục.</p>}
+          {i === 0 && <p className="dtx-showcase__hint">Input image. Press Play or choose a step.</p>}
+          {current && isPre(current) && <p className="dtx-showcase__hint">{ocrStageLabels[current]}: normalize the image before recognition.</p>}
+          {current === 'detect' && <p className="dtx-showcase__hint"><b>{norm.lines.length}</b> text regions detected.</p>}
+          {current === 'layout' && <p className="dtx-showcase__hint"><b>{norm.regions.length}</b> layout regions.</p>}
           {(current === 'recognize' || current === 'layout') && (
             <ul className="dtx-showcase__list">
               {norm.lines.map((l, n) => (

@@ -30,8 +30,8 @@ export function describeError(src: string | Blob, fileName?: string): ImageError
   const name = fileName ?? (typeof src === 'string' ? src.split(/[?#]/)[0] : (src as File).name ?? '');
   const type = typeof src === 'string' ? '' : src.type;
   if (UNDRAWABLE.test(name) || UNDRAWABLE.test(type)) {
-    return { title: 'Trình duyệt này không hiển thị được ảnh TIFF hoặc HEIC.', hint: 'Chuyển ảnh sang PNG hoặc JPEG rồi mở lại.', retry: false };
+    return { title: 'This browser cannot display TIFF or HEIC images.', hint: 'Convert the image to PNG or JPEG, then open it again.', retry: false };
   }
-  if (typeof src !== 'string') return { title: 'File không phải ảnh hợp lệ hoặc đã bị hỏng.', hint: 'Mở thử file gốc trên máy, hoặc xuất lại ảnh dạng PNG, JPEG hay WebP.', retry: false };
-  return { title: 'Không tải được ảnh.', hint: 'Kiểm tra đường dẫn, quyền truy cập và kết nối mạng rồi thử lại.', retry: true };
+  if (typeof src !== 'string') return { title: 'The file is not a valid image or is corrupted.', hint: 'Open the original file on your computer, or export the image again as PNG, JPEG or WebP.', retry: false };
+  return { title: 'Could not load the image.', hint: 'Check the path, access permissions and network connection, then try again.', retry: true };
 }

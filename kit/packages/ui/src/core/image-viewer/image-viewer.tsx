@@ -141,21 +141,21 @@ export function ImageViewer({ src, alt, fileName, defaultZoom = 'fit', download 
     return () => el.removeEventListener('wheel', onWheel);
   });
 
-  const name = fileName ?? 'Ảnh';
+  const name = fileName ?? 'Image';
   return (
     <div className={cx('dtx-img', className)}>
-      <div className="dtx-img__bar" role="toolbar" aria-label={`Điều khiển ${name}`}>
+      <div className="dtx-img__bar" role="toolbar" aria-label={`Controls for ${name}`}>
         {fileName && <span className="dtx-img__name" title={fileName}><FileImage aria-hidden /><span>{fileName}</span></span>}
         <div className="dtx-img__group">
-          <Tool label="Thu nhỏ" onClick={() => zoomTo(stepZoom(scale, -1, zoomStops(fit)))} disabled={!ready || scale <= min + 0.0005}><Minus aria-hidden /></Tool>
+          <Tool label="Zoom out" onClick={() => zoomTo(stepZoom(scale, -1, zoomStops(fit)))} disabled={!ready || scale <= min + 0.0005}><Minus aria-hidden /></Tool>
           <span className="dtx-img__zoom dtx-num" aria-live="polite">{ready ? `${Math.round(scale * 100)}%` : '–'}</span>
-          <Tool label="Phóng to" onClick={() => zoomTo(stepZoom(scale, 1, zoomStops(fit)))} disabled={!ready || scale >= ZOOM_MAX - 0.0005}><Plus aria-hidden /></Tool>
-          <Tool label="Vừa khung" aria-pressed={zoom === 'fit'} onClick={() => zoomTo(zoom === 'fit' ? 1 : 'fit')} disabled={!ready}><Maximize aria-hidden /></Tool>
-          <Tool label="Xoay phải 90°" onClick={turn} disabled={!ready}><RotateCw aria-hidden /></Tool>
+          <Tool label="Zoom in" onClick={() => zoomTo(stepZoom(scale, 1, zoomStops(fit)))} disabled={!ready || scale >= ZOOM_MAX - 0.0005}><Plus aria-hidden /></Tool>
+          <Tool label="Fit" aria-pressed={zoom === 'fit'} onClick={() => zoomTo(zoom === 'fit' ? 1 : 'fit')} disabled={!ready}><Maximize aria-hidden /></Tool>
+          <Tool label="Rotate 90°" onClick={turn} disabled={!ready}><RotateCw aria-hidden /></Tool>
         </div>
         {download && ready && <>
           <i className="dtx-img__sep" aria-hidden />
-          <Tooltip content="Tải xuống"><Button variant="ghost" size="sm" icon href={state.url} download={fileName ?? ''} aria-label={`Tải xuống ${name}`}><Download aria-hidden /></Button></Tooltip>
+          <Tooltip content="Download"><Button variant="ghost" size="sm" icon href={state.url} download={fileName ?? ''} aria-label={`Download ${name}`}><Download aria-hidden /></Button></Tooltip>
         </>}
       </div>
       <div
@@ -203,14 +203,14 @@ export function ImageViewer({ src, alt, fileName, defaultZoom = 'fit', download 
           </div>
         ) : state.status === 'loading' ? (
           <div className="dtx-img__state" role="status">
-            <span>Đang mở ảnh…</span>
+            <span>Opening image…</span>
             <Skeleton width={Math.max(0, Math.min(box.w - 2 * PAD, 480))} height={Math.max(0, Math.min(box.w - 2 * PAD, 480)) * 0.75} radius={2} />
           </div>
         ) : state.status === 'error' ? (
           <EmptyState size="sm" tone="err" title={state.error.title}
-            action={state.error.retry && <Button variant="secondary" size="sm" onClick={() => setAttempt(a => a + 1)}>Thử lại</Button>}>{state.error.hint}</EmptyState>
+            action={state.error.retry && <Button variant="secondary" size="sm" onClick={() => setAttempt(a => a + 1)}>Retry</Button>}>{state.error.hint}</EmptyState>
         ) : (
-          <EmptyState size="sm" icon={<ImageIcon />} title="Chưa có ảnh">Chọn một ảnh để xem tại đây.</EmptyState>
+          <EmptyState size="sm" icon={<ImageIcon />} title="No image yet">Choose an image to view it here.</EmptyState>
         )}
       </div>
     </div>

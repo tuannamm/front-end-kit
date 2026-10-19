@@ -18,7 +18,7 @@ export function Skeleton({ width = '100%', height = 10, radius, className }: { w
   return <span className={cx('dtx-skeleton', className)} style={{ width, height, borderRadius: radius }} aria-hidden />;
 }
 
-export function SkeletonText({ lines = 3, label = 'Đang tải' }: { lines?: number; label?: string }) {
+export function SkeletonText({ lines = 3, label = 'Loading' }: { lines?: number; label?: string }) {
   const widths = ['40%', '100%', '70%', '85%', '60%'];
   return (
     <div className="dtx-skeleton-stack" role="status" aria-label={label}>

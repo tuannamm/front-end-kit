@@ -22,7 +22,7 @@ export type BadgeProps = ComponentProps<'span'> & {
   removeLabel?: string;
 };
 
-export function Badge({ tone = 'brand', variant = 'soft', size = 'md', pill, dot, live, icon, onRemove, removeLabel = 'Xoá', className, children, ...rest }: BadgeProps) {
+export function Badge({ tone = 'brand', variant = 'soft', size = 'md', pill, dot, live, icon, onRemove, removeLabel = 'Remove', className, children, ...rest }: BadgeProps) {
   return (
     <span className={cx('dtx-badge', `dtx-tone-${tone}`, variant !== 'soft' && `dtx-badge--${variant}`, size !== 'md' && `dtx-badge--${size}`, pill && 'dtx-badge--pill', className)} {...rest}>
       {(dot || live) && <i className={cx('dtx-dot', live && 'dtx-dot--live')} aria-hidden />}

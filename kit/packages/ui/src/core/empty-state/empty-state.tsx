@@ -4,7 +4,7 @@ import { mascotUrl } from '../../brand/logo';
 import { toneIcon } from '../badge/badge';
 
 export type EmptyStateProps = Omit<ComponentProps<'div'>, 'title'> & {
-  /** What the user is looking at, e.g. "Chưa có lô nào", "Không tìm thấy “HD-99”". */
+  /** What the user is looking at, e.g. "No batches yet", "No results for “HD-99”". */
   title: ReactNode;
   /** What to do next. */
   children?: ReactNode;

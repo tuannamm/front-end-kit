@@ -6,7 +6,7 @@ export type SplitterPanel = PanelLimits & {
   content: ReactNode;
   /** Starting size: px, or '30%'. Panels without one share the rest. Restore a saved layout through this. */
   defaultSize?: PanelSize;
-  /** Names the panel for the handle before it ("Đổi kích thước: Danh sách"). */
+  /** Names the panel for the handle before it ("Resize: List"). */
   label?: string;
 };
 
@@ -118,7 +118,7 @@ export function Splitter({ panels, orientation = 'horizontal', onResize, onResiz
               <div
                 className="dtx-splitter__handle" role="separator" tabIndex={0}
                 aria-orientation={horizontal ? 'vertical' : 'horizontal'} aria-controls={`${id}-${i - 1}`}
-                aria-label={`Đổi kích thước: ${panels[i - 1].label ?? `khung ${i}`}`}
+                aria-label={`Resize: ${panels[i - 1].label ?? `panel ${i}`}`}
                 aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}
                 data-dragging={dragging === i - 1 ? '' : undefined}
                 onPointerDown={onPointerDown(i - 1)} onKeyDown={onKeyDown(i - 1)} onDoubleClick={() => fold(i - 1)}
