@@ -5,7 +5,7 @@ A scrolling column of PDF pages with page navigation, zoom and download. Built o
 ```tsx
 import { PdfViewer } from '@dgtx/ui-frek';
 
-<PdfViewer src="/files/hop-dong.pdf" fileName="hop-dong.pdf" />
+<PdfViewer src="/files/contract.pdf" fileName="contract.pdf" />
 
 // a File from FileDropzone or an <input type="file">: nothing is uploaded
 <PdfViewer src={file} fileName={file?.name} className="h-[70vh]" />
@@ -36,16 +36,16 @@ ScanBeam, FieldLink. The wrapper zooms with the page; `index` picks that page's 
 - **Drawing:** every page size is read on open, so the scroll height is right at once. Pages within one viewport of the
   visible area are drawn to a canvas at the screen's pixel ratio; pages further away release theirs. A zoom draws the
   new canvas off-screen and swaps it in, so pages never flash blank. Canvases are capped at 16.7M pixels (iOS limit).
-- **Zoom:** −/+ step through 25–400% presets. "Vừa chiều rộng" (`'fit'`) fits every page to the width, portrait and
+- **Zoom:** −/+ step through 25–400% presets. "Fit width" (`'fit'`) fits every page to the width, portrait and
   landscape alike, and follows the container width; the label shows the current page's scale. Pressing it again goes
   to 100%. Zooming keeps the spot at the top of the view.
 - **Page box:** type a number and press Enter (or leave the box); Escape restores it. The current page is the one a third
   of the way down the view, or the last page once scrolled to the bottom.
 - **States:** loading (with a percentage when the server sends a length), empty, and an error that says what failed
-  and how to recover: password, not a PDF, HTTP 404 or other status, network. "Thử lại" appears only when retrying can help.
+  and how to recover: password, not a PDF, HTTP 404 or other status, network. "Retry" appears only when retrying can help.
   A page that fails to draw says so in place.
 - **Accessibility:** the toolbar is a `toolbar`, icon buttons have names and tooltips, the page area is a focusable
-  `region` (arrow keys and Page Up/Down scroll). Pages are `role="img"` named "Trang 3 / 12": there is no text layer yet,
+  `region` (arrow keys and Page Up/Down scroll). Pages are `role="img"` named "Page 3 / 12": there is no text layer yet,
   so text cannot be selected, searched or read aloud.
 - Pages are paper: white in both themes, edged with a hairline on the sunken surface.
 - Size the viewer from outside (`className` with a height, or a flex parent); the default height is 640px.

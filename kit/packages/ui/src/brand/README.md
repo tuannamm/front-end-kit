@@ -5,7 +5,7 @@ DIGI-TEXX identity pieces from the Branding Guidelines PDF: logo, headline type,
 ```tsx
 import { Logo, Display, Lede, TechBackdrop } from '@dgtx/ui-frek';
 
-<TechBackdrop><Logo variant="horizontal-white" /><Display>Số hoá <em>thông minh</em></Display><Lede>…</Lede></TechBackdrop>
+<TechBackdrop><Logo variant="horizontal-white" /><Display>Smart <em>digitisation</em></Display><Lede>…</Lede></TechBackdrop>
 ```
 
 ## Props

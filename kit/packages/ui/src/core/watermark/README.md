@@ -6,12 +6,12 @@ when, so a screenshot or a photo of the screen can be traced.
 ```tsx
 import { Watermark } from '@dgtx/ui-frek';
 
-<Watermark content={['DIGI-TEXX · Tài liệu mật', `${user.name} · ${shortTime(new Date())}`]}>
+<Watermark content={['DIGI-TEXX · Confidential', `${user.name} · ${shortTime(new Date())}`]}>
   <RecordDetail />
 </Watermark>
 
 // a draft: one big word, wider apart
-<Watermark content="BẢN NHÁP" fontSize={28} rotate={-30} gap={[160, 120]}>…</Watermark>
+<Watermark content="DRAFT" fontSize={28} rotate={-30} gap={[160, 120]}>…</Watermark>
 ```
 
 ## Notes

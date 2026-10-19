@@ -1,3 +1,94 @@
+/**
+ * # Select · MultiSelect
+ *
+ * One API for every dropdown. A flat list, groups, icons, descriptions and search can be mixed freely.
+ *
+ * ```tsx
+ * import { Select, MultiSelect, Field } from '@dgtx/ui-frek';
+ *
+ * <Field label="Record type">
+ *   <Select items={types} value={type} onValueChange={setType} />
+ * </Field>
+ *
+ * <Select searchable items={[{ label: 'Insurance', items: insurance }, { label: 'Banking', items: banks }]} aria-label="Partner" />
+ *
+ * <MultiSelect items={tags} value={selected} onValueChange={setSelected} aria-label="Tags" />
+ * ```
+ *
+ * ## Notes
+ *
+ * - Without search it is a Base UI Select (typeahead works). With `searchable` it is a Base UI Combobox,
+ *   with the search input inside the popup.
+ * - Search ignores accents: "cafe" matches "Café" (and Vietnamese đ matches d). It searches the label and the description.
+ * - MultiSelect shows chips in the trigger. Typing filters the list, Backspace removes the last chip, and ←/→ move between chips.
+ * - Without a visible `<Field label>`, pass `aria-label`.
+ * - The popup sits at z-index 65, above Dialog and Drawer (60–61), so a Select inside them opens on top.
+ *   DatePicker, DateRangePicker and Tooltip reuse `.dtx-select-positioner` and `.dtx-select-popup`.
+ * - On touch devices the MultiSelect input is 16px, so iOS does not zoom in.
+ *
+ * ## Props
+ *
+ * ### Select
+ *
+ * | Prop | Type | Default | Description |
+ * |---|---|---|---|
+ * | `items` | `SelectOption[] \| SelectGroup[]` | **required** | Flat options, or groups with headings |
+ * | `value` | `string \| null` |  | Controlled value |
+ * | `defaultValue` | `string \| null` |  | Initial value when uncontrolled |
+ * | `onValueChange` | `(value: string \| null) => void` |  |  |
+ * | `searchable` | `boolean` |  | Adds an accent-insensitive search box in the popup |
+ * | `searchPlaceholder` | `string` | `'Search…'` | With `searchable` |
+ * | `placeholder` | `string` | `'Select…'` | Shown while nothing is selected |
+ * | `emptyText` | `string` | `'No results found'` | Shown when the filter matches nothing |
+ * | `size` | `'sm' \| 'md'` | `'md'` | 32 · 40px tall |
+ * | `disabled` | `boolean` |  |  |
+ * | `aria-label` | `string` |  | Accessible name when there is no visible `<Field label>` |
+ * | `className` | `string` |  | On the trigger |
+ *
+ * ### MultiSelect
+ *
+ * | Prop | Type | Default | Description |
+ * |---|---|---|---|
+ * | `items` | `SelectOption[] \| SelectGroup[]` | **required** | Same as Select |
+ * | `value` | `string[]` |  | Controlled values |
+ * | `defaultValue` | `string[]` |  | Initial values when uncontrolled |
+ * | `onValueChange` | `(value: string[]) => void` |  |  |
+ * | `placeholder` | `string` | `'Select…'` | Shown while nothing is selected |
+ * | `emptyText` | `string` | `'No results found'` | Shown when the filter matches nothing |
+ * | `size` | `'sm' \| 'md'` | `'md'` | 32 · 40px tall |
+ * | `disabled` | `boolean` |  |  |
+ * | `aria-label` | `string` |  | Accessible name of the filter input |
+ * | `className` | `string` |  | On the chip box |
+ *
+ * ### SelectOption
+ *
+ * | Prop | Type | Default | Description |
+ * |---|---|---|---|
+ * | `value` | `string` | **required** |  |
+ * | `label` | `string` | **required** | Text; also what typeahead and search match |
+ * | `description` | `string` |  | Second line under the label; search matches it too |
+ * | `icon` | `ReactNode` |  | Shown in a tinted tile |
+ * | `tone` | `Tone` |  | Tint of the icon tile |
+ * | `disabled` | `boolean` |  |  |
+ *
+ * ### SelectGroup
+ *
+ * | Prop | Type | Default | Description |
+ * |---|---|---|---|
+ * | `label` | `string` | **required** | Group heading |
+ * | `items` | `SelectOption[]` | **required** |  |
+ *
+ * ## Files
+ *
+ * - `select.tsx`: Select, MultiSelect, `SelectOption`, `SelectGroup`
+ * - `select.css`: `.dtx-select-*`, `.dtx-chips`, `.dtx-ms*`. Load it after `badge.css` (chips are badges)
+ *   and before `date-picker.css` (which resizes the popup).
+ *
+ * Catalog: `#/catalog/select`, `#/catalog/multiselect`
+ *
+ * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ */
+
 import { Fragment, useMemo, type ReactNode } from 'react';
 import { Select as BSelect } from '@base-ui/react/select';
 import { Combobox } from '@base-ui/react/combobox';

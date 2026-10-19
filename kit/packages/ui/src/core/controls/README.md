@@ -5,14 +5,14 @@ Small Base UI controls.
 ```tsx
 import { Switch, Tabs, Segmented, Tooltip, TooltipProvider } from '@dgtx/ui-frek';
 
-<Switch label="Tự động duyệt" checked={auto} onCheckedChange={setAuto} />
+<Switch label="Auto-approve" checked={auto} onCheckedChange={setAuto} />
 
-<Tabs items={[{ value: 'info', label: 'Thông tin', content: <Info /> }, { value: 'log', label: 'Nhật ký', content: <Log /> }]} />
+<Tabs items={[{ value: 'info', label: 'Details', content: <Info /> }, { value: 'log', label: 'Log', content: <Log /> }]} />
 
-<Segmented aria-label="Khoảng thời gian" options={[{ value: '7d', label: '7 ngày' }, { value: '30d', label: '30 ngày' }]} onValueChange={setRange} />
+<Segmented aria-label="Time range" options={[{ value: '7d', label: '7 days' }, { value: '30d', label: '30 days' }]} onValueChange={setRange} />
 
 <TooltipProvider>                                  {/* once, at the app root */}
-  <Tooltip content="Tìm kiếm" shortcut="⌘K"><Button icon aria-label="Tìm kiếm"><Search /></Button></Tooltip>
+  <Tooltip content="Search" shortcut="⌘K"><Button icon aria-label="Search"><Search /></Button></Tooltip>
 </TooltipProvider>
 ```
 

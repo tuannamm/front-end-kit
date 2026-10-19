@@ -6,11 +6,11 @@ tonight. It is never a field error (use `<Field error>`) and never news of a mom
 ```tsx
 import { Alert, Button } from '@dgtx/ui-frek';
 
-<Alert tone="err" title="Không lưu được hồ sơ HS-0142" action={<Button size="sm" onClick={save}>Lưu lại</Button>}>
-  Mất kết nối máy chủ. Dữ liệu vẫn còn trên máy này.
+<Alert tone="err" title="Could not save record HS-0142" action={<Button size="sm" onClick={save}>Save again</Button>}>
+  Lost connection to the server. The data is still on this device.
 </Alert>
 
-<Alert tone="warn" title="Lô HD-5517 có thể trễ hạn SLA 16:15" onClose={() => setHidden(true)} />
+<Alert tone="warn" title="Batch HD-5517 may miss the 16:15 SLA" onClose={() => setHidden(true)} />
 ```
 
 ## Notes
@@ -35,7 +35,7 @@ import { Alert, Button } from '@dgtx/ui-frek';
 | `icon` | `ReactNode \| false` |  | Replaces the tone's icon; `false` hides it |
 | `action` | `ReactNode` |  | Buttons under the text |
 | `onClose` | `() => void` |  | Shows a close button |
-| `closeLabel` | `string` | `'Đóng'` | Accessible name of the close button |
+| `closeLabel` | `string` | `'Close'` | Accessible name of the close button |
 | `className` | `string` |  | Extra classes |
 
 Plus every `<div>` prop (`role`, `id`, `aria-*`).

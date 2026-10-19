@@ -5,9 +5,9 @@ Page structure: `Card` for a section of a page, and the app frame (`AppShell` wi
 ```tsx
 import { AppShell, Sidebar, SidebarGroup, SidebarItem, Topbar, Card, CardHeader, CardBody } from '@dgtx/ui-frek';
 
-<AppShell sidebar={<Sidebar><SidebarGroup label="Vận hành"><SidebarItem href="#/" icon={<LayoutDashboard />} label="Tổng quan" active /></SidebarGroup></Sidebar>}>
+<AppShell sidebar={<Sidebar><SidebarGroup label="Operations"><SidebarItem href="#/" icon={<LayoutDashboard />} label="Overview" active /></SidebarGroup></Sidebar>}>
   <Topbar>…</Topbar>
-  <Card><CardHeader title="Lô gần đây" /><CardBody>…</CardBody></Card>
+  <Card><CardHeader title="Recent batches" /><CardBody>…</CardBody></Card>
 </AppShell>
 ```
 
@@ -52,7 +52,7 @@ Plus every `<div>` attribute.
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `children` | `ReactNode` | **required** | Workspace, groups, footer |
-| `aria-label` | `string` | `'Điều hướng'` | Name of the `<nav>` |
+| `aria-label` | `string` | `'Navigation'` | Name of the `<nav>` |
 
 ### SidebarWorkspace
 
@@ -102,7 +102,7 @@ Plus every `<a>` attribute (`href`, `onClick`…).
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `placeholder` | `string` | `'Tìm kiếm…'` | Text in the box |
+| `placeholder` | `string` | `'Search…'` | Text in the box |
 | `shortcut` | `string` | `'Ctrl K'` (`'⌘ K'` on Apple) | Key hint; CommandPalette binds the key |
 | `className` | `string` |  | Extra classes |
 

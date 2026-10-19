@@ -5,9 +5,9 @@ On/off choices with a clickable label.
 ```tsx
 import { Checkbox, CheckboxGroup, RadioGroup } from '@dgtx/ui-frek';
 
-<Checkbox label="Tôi đồng ý với điều khoản" required error={errors.terms} />
-<CheckboxGroup label="Thông báo" options={channels} selectAll="Tất cả kênh" defaultValue={['email']} />
-<RadioGroup label="Hình thức" options={modes} row value={mode} onValueChange={setMode} />
+<Checkbox label="I agree to the terms" required error={errors.terms} />
+<CheckboxGroup label="Notifications" options={channels} selectAll="All channels" defaultValue={['email']} />
+<RadioGroup label="Mode" options={modes} row value={mode} onValueChange={setMode} />
 ```
 
 | Use | When |

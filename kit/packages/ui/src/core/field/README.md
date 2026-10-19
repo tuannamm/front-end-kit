@@ -6,11 +6,11 @@
 ```tsx
 import { Field, Input } from '@dgtx/ui-frek';
 
-<Field label="Họ và tên" description="Như trên CCCD" error={errors.name}>
+<Field label="Full name" description="As on your ID card" error={errors.name}>
   <Input name="name" required />
 </Field>
 
-<Field label="Lý do từ chối" description="Đội scan sẽ thấy ghi chú này.">
+<Field label="Rejection reason" description="The scan team will see this note.">
   <Textarea name="reason" maxLength={500} />
 </Field>
 ```
@@ -23,7 +23,7 @@ import { Field, Input } from '@dgtx/ui-frek';
   DateRangePicker and FileDropzone use them for the same layout.
 - `Textarea` starts at `rows` lines (3) and grows with its text up to `maxRows` (12), then scrolls. Growth uses CSS
   `field-sizing: content` (Chromium). Safari and Firefox keep the `rows` height with a resize handle.
-- `maxLength` adds a "120 / 500" counter that turns darker in the last 10%. Screen readers hear "Còn N ký tự" only in
+- `maxLength` adds a "120 / 500" counter that turns darker in the last 10%. Screen readers hear "N characters left" only in
   the last 20 characters, and once at the limit; the browser itself stops input there.
 - On touch devices `Input` and `Textarea` use 16px text, so iOS does not zoom in.
 - The `:focus-visible` rule also styles `.dtx-select-trigger`, so Select and Input focus look the same.
@@ -44,7 +44,7 @@ import { Field, Input } from '@dgtx/ui-frek';
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `placeholder` | `string` |  | Example of the expected text, e.g. "Nguyễn Văn A". Never instead of a label |
+| `placeholder` | `string` |  | Example of the expected text, e.g. "John Smith". Never instead of a label |
 | `className` | `string` |  | Extra classes |
 
 Plus every `<input>` prop (Base UI `Input`): `value`, `onChange`, `name`, `type`, `required`…
@@ -56,7 +56,7 @@ Plus every `<input>` prop (Base UI `Input`): `value`, `onChange`, `name`, `type`
 | `rows` | `number` | `3` | Starting (and minimum) height in lines |
 | `maxRows` | `number` | `12` | Grows up to this many lines, then scrolls |
 | `maxLength` | `number` |  | Character limit; shows the counter |
-| `placeholder` | `string` |  | Example of the expected text, e.g. "Ví dụ: trang 4 bị mờ". Never instead of a label |
+| `placeholder` | `string` |  | Example of the expected text, e.g. "Example: page 4 is blurry". Never instead of a label |
 | `value` | `string` |  | Controlled text |
 | `defaultValue` | `string` |  | Initial text when uncontrolled |
 | `onChange` | `(e: ChangeEvent<HTMLTextAreaElement>) => void` |  | Every edit |

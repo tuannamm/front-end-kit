@@ -5,9 +5,9 @@ The kit's only button. Renders a `<button type="button">`, or an `<a>` when `hre
 ```tsx
 import { Button } from '@dgtx/ui-frek';
 
-<Button onClick={save}>Lưu</Button>
-<Button variant="secondary" href="/reports">Xem báo cáo</Button>
-<Button variant="ghost" size="sm" icon aria-label="Đóng"><X /></Button>
+<Button onClick={save}>Save</Button>
+<Button variant="secondary" href="/reports">View report</Button>
+<Button variant="ghost" size="sm" icon aria-label="Close"><X /></Button>
 ```
 
 | Variant | Use |
@@ -15,7 +15,7 @@ import { Button } from '@dgtx/ui-frek';
 | `primary` | The one main action on a screen |
 | `secondary` | Other actions next to the primary |
 | `ghost` | Low-weight actions: toolbars, dialog footers, rows |
-| `danger` | Destructive action; name the object on the label ("Xoá hồ sơ") |
+| `danger` | Destructive action; name the object on the label ("Delete record") |
 
 ## Notes
 

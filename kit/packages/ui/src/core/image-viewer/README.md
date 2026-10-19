@@ -5,7 +5,7 @@ One image with zoom, pan, quarter-turn rotation and download. Plain `<img>`, no 
 ```tsx
 import { ImageViewer } from '@dgtx/ui-frek';
 
-<ImageViewer src="/files/trang-1.jpg" fileName="trang-1.jpg" />
+<ImageViewer src="/files/page-1.jpg" fileName="page-1.jpg" />
 
 // a File from FileDropzone or an <input type="file">: nothing is uploaded
 <ImageViewer src={file} fileName={file?.name} className="h-[70vh]" />
@@ -33,14 +33,14 @@ ScanBeam, FieldLink. Same prop as PdfViewer, so swapping viewers keeps the overl
 - **Sources:** a URL or a `File`/`Blob`. A Blob gets an object URL that is revoked when `src` changes. Keep `src` stable
   between renders (state, memo): a new value reloads the image and resets zoom and rotation.
 - **Zoom:** −/+ step through the 25–400% presets of PdfViewer plus the fit scale, which goes below 25% for a big scan.
-  "Vừa khung" (`'fit'`) shows the whole image, never enlarged past 100%, and follows the container size; pressing it
+  "Fit" (`'fit'`) shows the whole image, never enlarged past 100%, and follows the container size; pressing it
   again goes to 100%. Ctrl + wheel and trackpad pinch zoom smoothly around the pointer; double-click toggles fit and
   100% at the pointer. Button zooms keep the centre of the view in place.
 - **Pan:** the image area is a native scroller, so touch, trackpad, wheel and arrow keys pan it. With a mouse, drag the
   image once it is larger than the view (the cursor turns into a hand).
-- **Rotate:** "Xoay phải 90°" turns the view only; the file and the download stay as they are.
+- **Rotate:** "Rotate 90°" turns the view only; the file and the download stay as they are.
 - **States:** loading, empty, and an error that names the cause it can know: TIFF/HEIC, a broken file (Blob), or a URL
-  that did not load. An `<img>` error has no HTTP status, so 404 and network errors share one message; "Thử lại" appears
+  that did not load. An `<img>` error has no HTTP status, so 404 and network errors share one message; "Retry" appears
   only for URLs.
 - **Download:** a cross-origin URL without `Content-Disposition` opens in a new tab instead of downloading; that is the
   browser's rule for the `download` attribute.

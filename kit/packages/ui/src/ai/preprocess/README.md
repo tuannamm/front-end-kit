@@ -6,7 +6,7 @@ grayscale) are a before/after pair of pages: show them with CompareSlider or Sca
 ```tsx
 import { Preprocess, PreprocessPipeline, UnwarpView } from '@dgtx/ui-frek';
 
-<Preprocess effect="deskew" applied={done}><img src={page} alt="Trang 1" /></Preprocess>
+<Preprocess effect="deskew" applied={done}><img src={page} alt="Page 1" /></Preprocess>
 <UnwarpView raw={raw} unwarped={flat} grid={lattice} applied={done} />
 ```
 
@@ -54,7 +54,7 @@ import { Preprocess, PreprocessPipeline, UnwarpView } from '@dgtx/ui-frek';
 | `applied` | `boolean` | **required** | Stretch the raw page flat along the lattice |
 | `duration` | `number` | `1800` | ms of the stretch |
 | `hold` | `number` | `500` | ms the lattice shows on the raw page before the stretch |
-| `alt` | `string` | `'Trang tài liệu'` | Image description |
+| `alt` | `string` | `'Document page'` | Image description |
 
 ### UnwarpMesh
 

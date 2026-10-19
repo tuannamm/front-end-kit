@@ -29,6 +29,7 @@ Guidance for AI coding agents working in this repo. Read `README.md` first for s
   `src/docs.check.ts` fails `npm test` when a README, a component block or a prop row is missing, or a documented prop
   no longer exists.
   Import its CSS in `styles.css` after `base.css` and after any component it overrides (import order = cascade order).
+- The top `/** */` comment of every `.tsx` is a generated mirror of its folder's `README.md` (it ships in `dist`).
 - **One job per component; compose.** Examples already in the kit:
   - `ScanBeam` is the only scan/wipe effect. It owns the reveal (`reveal="progressive" | "whole" | "none"`); anything
     inside reveals with it (BoxOverlay boxes, `before`/`after` wipe, `<ScanReveal>`). `beam={false}` = wipe without line.

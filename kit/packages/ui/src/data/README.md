@@ -5,10 +5,10 @@ KPIs, tables and small charts. Every chart takes a `label`, its accessible name;
 ```tsx
 import { KpiCard, Sparkline, DataTable, type Column } from '@dgtx/ui-frek';
 
-<KpiCard label="Tài liệu xử lý hôm nay" value="48,210" viz={<Sparkline data={trend} label="Xu hướng 12 giờ" />} />
-<DataTable caption="Lô gần đây" columns={columns} rows={batches} rowKey={b => b.id} />
-<LineChart label="Độ chính xác theo ngày" labels={days} min={98} max={100} format={{ maximumFractionDigits: 1 }} series={[{ name: 'OCR', data: accuracy }]} />
-<AreaChart label="Sản lượng theo giờ" labels={hours} stacked curve="smooth" series={[{ name: 'AI tự động', data: ai }, { name: 'Thủ công', data: manual }]} />
+<KpiCard label="Documents processed today" value="48,210" viz={<Sparkline data={trend} label="12-hour trend" />} />
+<DataTable caption="Recent batches" columns={columns} rows={batches} rowKey={b => b.id} />
+<LineChart label="Accuracy by day" labels={days} min={98} max={100} format={{ maximumFractionDigits: 1 }} series={[{ name: 'OCR', data: accuracy }]} />
+<AreaChart label="Output by hour" labels={hours} stacked curve="smooth" series={[{ name: 'Automated by AI', data: ai }, { name: 'Manual', data: manual }]} />
 ```
 
 ### LineChart and AreaChart
@@ -44,7 +44,7 @@ import { KpiCard, Sparkline, DataTable, type Column } from '@dgtx/ui-frek';
 | `rows` | `T[]` | **required** | Data, in display order |
 | `rowKey` | `(row: T) => string` | **required** | Stable key per row |
 | `caption` | `string` |  | Table name for screen readers |
-| `empty` | `ReactNode` | `'Chưa có dữ liệu'` | No rows: text becomes an EmptyState title; pass `<EmptyState size="sm" …>` for an icon or a way out |
+| `empty` | `ReactNode` | `'No data yet'` | No rows: text becomes an EmptyState title; pass `<EmptyState size="sm" …>` for an icon or a way out |
 
 ### Column
 
@@ -70,7 +70,7 @@ import { KpiCard, Sparkline, DataTable, type Column } from '@dgtx/ui-frek';
 | `target` | `number` | **required** | Marker position |
 | `min` | `number` | `0` | Start of the scale |
 | `max` | `number` | `100` | End of the scale |
-| `label` | `string` | **required** | Accessible name, e.g. "99,62% / mục tiêu 99,5%" |
+| `label` | `string` | **required** | Accessible name, e.g. "99.62% / target 99.5%" |
 
 ### CategoryBar
 
@@ -119,7 +119,7 @@ import { KpiCard, Sparkline, DataTable, type Column } from '@dgtx/ui-frek';
 | `curve` | `'linear' \| 'smooth'` | `'linear'` | `'smooth'` is monotone: it never draws past a peak or a dip |
 | `legend` | `boolean` | more than one series | Names with their colour and dash under the plot |
 | `defaultActive` | `number` |  | Label index whose readout shows at rest (e.g. the latest), and again when pointer or focus leaves |
-| `empty` | `ReactNode` | `'Chưa có dữ liệu'` | No labels or no values: text becomes an EmptyState title, or pass an `<EmptyState>` |
+| `empty` | `ReactNode` | `'No data yet'` | No labels or no values: text becomes an EmptyState title, or pass an `<EmptyState>` |
 | `className` | `string` |  | Extra classes |
 
 ### AreaChart
@@ -137,7 +137,7 @@ import { KpiCard, Sparkline, DataTable, type Column } from '@dgtx/ui-frek';
 | `curve` | `'linear' \| 'smooth'` | `'linear'` | Monotone smoothing |
 | `legend` | `boolean` | more than one series | Names under the plot |
 | `defaultActive` | `number` |  | Label index whose readout shows at rest |
-| `empty` | `ReactNode` | `'Chưa có dữ liệu'` | Shown when there is nothing to draw |
+| `empty` | `ReactNode` | `'No data yet'` | Shown when there is nothing to draw |
 | `className` | `string` |  | Extra classes |
 
 ### ChartSeries

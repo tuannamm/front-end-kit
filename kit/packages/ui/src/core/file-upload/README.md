@@ -6,15 +6,15 @@ reports progress back.
 ```tsx
 import { FileDropzone, FileList, FileItem, UploadToast } from '@dgtx/ui-frek';
 
-<FileDropzone label="Hồ sơ đính kèm" accept=".pdf,image/*" maxSize={20 * 1024 * 1024} onFiles={upload}>
-  <FileList aria-label="Tệp đã chọn">               // the picked files, listed inside the box
+<FileDropzone label="Attached records" accept=".pdf,image/*" maxSize={20 * 1024 * 1024} onFiles={upload}>
+  <FileList aria-label="Selected files">               // the picked files, listed inside the box
     {uploads.map(u => <FileItem key={u.id} {...u} />)}
   </FileList>
 </FileDropzone>
 
 <UploadToast items={uploads} />                     // { id, name, size, status, progress, error, onRetry, onRemove }[]
 
-<FileList aria-label="Tệp đã tải">                  // inline rows, when a toast does not fit
+<FileList aria-label="Uploaded files">                  // inline rows, when a toast does not fit
   {uploads.map(u => <FileItem key={u.id} {...u} />)}
 </FileList>
 ```
@@ -23,11 +23,11 @@ import { FileDropzone, FileList, FileItem, UploadToast } from '@dgtx/ui-frek';
 
 - **Dropzone:** accepts a drop, a click or Enter. It checks type (same rules as `<input accept>`) and size, then calls
   `onFiles` with the accepted files. Rejected files are listed under it with a reason and a recovery step until the next pick.
-  The hint defaults to the accepted formats and the size limit ("PDF, ảnh · tối đa 20 MB").
+  The hint defaults to the accepted formats and the size limit ("PDF, image · up to 20 MB").
 - Drag events are always cancelled, even when the dropzone is disabled, so a dropped file never opens in the browser tab.
 - `compact`: one row, for forms and narrow panels. AvatarPicker uses it.
 - `children` render inside the dashed box, under the pick area: pass a `<FileList>` of the picked files so they show
-  where they were dropped. The rows turn into hairline rows, the pick text reads "Kéo thả thêm tệp…", and dropping
+  where they were dropped. The rows turn into hairline rows, the pick text reads "Drag and drop more files here or browse your computer", and dropping
   anywhere in the box adds files. With no children (or `false`) the box looks as before. The dropzone keeps no file
   state: the app owns the list.
 - **FileItem:** `queued · uploading · done · error`. Screen readers announce the status changes, but not the changing percentage.
@@ -77,9 +77,9 @@ import { FileDropzone, FileList, FileItem, UploadToast } from '@dgtx/ui-frek';
 | `size` | `number` |  | Bytes |
 | `status` | `'queued' \| 'uploading' \| 'done' \| 'error'` | `'done'` |  |
 | `progress` | `number` | `0` | 0–100 while uploading |
-| `error` | `ReactNode` | `'Tải lên thất bại'` | What failed and how to recover; shown when `status` is error |
+| `error` | `ReactNode` | `'Upload failed'` | What failed and how to recover; shown when `status` is error |
 | `thumb` | `string` |  | Thumbnail URL for images, e.g. `URL.createObjectURL(file)` |
-| `onRemove` | `() => void` |  | Remove; reads "Huỷ tải" while uploading |
+| `onRemove` | `() => void` |  | Remove; reads "Cancel upload" while uploading |
 | `onRetry` | `() => void` |  | Shown when `status` is error |
 
 ### UploadToast

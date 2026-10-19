@@ -5,7 +5,7 @@ Columns of tiles of different heights: notes, document thumbnails, image galleri
 ```tsx
 import { Masonry } from '@dgtx/ui-frek';
 
-<Masonry aria-label="Ghi chú QC">
+<Masonry aria-label="QC notes">
   {notes.map(n => <NoteCard key={n.id} note={n} />)}
 </Masonry>
 

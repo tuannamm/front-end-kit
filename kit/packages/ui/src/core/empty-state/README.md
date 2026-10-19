@@ -7,22 +7,22 @@ so they all look and read the same.
 ```tsx
 import { EmptyState, Button } from '@dgtx/ui-frek';
 
-<EmptyState mascot title="Chưa có lô tài liệu nào" action={<Button onClick={create}>Tạo lô đầu tiên</Button>}>
-  Tải hồ sơ lên để bắt đầu số hoá. Hệ thống nhận PDF, TIFF và ảnh chụp.
+<EmptyState mascot title="No batches yet" action={<Button onClick={create}>Create your first batch</Button>}>
+  Upload records to start digitising. The system accepts PDF, TIFF and photos.
 </EmptyState>
 
 <DataTable rows={rows} columns={columns} rowKey={r => r.id}
-  empty={<EmptyState size="sm" icon={<ListFilter />} title="Không có lô nào khớp bộ lọc" action={<Button variant="secondary" size="sm" onClick={reset}>Xoá bộ lọc</Button>} />} />
+  empty={<EmptyState size="sm" icon={<ListFilter />} title="No batches match the filters" action={<Button variant="secondary" size="sm" onClick={reset}>Clear filters</Button>} />} />
 ```
 
 ## Notes
 
 - Five cases, five messages. Each says what happened and what to do next:
-  - first use: the mascot, what this place is for, the primary action ("Tạo lô đầu tiên");
+  - first use: the mascot, what this place is for, the primary action ("Create your first batch");
   - no results: echo the query, suggest a shorter or different one;
-  - filtered to nothing: name the filters as the cause, offer "Xoá bộ lọc";
+  - filtered to nothing: name the filters as the cause, offer "Clear filters";
   - no permission: who can grant it, offer to ask;
-  - load failure: `tone="err"`, what failed and "Thử lại".
+  - load failure: `tone="err"`, what failed and "Retry".
 - The mascot is for first use, onboarding and 404 only (brand), at 120px (`md`) or 64px (`sm`). Never next to an error.
 - `tone="err"` gets `role="alert"` and the error icon in red. The others are `role="status"`; pass `role` to override
   (e.g. `role={undefined}` inside a container that already is a live region).
@@ -35,7 +35,7 @@ import { EmptyState, Button } from '@dgtx/ui-frek';
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `title` | `ReactNode` | **required** | What the user is looking at, e.g. "Chưa có lô nào" |
+| `title` | `ReactNode` | **required** | What the user is looking at, e.g. "No batches yet" |
 | `children` | `ReactNode` |  | What to do next |
 | `icon` | `ReactNode` |  | Lucide icon above the title; `'err'` defaults to the error icon |
 | `mascot` | `boolean` |  | The robot instead of the icon: first use, onboarding, 404 only |

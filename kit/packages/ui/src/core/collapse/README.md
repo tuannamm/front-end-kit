@@ -6,13 +6,13 @@ Sections that open and close under their headings: FAQ, settings groups, long de
 import { Collapse } from '@dgtx/ui-frek';
 
 <Collapse multiple={false} defaultValue={['sla']} items={[
-  { value: 'sla', title: 'SLA được tính từ lúc nào?', content: 'Từ khi lô được nhận đủ hồ sơ gốc…' },
-  { value: 'format', title: 'Hệ thống nhận những định dạng nào?', content: <FormatList /> },
+  { value: 'sla', title: 'When does the SLA start?', content: 'From the moment the batch has all original records…' },
+  { value: 'format', title: 'Which formats does the system accept?', content: <FormatList /> },
 ]} />
 
 // settings groups: a second line, a status on the right, in a hairline box
 <Collapse bordered headingLevel={2} items={[
-  { value: 'ocr', title: 'Nhận dạng (OCR)', description: 'Ngôn ngữ, ngưỡng tin cậy', extra: <Badge tone="ok">Đang bật</Badge>, content: <OcrSettings /> },
+  { value: 'ocr', title: 'Recognition (OCR)', description: 'Language, confidence threshold', extra: <Badge tone="ok">On</Badge>, content: <OcrSettings /> },
 ]} />
 ```
 

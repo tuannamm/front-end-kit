@@ -7,7 +7,7 @@ import { Icon } from '@dgtx/ui-frek';
 import { Upload, CircleAlert } from 'lucide-react';
 
 <Icon icon={Upload} />                                     // decorative, 16px, text colour
-<Icon icon={CircleAlert} tone="err" label="Có lỗi" />      // stands alone: give it a name
+<Icon icon={CircleAlert} tone="err" label="Error" />      // stands alone: give it a name
 ```
 
 Sizes: `xs 12 · sm 14 · md 16 · lg 20 · xl 24` px. Tones: any `Tone` from `badge/`, or `muted`.

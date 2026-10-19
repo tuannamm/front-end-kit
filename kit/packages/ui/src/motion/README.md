@@ -38,7 +38,7 @@ import { Loadable, Reveal, CountUp } from '@dgtx/ui-frek';
 | Prop | Type | Default | Description |
 |---|---|---|---|
 | `lines` | `number` | `3` | Number of lines; the first is taller, like a title |
-| `label` | `string` | `'Đang tải'` | Accessible name of the loading status |
+| `label` | `string` | `'Loading'` | Accessible name of the loading status |
 
 ### Loadable
 

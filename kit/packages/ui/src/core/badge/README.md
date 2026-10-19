@@ -6,8 +6,8 @@ Icon, Select and KpiCard reuse.
 ```tsx
 import { Badge, Counter, ProgressRing, Kbd, IconTile } from '@dgtx/ui-frek';
 
-<Badge tone="ok" dot>Hoàn tất</Badge>
-<Badge tone="brand" live>Đang xử lý</Badge>
+<Badge tone="ok" dot>Completed</Badge>
+<Badge tone="brand" live>Processing</Badge>
 <Badge tone="neutral" onRemove={() => drop(tag)}>{tag}</Badge>
 <Counter>12</Counter>
 <Badge icon={<ProgressRing value={60} />}>60%</Badge>
@@ -25,7 +25,7 @@ Violet is for AI only and always sits next to blue.
 - `live`: a pulsing dot. Use it only while a process really runs.
 - `pill`: use only for trend deltas. Other badges stay square, like the logo.
 - `solid` on lime/amber uses ink text in both themes (`theme-fixed` in the CSS).
-- The remove button is 16px with a 24px hit area (WCAG 2.5.8). Its label defaults to "Xoá".
+- The remove button is 16px with a 24px hit area (WCAG 2.5.8). Its label defaults to "Remove".
 - `ProgressRing` is decorative unless you pass `label`.
 
 ## Props
@@ -42,7 +42,7 @@ Violet is for AI only and always sits next to blue.
 | `live` | `boolean` |  | Pulsing dot: only while a process is running. Implies `dot` |
 | `icon` | `ReactNode` |  | Leading icon, sized to 12px |
 | `onRemove` | `() => void` |  | Shows a remove button (24px hit area) |
-| `removeLabel` | `string` | `'Xoá'` | Accessible name of the remove button |
+| `removeLabel` | `string` | `'Remove'` | Accessible name of the remove button |
 | `children` | `ReactNode` |  | Text |
 | `className` | `string` |  | Extra classes |
 

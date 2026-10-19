@@ -5,20 +5,20 @@ One API for every dropdown. A flat list, groups, icons, descriptions and search 
 ```tsx
 import { Select, MultiSelect, Field } from '@dgtx/ui-frek';
 
-<Field label="Loại hồ sơ">
+<Field label="Record type">
   <Select items={types} value={type} onValueChange={setType} />
 </Field>
 
-<Select searchable items={[{ label: 'Bảo hiểm', items: insurance }, { label: 'Ngân hàng', items: banks }]} aria-label="Đối tác" />
+<Select searchable items={[{ label: 'Insurance', items: insurance }, { label: 'Banking', items: banks }]} aria-label="Partner" />
 
-<MultiSelect items={tags} value={selected} onValueChange={setSelected} aria-label="Nhãn" />
+<MultiSelect items={tags} value={selected} onValueChange={setSelected} aria-label="Tags" />
 ```
 
 ## Notes
 
 - Without search it is a Base UI Select (typeahead works). With `searchable` it is a Base UI Combobox,
   with the search input inside the popup.
-- Search ignores accents: "bao hiem" matches "Bảo hiểm" (and đ matches d). It searches the label and the description.
+- Search ignores accents: "cafe" matches "Café" (and Vietnamese đ matches d). It searches the label and the description.
 - MultiSelect shows chips in the trigger. Typing filters the list, Backspace removes the last chip, and ←/→ move between chips.
 - Without a visible `<Field label>`, pass `aria-label`.
 - The popup sits at z-index 65, above Dialog and Drawer (60–61), so a Select inside them opens on top.
@@ -36,9 +36,9 @@ import { Select, MultiSelect, Field } from '@dgtx/ui-frek';
 | `defaultValue` | `string \| null` |  | Initial value when uncontrolled |
 | `onValueChange` | `(value: string \| null) => void` |  |  |
 | `searchable` | `boolean` |  | Adds an accent-insensitive search box in the popup |
-| `searchPlaceholder` | `string` | `'Tìm…'` | With `searchable` |
-| `placeholder` | `string` | `'Chọn…'` | Shown while nothing is selected |
-| `emptyText` | `string` | `'Không tìm thấy kết quả'` | Shown when the filter matches nothing |
+| `searchPlaceholder` | `string` | `'Search…'` | With `searchable` |
+| `placeholder` | `string` | `'Select…'` | Shown while nothing is selected |
+| `emptyText` | `string` | `'No results found'` | Shown when the filter matches nothing |
 | `size` | `'sm' \| 'md'` | `'md'` | 32 · 40px tall |
 | `disabled` | `boolean` |  |  |
 | `aria-label` | `string` |  | Accessible name when there is no visible `<Field label>` |
@@ -52,8 +52,8 @@ import { Select, MultiSelect, Field } from '@dgtx/ui-frek';
 | `value` | `string[]` |  | Controlled values |
 | `defaultValue` | `string[]` |  | Initial values when uncontrolled |
 | `onValueChange` | `(value: string[]) => void` |  |  |
-| `placeholder` | `string` | `'Chọn…'` | Shown while nothing is selected |
-| `emptyText` | `string` | `'Không tìm thấy kết quả'` | Shown when the filter matches nothing |
+| `placeholder` | `string` | `'Select…'` | Shown while nothing is selected |
+| `emptyText` | `string` | `'No results found'` | Shown when the filter matches nothing |
 | `size` | `'sm' \| 'md'` | `'md'` | 32 · 40px tall |
 | `disabled` | `boolean` |  |  |
 | `aria-label` | `string` |  | Accessible name of the filter input |

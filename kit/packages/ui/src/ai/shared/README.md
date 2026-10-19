@@ -6,8 +6,8 @@ synthetic sample page.
 ```tsx
 import { BoxOverlay, ScanBeam, CompareSlider, ConfidenceBadge } from '@dgtx/ui-frek';
 
-<ScanBeam><BoxOverlay boxes={lines}><img src={page} alt="Trang 1" /></BoxOverlay></ScanBeam>
-<CompareSlider before={<img src={raw} alt="Bản gốc" />} after={<img src={clean} alt="Đã xử lý" />} />
+<ScanBeam><BoxOverlay boxes={lines}><img src={page} alt="Page 1" /></BoxOverlay></ScanBeam>
+<CompareSlider before={<img src={raw} alt="Original" />} after={<img src={clean} alt="Processed" />} />
 ```
 
 Inside PdfViewer or ImageViewer, pass the overlay through their `renderPage`; it then zooms, pans and turns with the
@@ -21,7 +21,7 @@ which keep them) and BoxOverlay draws the shape instead of its bounding rectangl
 
 ```tsx
 <BoxOverlay boxes={lines.map(l => ({ id: l.id, text: l.text, confidence: l.score * 100, ...toBox(l.poly, W, H) }))}>
-  <img src={page} alt="Trang 1" />
+  <img src={page} alt="Page 1" />
 </BoxOverlay>
 ```
 
@@ -73,7 +73,7 @@ which keep them) and BoxOverlay draws the shape instead of its bounding rectangl
 |---|---|---|---|
 | `value` | `number` | **required** | 0–100 |
 | `thresholds` | `Thresholds` | `{ high: 95, low: 80 }` | ≥ high is high, < low is low |
-| `showLabel` | `boolean` |  | Adds the review hint ("Cần kiểm tra") for QC screens |
+| `showLabel` | `boolean` |  | Adds the review hint ("Needs review") for QC screens |
 | `size` | `'sm' \| 'md'` | `'sm'` | Badge size |
 
 ### ConfidenceBar
@@ -97,8 +97,8 @@ which keep them) and BoxOverlay draws the shape instead of its bounding rectangl
 | `before` | `ReactNode` | **required** | Raw page |
 | `after` | `ReactNode` | **required** | Processed page, same size |
 | `defaultValue` | `number` | `50` | Start position, % from the left |
-| `beforeLabel` | `string` | `'Bản gốc'` | Tag on the left |
-| `afterLabel` | `string` | `'Đã xử lý'` | Tag on the right |
+| `beforeLabel` | `string` | `'Original'` | Tag on the left |
+| `afterLabel` | `string` | `'Processed'` | Tag on the right |
 
 ### ScanBeam
 

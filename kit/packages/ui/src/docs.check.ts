@@ -38,6 +38,8 @@ function componentProps(src: string) {
   return out;
 }
 
+// The README mirror docs-sync.mjs puts atop each .tsx; unstripped, every documented prop would "appear in the source".
+const GENERATED = /^\/\*\*\n(?:(?!\*\/)[\s\S])*?\n \* @generated[^\n]*\n \*\/\n\n/;
 const HEADER = ['Prop', 'Type', 'Default', 'Description'];
 const root = import.meta.dirname;
 const walk = (dir: string): string[] => [dir, ...readdirSync(dir, { withFileTypes: true }).filter(d => d.isDirectory()).flatMap(d => walk(join(dir, d.name)))];
@@ -52,7 +54,7 @@ for (const d of readdirSync(core, { withFileTypes: true }).filter(d => d.isDirec
 for (const dir of walk(root)) {
   const rel = relative(root, dir) || '.';
   const files = readdirSync(dir).filter(f => /\.tsx?$/.test(f) && !f.endsWith('.check.ts'));
-  const src = files.map(f => readFileSync(join(dir, f), 'utf8')).join('\n');
+  const src = files.map(f => readFileSync(join(dir, f), 'utf8').replace(GENERATED, '')).join('\n');
   const components = componentProps(src);
   const readme = join(dir, 'README.md');
   if (!existsSync(readme)) {

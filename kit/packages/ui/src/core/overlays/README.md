@@ -5,23 +5,23 @@ Layers above the page: a modal dialog, a side panel or bottom sheet, and stacked
 ```tsx
 import { Dialog, DialogClose, Drawer, DrawerClose, ToastProvider, useToast, Button } from '@dgtx/ui-frek';
 
-<Dialog trigger={<Button variant="danger">Xoá hồ sơ</Button>} title="Xoá hồ sơ HS-0142?" description="Không thể hoàn tác."
-  footer={<><DialogClose><Button variant="ghost">Huỷ</Button></DialogClose><Button variant="danger" onClick={remove}>Xoá hồ sơ</Button></>} />
+<Dialog trigger={<Button variant="danger">Delete record</Button>} title="Delete record HS-0142?" description="This cannot be undone."
+  footer={<><DialogClose><Button variant="ghost">Cancel</Button></DialogClose><Button variant="danger" onClick={remove}>Delete record</Button></>} />
 
-<Drawer open={!!record} onOpenChange={o => !o && setRecord(null)} title={record?.id} footer={<Button>Lưu</Button>}>
+<Drawer open={!!record} onOpenChange={o => !o && setRecord(null)} title={record?.id} footer={<Button>Save</Button>}>
   <RecordDetail record={record} />
 </Drawer>
 
 <ToastProvider><App /></ToastProvider>              // once, at the app root
 const toast = useToast();
-toast({ title: 'Đã lưu', description: 'Hồ sơ HS-0142', tone: 'ok' });
-toast({ title: 'Không lưu được hồ sơ HS-0142', description: 'Mất kết nối máy chủ.', tone: 'err' });
+toast({ title: 'Saved', description: 'Record HS-0142', tone: 'ok' });
+toast({ title: 'Could not save record HS-0142', description: 'Lost connection to the server.', tone: 'err' });
 ```
 
 ## Notes
 
 - **Dialog:** focus is trapped while open and returned to the trigger on close. The panel scales .94 → 1, and the exit is faster.
-  Put the action on the button ("Xoá hồ sơ"), never "OK".
+  Put the action on the button ("Delete record"), never "OK".
 - **Drawer:** `side` is `right` (default), `left` or `bottom`. Width is `sm 360 · md 480 · lg 720` px, always leaving
   a 40px strip of the page. Header and footer stay in place and the body scrolls. Swiping toward the edge dismisses it,
   and a fast swipe closes faster.

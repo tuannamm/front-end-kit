@@ -6,9 +6,9 @@ Where the user is in a sequence: a wizard, a checkout, the stages a batch goes t
 import { Steps } from '@dgtx/ui-frek';
 
 <Steps current={1} items={[
-  { title: 'Tiếp nhận', description: '3.860 trang' },
-  { title: 'Nhận dạng', subTitle: 'Còn 00:08', description: '2.140 / 3.860 trang' },
-  { title: 'Kiểm tra chất lượng' },
+  { title: 'Intake', description: '3,860 pages' },
+  { title: 'Recognition', subTitle: '00:08 left', description: '2,140 / 3,860 pages' },
+  { title: 'Quality check' },
 ]} />
 
 // a failed step
@@ -27,8 +27,7 @@ import { Steps } from '@dgtx/ui-frek';
   when the steps do not fit the width, Steps lays itself out vertically, and back when there is room again. Measured,
   not a breakpoint, so it holds for three short steps on a phone and eight long ones on a laptop.
 - `onChange` turns each step into a button (`disabled` items stay inert). Without it the steps are plain text.
-- An `<ol>`; the current step has `aria-current="step"`, and every title is read with its status ("Đã xong: Tiếp
-  nhận"), so the colour is never the only signal.
+- An `<ol>`; the current step has `aria-current="step"`, and every title is read with its status ("Done: Intake"), so the colour is never the only signal.
 - `variant="outlined"` draws a hairline ring instead of a tint; `size="sm"` for toolbars and dialogs.
 - For a log of past events with times, use Timeline instead.
 

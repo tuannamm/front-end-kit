@@ -10,7 +10,7 @@ import { Notification, NotificationList, Button } from '@dgtx/ui-frek';
   items={notifications}                                   // newest first; the app decides the order
   onSelect={n => markRead(n.id)}
   onMarkAllRead={markAllRead}
-  footer={<Button variant="ghost" size="sm" href="/notifications">Xem tất cả thông báo</Button>}
+  footer={<Button variant="ghost" size="sm" href="/notifications">View all notifications</Button>}
 />
 
 <NotificationList items={notifications} loading={isLoading} error={loadError} onRetry={reload} />
@@ -21,16 +21,16 @@ import { Notification, NotificationList, Button } from '@dgtx/ui-frek';
 - **Nothing is fetched or marked here.** The app passes `items`, marks a row read in `onSelect`, and loads more
   in `onOpenChange(true)` if it wants fresh data on open.
 - **Count:** the unread count is derived from `items` (`read !== true`). It shows "99+" above 99 and pops again when it grows.
-  The bell's accessible name says it too: "Thông báo, 3 chưa đọc".
-- **Unread rows** get a blue tint, a medium-weight title, a square dot and a hidden "Chưa đọc:" prefix, so the
+  The bell's accessible name says it too: "Notifications, 3 unread".
+- **Unread rows** get a blue tint, a medium-weight title, a square dot and a hidden "Unread:" prefix, so the
   state never depends on colour alone.
 - **Rows:** a link when the item has `href`, a button when there is `onSelect`, plain text otherwise.
   Picking a row closes the popover. The description is clamped to two lines.
-- **Time:** `relativeTime` shows "Vừa xong", "5 phút trước", "3 giờ trước", then calendar days ("Hôm qua", "Hôm kia",
-  "6 ngày trước"), then the date. The exact time is in the hover title. It is computed on render, and the popover renders on open.
+- **Time:** `relativeTime` shows "Just now", "5 minutes ago", "3 hours ago", then calendar days ("yesterday", "2 days ago",
+  "6 days ago"), then the date. The exact time is in the hover title. It is computed on render, and the popover renders on open.
 - **States:** `loading` shows skeleton rows while there are no items yet. `error` replaces the list; add `onRetry` for a
-  "Thử lại" button. The empty state says that new notifications will show here.
-- Focus moves to the panel on open (not to "Đánh dấu đã đọc"). Escape or a click outside closes it and returns focus to the bell.
+  "Retry" button. The empty state says that new notifications will show here.
+- Focus moves to the panel on open (not to "Mark all as read"). Escape or a click outside closes it and returns focus to the bell.
 - The popover reuses Select's positioner (z-index 65), so it opens above Dialog and Drawer.
 
 ## Props
@@ -43,7 +43,7 @@ import { Notification, NotificationList, Button } from '@dgtx/ui-frek';
 | `defaultOpen` | `boolean` | `false` | Initial state when uncontrolled |
 | `onOpenChange` | `(open: boolean) => void` |  | E.g. refresh the items on open |
 | `onSelect` | `(item: NotificationItem) => void` |  | A row was picked; the popover closes |
-| `aria-label` | `string` | `'Thông báo'` | Name of the bell and the panel; the unread count is added |
+| `aria-label` | `string` | `'Notifications'` | Name of the bell and the panel; the unread count is added |
 
 Plus every NotificationList prop.
 
@@ -53,13 +53,13 @@ Plus every NotificationList prop.
 |---|---|---|---|
 | `items` | `NotificationItem[]` | **required** | In display order |
 | `onSelect` | `(item: NotificationItem) => void` |  | A row was picked. Marking it read is the app's job |
-| `onMarkAllRead` | `() => void` |  | Shows "Đánh dấu đã đọc" while something is unread |
+| `onMarkAllRead` | `() => void` |  | Shows "Mark all as read" while something is unread |
 | `loading` | `boolean` |  | Skeleton rows while there are no items yet |
 | `error` | `ReactNode` |  | Replaces the list: what failed and how to recover |
-| `onRetry` | `() => void` |  | Shows "Thử lại" under the error |
-| `emptyText` | `ReactNode` | "Chưa có thông báo nào" | Empty-state title; the default also says new ones will show here |
-| `footer` | `ReactNode` |  | Under the list, e.g. a "Xem tất cả" link |
-| `title` | `ReactNode` | `'Thông báo'` | Header text |
+| `onRetry` | `() => void` |  | Shows "Retry" under the error |
+| `emptyText` | `ReactNode` | "No notifications yet" | Empty-state title; the default also says new ones will show here |
+| `footer` | `ReactNode` |  | Under the list, e.g. a "View all" link |
+| `title` | `ReactNode` | `'Notifications'` | Header text |
 | `className` | `string` |  | Extra classes |
 
 ### NotificationItem

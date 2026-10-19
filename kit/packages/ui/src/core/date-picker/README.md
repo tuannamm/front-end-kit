@@ -6,11 +6,11 @@ no time and no timezone, so they compare with `<` and `>`.
 ```tsx
 import { DatePicker, DateRangePicker, Calendar, Field } from '@dgtx/ui-frek';
 
-<Field label="Ngày sinh">
+<Field label="Date of birth">
   <DatePicker value={dob} onValueChange={setDob} max={todayIso()} name="dob" />
 </Field>
 
-<DateRangePicker label="Khoảng thời gian" value={range} onValueChange={setRange} name="period" />  // submits periodFrom / periodTo
+<DateRangePicker label="Period" value={range} onValueChange={setRange} name="period" />  // submits periodFrom / periodTo
 
 <Calendar value={day} onValueChange={setDay} />
 ```
@@ -74,7 +74,7 @@ are exported. `clampDate`, `monthGrid`, `weekday` and `toIso` are internal.
 | `min` | `string` |  | ISO lower bound for both ends, inclusive |
 | `max` | `string` |  | ISO upper bound for both ends, inclusive |
 | `format` | `string` | `'dd/MM/yyyy'` | Display pattern, as DatePicker |
-| `placeholder` | `string` | `'Chọn khoảng ngày'` |  |
+| `placeholder` | `string` | `'Pick date range'` |  |
 | `size` | `'sm' \| 'md'` | `'md'` | 32 · 40px tall |
 | `disabled` | `boolean` |  |  |
 | `label` | `ReactNode` |  | Visible label. Without it, pass `aria-label` |

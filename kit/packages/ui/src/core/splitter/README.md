@@ -7,8 +7,8 @@ import { Splitter } from '@dgtx/ui-frek';
 
 <div style={{ height: 480 }}>
   <Splitter onResizeEnd={save} panels={[
-    { label: 'Danh sách', defaultSize: 280, min: 200, max: '50%', collapsible: true, content: <BatchList /> },
-    { label: 'Chi tiết', min: 320, content: <BatchDetail /> },
+    { label: 'List', defaultSize: 280, min: 200, max: '50%', collapsible: true, content: <BatchList /> },
+    { label: 'Details', min: 320, content: <BatchDetail /> },
   ]} />
 </div>
 

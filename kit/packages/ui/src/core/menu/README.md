@@ -7,19 +7,19 @@ import { Menu, Button } from '@dgtx/ui-frek';
 import { MoreHorizontal, Eye, Trash2 } from 'lucide-react';
 
 <Menu align="end"
-  trigger={<Button variant="ghost" size="sm" icon aria-label="Thao tác cho HD-5517"><MoreHorizontal aria-hidden /></Button>}
+  trigger={<Button variant="ghost" size="sm" icon aria-label="Actions for HD-5517"><MoreHorizontal aria-hidden /></Button>}
   items={[
-    { label: 'Xem chi tiết', icon: <Eye />, onSelect: open },
-    { label: 'Tải xuống', href: '/files/hd-5517.pdf' },
+    { label: 'View details', icon: <Eye />, onSelect: open },
+    { label: 'Download', href: '/files/hd-5517.pdf' },
     'separator',
-    { label: 'Xoá lô HD-5517', icon: <Trash2 />, danger: true, onSelect: confirmDelete },
+    { label: 'Delete batch HD-5517', icon: <Trash2 />, danger: true, onSelect: confirmDelete },
   ]} />
 
 // view options: toggles and one-of-many keep the menu open
 items={[
-  { type: 'group', label: 'Cột', items: columns.map(c => ({ type: 'checkbox', label: c.label, checked: shown.has(c.id), onCheckedChange: on => toggle(c.id, on) })) },
+  { type: 'group', label: 'Columns', items: columns.map(c => ({ type: 'checkbox', label: c.label, checked: shown.has(c.id), onCheckedChange: on => toggle(c.id, on) })) },
   'separator',
-  { type: 'group', label: 'Sắp xếp theo', items: [{ type: 'radio', value: sort, onValueChange: setSort, options: sortOptions }] },
+  { type: 'group', label: 'Sort by', items: [{ type: 'radio', value: sort, onValueChange: setSort, options: sortOptions }] },
 ]}
 ```
 
@@ -29,11 +29,11 @@ items={[
   and Esc closes and returns focus to the trigger.
 - Actions close the menu when picked. Checkbox and radio entries keep it open, so several can be changed in a row.
 - An item with `href` is a link; a disabled one becomes a disabled item, because a link cannot be disabled.
-- `danger` items are red. Name the object in the label ("Xoá lô HD-5517"), and confirm or offer undo in `onSelect`.
+- `danger` items are red. Name the object in the label ("Delete batch HD-5517"), and confirm or offer undo in `onSelect`.
 - `shortcut` only shows the key hint. Bind the keys in the app.
 - The popup is at least 200px wide (or as wide as the trigger) and at most 320px. It reuses the Select popup styles,
   so it sits above Dialog and Drawer, and it flips or shifts to stay on screen.
-- Icon-only triggers need an `aria-label` that names the object ("Thao tác cho HD-5517"), not only "Thao tác".
+- Icon-only triggers need an `aria-label` that names the object ("Actions for HD-5517"), not only "Actions".
 
 ## Props
 

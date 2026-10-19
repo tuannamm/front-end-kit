@@ -6,12 +6,12 @@ type, use an `Input` instead.
 ```tsx
 import { Field, Slider } from '@dgtx/ui-frek';
 
-<Field label="Ngưỡng tin cậy tối thiểu">
+<Field label="Minimum confidence threshold">
   <Slider value={threshold} onValueChange={setThreshold} onValueCommitted={save} max={100} format={{ style: 'unit', unit: 'percent' }} />
 </Field>
 
 // a range: pass [from, to]
-<Slider aria-label="Số trang" defaultValue={[500, 3000]} max={5000} step={100} />
+<Slider aria-label="Pages" defaultValue={[500, 3000]} max={5000} step={100} />
 ```
 
 ## Notes
@@ -23,7 +23,7 @@ import { Field, Slider } from '@dgtx/ui-frek';
   (`aria-valuetext`). Numbers use Vietnamese grouping ("1.000.000 ₫").
 - The readout on the right keeps a fixed width (the widest end value), so the track does not resize while dragging.
 - Inside `<Field label>` the label names the slider. Without one, pass `aria-label`. A range's thumbs are named
-  "Từ" and "Đến" (`thumbLabels`), prefixed with `aria-label` when there is one.
+  "From" and "To" (`thumbLabels`), prefixed with `aria-label` when there is one.
 - The thumb is 18px with a 30px hit area; the whole 32px row takes a press.
 
 ## Props
@@ -42,7 +42,7 @@ import { Field, Slider } from '@dgtx/ui-frek';
 | `largeStep` | `number` | `10` | Page Up/Down and Shift+arrow |
 | `format` | `Intl.NumberFormatOptions` |  | Readout and `aria-valuetext` format |
 | `showValue` | `boolean` | `true` | The value readout on the right |
-| `thumbLabels` | `[string, string]` | `['Từ', 'Đến']` | Names of a range's two thumbs |
+| `thumbLabels` | `[string, string]` | `['From', 'To']` | Names of a range's two thumbs |
 | `disabled` | `boolean` |  |  |
 | `name` | `string` |  | Form field name |
 | `aria-label` | `string` |  | Accessible name when there is no visible `<Field label>` |

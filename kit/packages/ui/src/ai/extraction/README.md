@@ -6,7 +6,7 @@ appears with a confidence score. Phases: idle → scanning → done.
 ```tsx
 import { DocumentScan, type ScanRow, type ScanField } from '@dgtx/ui-frek';
 
-<DocumentScan fileName="HD-0347.pdf" title="Hoá đơn GTGT" rows={rows} fields={fields} />
+<DocumentScan fileName="HD-0347.pdf" title="VAT invoice" rows={rows} fields={fields} />
 ```
 
 `FieldLink`: a line from an extracted field to the box it was read from. Hover or focus a field and the line runs to
