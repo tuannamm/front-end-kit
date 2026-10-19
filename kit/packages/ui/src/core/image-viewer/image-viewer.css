@@ -1,0 +1,35 @@
+/* image viewer: toolbar over a scroller holding one image on the sunken surface, edged by a hairline, never a shadow.
+   Same toolbar shape as .dtx-pdf. Size the viewer from outside (height or flex); 640px is only the default. */
+.dtx-img {
+  display: flex; flex-direction: column; height: 640px; min-width: 0; overflow: hidden; container-type: inline-size;
+  border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-lg); background: var(--dtx-surface);
+}
+.dtx-img__bar { flex: none; display: flex; align-items: center; gap: 4px; min-height: 48px; padding: 6px 8px; border-bottom: 1px solid var(--dtx-border); }
+.dtx-img__name { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; padding-left: 4px; font-size: var(--dtx-text-sm); font-weight: 500; }
+.dtx-img__name > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dtx-img__name > svg { flex: none; width: 16px; height: 16px; color: var(--dtx-fg-muted); }
+.dtx-img__group { flex: none; display: flex; align-items: center; gap: 2px; margin-left: auto; }
+.dtx-img__sep { flex: none; width: 1px; height: 20px; margin: 0 4px; background: var(--dtx-border); }
+.dtx-img__zoom { min-width: 5ch; font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted); text-align: center; }
+.dtx-img__bar .dtx-btn[aria-pressed="true"] { background: rgb(37 130 215 / .14); }
+@container (max-width: 400px) {
+  .dtx-img__name { display: none; }
+  .dtx-img__group { margin-left: 0; }
+}
+
+.dtx-img__scroll { position: relative; flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; background: var(--dtx-surface-2); }
+.dtx-img__scroll:focus-visible { outline-offset: -2px; }
+.dtx-img__scroll[data-pan] { cursor: grab; }
+.dtx-img__scroll[data-pan]:active { cursor: grabbing; }
+/* centred while smaller than the view, scrollable on every side once larger */
+.dtx-img__stage { display: grid; place-items: center; width: max-content; height: max-content; min-width: 100%; min-height: 100%; padding: 16px; user-select: none; }
+.dtx-img__frame { position: relative; }
+.dtx-img__frame > img {
+  position: absolute; left: 50%; top: 50%; display: block; max-width: none; max-height: none;
+  box-shadow: 0 0 0 1px var(--dtx-border);
+  /* transparency shows as the usual checkerboard, light in both themes so dark ink stays visible */
+  background: repeating-conic-gradient(#E9EBEF 0 25%, #FFFFFF 0 50%) 0 0 / 16px 16px; /* theme-fixed: transparency grid */
+}
+
+.dtx-img__state { display: grid; justify-items: center; align-content: start; gap: 6px; padding: 48px 24px; text-align: center; text-wrap: balance; font-size: var(--dtx-text-sm); color: var(--dtx-fg-muted); }
+.dtx-img__state .dtx-skeleton { margin-top: 12px; }

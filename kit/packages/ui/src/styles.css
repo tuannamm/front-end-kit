@@ -34,6 +34,7 @@
 @import "./core/avatar/avatar.css" layer(dtx);
 @import "./core/notification/notification.css" layer(dtx);
 @import "./core/pdf-viewer/pdf-viewer.css" layer(dtx);
+@import "./core/image-viewer/image-viewer.css" layer(dtx);
 
 @layer dtx {
   /* ---------- card / kpi ---------- */

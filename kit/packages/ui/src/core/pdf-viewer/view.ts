@@ -7,10 +7,10 @@ export const PT_TO_PX = 96 / 72;
 
 export const clampZoom = (scale: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, scale));
 
-/** Next preset above (dir 1) or below (dir -1) the current scale, so 87% steps to 100%, not 112%. */
-export function stepZoom(scale: number, dir: 1 | -1) {
-  const next = dir > 0 ? ZOOM_STEPS.find(s => s > scale + 0.001) : ZOOM_STEPS.findLast(s => s < scale - 0.001);
-  return next ?? (dir > 0 ? ZOOM_MAX : ZOOM_MIN);
+/** Next preset above (dir 1) or below (dir -1) the current scale, so 87% steps to 100%, not 112%. `steps` ascending. */
+export function stepZoom(scale: number, dir: 1 | -1, steps = ZOOM_STEPS) {
+  const next = dir > 0 ? steps.find(s => s > scale + 0.001) : steps.findLast(s => s < scale - 0.001);
+  return next ?? (dir > 0 ? steps[steps.length - 1] : steps[0]);
 }
 
 /** 0-based index of the page whose box holds y; `tops` ascending. */

@@ -29,3 +29,4 @@ export { Dialog, DialogClose, Drawer, DrawerClose, ToastProvider, useToast, type
 export { Notification, NotificationList, type NotificationItem, type NotificationProps, type NotificationListProps } from './notification/notification';
 export { CommandPalette, CommandList, type CommandItem, type CommandPaletteProps, type CommandListProps } from './command-palette/command-palette';
 export { PdfViewer, type PdfViewerProps, type PdfSource } from './pdf-viewer/pdf-viewer';
+export { ImageViewer, type ImageViewerProps, type ImageSource } from './image-viewer/image-viewer';

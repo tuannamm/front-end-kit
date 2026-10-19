@@ -3,7 +3,7 @@ import { AlertTriangle, BarChart3, CheckCircle2, CircleAlert, CircleCheck, FileS
 import {
   Alert, AppShell, Breadcrumb, Carousel, Collapse, Masonry, Splitter, Steps, Timeline, Watermark, Slider, Textarea, Avatar, EmptyState, AvatarPicker, Badge, Icon, Calendar, Checkbox, CheckboxGroup, DatePicker, DateRangePicker, RadioGroup, addDays, formatDate, todayIso, BoxOverlay, Button, Card, CardHeader, CategoryBar, CommandButton, CompareSlider, ConfidenceBadge, ConfidenceBar, ConfidenceDots,
   CountUp, Counter, DataTable, Dialog, DialogClose, Drawer, DrawerClose, Display, FileDropzone, FileItem, FileList, UploadToast, DocumentScan, Eyebrow, Field, HexIcon, IconTile, Input, Kbd, KpiCard, Lede,
-  Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
+  Logo, Meter, MultiSelect, Notification, NotificationList, OcrShowcase, PdfViewer, ImageViewer, Preprocess, PreprocessPipeline, ProgressRing, Reveal, SampleInvoice, ScanBeam, ScanReveal, SectionHeader, Segmented, Select, Sidebar,
   LineChart, AreaChart, SidebarGroup, SidebarItem, SidebarWorkspace, Skeleton, SkeletonText, Sparkline, StackedBarChart, Switch, Tabs, TargetBar, TechBackdrop,
   Tooltip, Topbar, mascotUrl, sampleInvoiceRegions, sampleInvoiceInset, type DateRange, type NormalizedOcr, type NotificationItem, type OcrBox, type GeometryStep, type ScanPhase, type Tone,
 } from '@dgtx/ui-frek';
@@ -286,6 +286,22 @@ function PdfOpenDemo() {
     <div className="grid w-full gap-3">
       <FileDropzone compact multiple={false} label="File PDF" accept=".pdf,application/pdf" maxSize={50 * 1024 * 1024} onFiles={fs => setFile(fs[0] ?? null)} />
       <PdfViewer src={file} fileName={file?.name} className="h-[480px]" />
+    </div>
+  );
+}
+
+const demoJpg = `${import.meta.env.BASE_URL}demo/hop-dong-mau-trang-1.jpg`;
+const demoPng = `${import.meta.env.BASE_URL}demo/hop-dong-mau-trang-4.png`;
+const demoSvg = `${import.meta.env.BASE_URL}favicon.svg`;
+const notImage = new Blob(['Đây không phải ảnh.'], { type: 'image/png' });
+const tiff = new Blob(['II*'], { type: 'image/tiff' });
+
+function ImageOpenDemo() {
+  const [file, setFile] = useState<File | null>(null);
+  return (
+    <div className="grid w-full gap-3">
+      <FileDropzone compact multiple={false} label="Ảnh" accept="image/*" maxSize={50 * 1024 * 1024} onFiles={fs => setFile(fs[0] ?? null)} />
+      <ImageViewer src={file} fileName={file?.name} className="h-[480px]" />
     </div>
   );
 }
@@ -630,6 +646,13 @@ export const entries: Entry[] = [
       { title: '1 · Multi-page file from a URL', note: 'Synthetic 4-page contract: 3 portrait A4 pages and a landscape one. Scroll, type a page number, zoom with − / +.', code: '<PdfViewer src="/demo/hop-dong-mau.pdf" fileName="hop-dong-mau.pdf" />', render: () => <PdfViewer src={demoPdf} fileName="hop-dong-mau.pdf" className="w-full" /> },
       { title: '2 · Open a file from the computer', note: 'The File goes straight to the viewer; nothing is uploaded.', code: 'const [file, setFile] = useState<File | null>(null);\n<FileDropzone compact multiple={false} accept=".pdf" onFiles={fs => setFile(fs[0])} />\n<PdfViewer src={file} fileName={file?.name} />', render: () => <PdfOpenDemo /> },
       { title: '3 · Empty · loading · error', render: () => <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3"><PdfViewer className="h-[300px]" /><PdfViewer src={stalled} className="h-[300px]" /><PdfViewer src={notPdf} fileName="khong-phai-pdf.pdf" className="h-[300px]" /></div> }] },
+  { id: 'image-viewer', name: 'Image Viewer', category: 'Core', status: 'ready', summary: 'One image (PNG, JPEG, WebP, GIF, AVIF, SVG…) with zoom, pan, quarter-turn rotation and download. Takes a URL or a File/Blob. “Vừa khung” shows the whole image without enlarging it; −/+ step through presets, ctrl + wheel and pinch zoom around the pointer, double-click toggles fit and 100%. The image area is a native scroller (touch, trackpad, arrow keys) and drags with the mouse once larger than the view. Transparency shows as a checkerboard. Loading, empty and error (TIFF/HEIC, broken file, URL) states are built in.',
+    importLine: imp('ImageViewer'),
+    demos: [
+      { title: '1 · Scanned page (JPEG) from a URL', note: 'Synthetic contract page at 150 dpi. Zoom with − / +, ctrl + wheel or a double-click, drag to pan, rotate.', code: '<ImageViewer src="/demo/hop-dong-mau-trang-1.jpg" fileName="hop-dong-mau-trang-1.jpg" />', render: () => <ImageViewer src={demoJpg} fileName="hop-dong-mau-trang-1.jpg" className="w-full" /> },
+      { title: '2 · Transparent PNG, small SVG, zoomed in', note: 'Transparent areas show the checkerboard. A small image is never enlarged by “Vừa khung”. A number opens at that scale.', code: '<ImageViewer src="/demo/hop-dong-mau-trang-4.png" fileName="hop-dong-mau-trang-4.png" />\n<ImageViewer src="/favicon.svg" fileName="favicon.svg" />\n<ImageViewer src="/demo/hop-dong-mau-trang-1.jpg" defaultZoom={2} />', render: () => <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3"><ImageViewer src={demoPng} fileName="hop-dong-mau-trang-4.png" className="h-[340px]" /><ImageViewer src={demoSvg} fileName="favicon.svg" className="h-[340px]" /><ImageViewer src={demoJpg} defaultZoom={2} alt="Trang 1 hợp đồng mẫu, phóng 200%" className="h-[340px]" /></div> },
+      { title: '3 · Open a file from the computer', note: 'The File goes straight to the viewer; nothing is uploaded.', code: 'const [file, setFile] = useState<File | null>(null);\n<FileDropzone compact multiple={false} accept="image/*" onFiles={fs => setFile(fs[0])} />\n<ImageViewer src={file} fileName={file?.name} />', render: () => <ImageOpenDemo /> },
+      { title: '4 · Empty · broken file · TIFF', note: 'Loading shows a skeleton with “Đang mở ảnh…” until the image is decoded.', render: () => <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-3"><ImageViewer className="h-[300px]" /><ImageViewer src={notImage} fileName="khong-phai-anh.png" className="h-[300px]" /><ImageViewer src={tiff} fileName="trang-1.tif" className="h-[300px]" /></div> }] },
   { id: 'avatar', name: 'Avatar', category: 'Core', status: 'ready', summary: 'Photo when src loads; otherwise initials of the first + last word (Vietnamese diacritics kept), or a person icon when the name has no letter. Square or circle, navy tile. The name is the accessible label. AvatarPicker makes it a button that opens a dialog to pick, preview, remove and save a photo (it hands back the File; uploading is the app\'s job).', importLine: imp('Avatar, AvatarPicker'),
     demos: [
       { title: '1 · Square and circle', render: () => <><Avatar name="Nguyễn Thị Thuận" /><Avatar name="Nguyễn Thị Thuận" shape="circle" /><Avatar name="Trần Minh" size="sm" /><Avatar name="Trần Minh" size="sm" shape="circle" /><Avatar name="Nguyễn Thị Thuận" size="lg" shape="circle" /></> },
