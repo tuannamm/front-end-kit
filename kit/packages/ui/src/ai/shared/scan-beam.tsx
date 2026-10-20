@@ -139,7 +139,7 @@
  *
  * ## Files
  *
- * - `box-overlay.tsx`: BoxOverlay, `OcrBox`, `regionLabels`
+ * - `box-overlay.tsx`: BoxOverlay, `OcrBox`, `regionLabels`, `levelRgb` (box colour per confidence level)
  * - `confidence.tsx`: ConfidenceBadge, ConfidenceBar, ConfidenceDots, `confidenceLevel`, `defaultThresholds`
  * - `compare-slider.tsx`: CompareSlider
  * - `scan-beam.tsx`: ScanBeam, ScanReveal, `useScanBeam`, `scanRevealProps`

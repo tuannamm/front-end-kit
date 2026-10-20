@@ -1,4 +1,4 @@
-/* AI OCR: OcrShowcase pipeline player, BoxEditor. */
+/* AI OCR: OcrShowcase pipeline player, BoxEditor, ConfidenceHeatmap. */
 /* ---- OcrShowcase (pipeline player) ---- */
 .dtx-showcase { display: grid; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-lg); background: var(--dtx-surface); overflow: hidden; }
 .dtx-showcase__head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border-bottom: 1px solid var(--dtx-border); }
@@ -50,3 +50,19 @@
 .dtx-boxedit__nav .dtx-badge { margin-inline-start: auto; }
 .dtx-boxedit__empty, .dtx-boxedit__hint { margin: 0; font-size: var(--dtx-text-sm); line-height: 1.5; color: var(--dtx-fg-muted); }
 .dtx-boxedit__hint { font-size: var(--dtx-text-xs); }
+
+
+/* ---- ConfidenceHeatmap: the page tinted where confidence is low, for QC triage ---- */
+.dtx-heat { display: grid; gap: 10px; margin: 0; }
+.dtx-heat__page { position: relative; overflow: hidden; }
+/* multiply: the tint darkens the paper and leaves the ink dark. The heat steps back while a box is inspected. */
+.dtx-heat__map {
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+  mix-blend-mode: multiply; filter: blur(4px);
+  transition: opacity var(--dtx-dur-base) var(--dtx-ease-standard); animation: dtx-fade var(--dtx-dur-slow) var(--dtx-ease-enter) both;
+}
+.dtx-heat:has(.dtx-ocr[data-active]) .dtx-heat__map { opacity: 0; }
+.dtx-heat__legend { display: flex; flex-wrap: wrap; gap: 6px 24px; font-size: var(--dtx-text-xs); line-height: 1.4; color: var(--dtx-fg-muted); }
+.dtx-heat__key { display: inline-flex; align-items: center; gap: 6px; }
+.dtx-heat__key i { width: 12px; height: 12px; border-radius: 2px; border: 1px solid rgb(var(--c)); background: linear-gradient(rgb(var(--c) / var(--a)), rgb(var(--c) / var(--a))), rgb(255 255 255 / 1); } /* theme-fixed: the tint as it looks on the white page */
+.dtx-heat__key b { color: var(--dtx-fg); font-weight: 500; }

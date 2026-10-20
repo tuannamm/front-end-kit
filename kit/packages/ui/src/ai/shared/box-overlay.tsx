@@ -139,7 +139,7 @@
  *
  * ## Files
  *
- * - `box-overlay.tsx`: BoxOverlay, `OcrBox`, `regionLabels`
+ * - `box-overlay.tsx`: BoxOverlay, `OcrBox`, `regionLabels`, `levelRgb` (box colour per confidence level)
  * - `confidence.tsx`: ConfidenceBadge, ConfidenceBar, ConfidenceDots, `confidenceLevel`, `defaultThresholds`
  * - `compare-slider.tsx`: CompareSlider
  * - `scan-beam.tsx`: ScanBeam, ScanReveal, `useScanBeam`, `scanRevealProps`
@@ -173,7 +173,8 @@ export type BoxHover = 'lens' | 'blink';
 
 // Outline ≥ 3:1 on white paper (WCAG 1.4.11) and white 10px tag text ≥ 4.5:1 on the fill (checked by test:a11y).
 const KIND_RGB: Record<RegionKind, string> = { title: '26 111 191', text: '19 123 182', table: '145 39 214', figure: '94 118 0', stamp: '148 96 0', signature: '196 43 43', field: '26 111 191' };
-const LEVEL_RGB = { high: '37 130 215', medium: '148 96 0', low: '196 43 43' };
+/** Box colour per confidence level, as "r g b" for `rgb(var(--c))`. Theme-fixed: boxes sit on the white page. */
+export const levelRgb = { high: '37 130 215', medium: '148 96 0', low: '196 43 43' };
 export const regionLabels: Record<RegionKind, string> = { title: 'Title', text: 'Text', table: 'Table', figure: 'Figure', stamp: 'Stamp', signature: 'Signature', field: 'Field' };
 
 export type BoxOverlayProps = {
@@ -285,7 +286,7 @@ export function BoxOverlay({ boxes: input, children, colorBy = 'confidence', hov
   const [hovered, setHovered] = useState<string | null>(null);
   const activeId = hovered ?? pinnedId ?? null;
   const active = boxes.find(b => b.id === activeId);
-  const rgbOf = (b: OcrBox) => colorBy === 'kind' ? KIND_RGB[b.kind ?? 'text'] : colorBy === 'plain' ? '26 111 191' : LEVEL_RGB[confidenceLevel(b.confidence ?? 100, thresholds)];
+  const rgbOf = (b: OcrBox) => colorBy === 'kind' ? KIND_RGB[b.kind ?? 'text'] : colorBy === 'plain' ? '26 111 191' : levelRgb[confidenceLevel(b.confidence ?? 100, thresholds)];
   const labelOf = (b: OcrBox) => b.label ?? (b.kind ? regionLabels[b.kind] : undefined);
 
   // blink comparator: flip original ↔ AI text while a box is active

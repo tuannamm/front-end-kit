@@ -3,13 +3,15 @@
  *
  * `OcrShowcase` plays an OCR pipeline from engine JSON: raw page → preprocessing → detection → recognition → layout →
  * extraction. `normalizeOcr` turns an `OcrDocument` into 0–1 boxes and 0–100 confidence. `BoxEditor` is the
- * human-in-the-loop step: a reviewer moves and resizes boxes and corrects their text.
+ * human-in-the-loop step: a reviewer moves and resizes boxes and corrects their text. `ConfidenceHeatmap` comes before
+ * it, for triage: the page tinted where confidence is low, so QC sees at a glance where to look.
  *
  * ```tsx
- * import { OcrShowcase, BoxEditor, type OcrDocument } from '@dgtx/ui-frek';
+ * import { OcrShowcase, BoxEditor, ConfidenceHeatmap, type OcrDocument } from '@dgtx/ui-frek';
  *
  * <OcrShowcase data={engineJson} stages={['unwarp', 'binarize', 'detect', 'recognize', 'extract']} />
  * <BoxEditor boxes={lines} onChange={setLines} page={<img src={page} alt="Trang 1" />} />
+ * <ConfidenceHeatmap boxes={lines}><img src={page} alt="Trang 1" /></ConfidenceHeatmap>
  * ```
  *
  * ### BoxEditor
@@ -22,6 +24,15 @@
  * - The side panel edits the text and steps through the boxes (Previous / Next).
  * - Controlled: every change calls `onChange` with the whole list, the edited box replaced by id. A polygon box moves and
  *   scales with its bounding rectangle. Confidence is left as the engine gave it.
+ *
+ * ### ConfidenceHeatmap
+ *
+ * - Each spot of the page takes the lowest score of the boxes within `spread` of it: amber where it needs review, red
+ *   where confidence is low, untouched where it is high or there is no text. The tint multiplies with the page, so the
+ *   ink stays readable.
+ * - The legend names both colours with their ranges and counts the boxes in each, so colour is never the only cue.
+ * - Wrap a BoxOverlay to get the boxes on top: `<ConfidenceHeatmap boxes={lines}><BoxOverlay boxes={lines}>{page}</BoxOverlay></ConfidenceHeatmap>`.
+ *   The heat steps back while a box is hovered or pinned, so the lens and the spotlight read clean.
  *
  * ## Props
  *
@@ -54,6 +65,17 @@
  * | `textInset` | `number` | `2` | Passed to BoxOverlay; lines the text up in the lens |
  * | `className` | `string` |  | Extra classes |
  *
+ * ### ConfidenceHeatmap
+ *
+ * | Prop | Type | Default | Description |
+ * |---|---|---|---|
+ * | `boxes` | `OcrBox[]` | **required** | Scored boxes, 0–1 of the page; boxes without `confidence` add no heat |
+ * | `children` | `ReactNode` | **required** | The page, or a BoxOverlay around it |
+ * | `thresholds` | `Thresholds` | `{ high: 95, low: 80 }` | Confidence levels |
+ * | `spread` | `number` | `0.03` | How far a box's score reaches around it, 0–1 of the page width |
+ * | `legend` | `boolean` | `true` | Colour key with box counts under the page |
+ * | `className` | `string` |  | Extra classes |
+ *
  * ### OcrDocument
  *
  * | Prop | Type | Default | Description |
@@ -74,6 +96,8 @@
  * - `showcase.tsx`: OcrShowcase, `ocrStageLabels`
  * - `box-editor.tsx`: BoxEditor
  * - `box-edit.ts` + `box-edit.check.ts`: `editBox` (move or corner-resize a box in 0–1 units, kept on the page) and its node check
+ * - `confidence-heatmap.tsx`: ConfidenceHeatmap
+ * - `heat-grid.ts` + `heat-grid.check.ts`: `heatGrid` (lowest nearby score per grid cell) and its node check
  * - `types.ts` + `types.check.ts`: `OcrDocument`, `NormalizedOcr`, `normalizeOcr` and its node check
  * - `ocr.css`
  *

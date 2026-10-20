@@ -13,7 +13,7 @@ import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
 import { contractLines } from './contract-lines';
-import { BoxEditorDemo, FieldLinkDemo, PolygonDemo, PolygonViewerDemo,AlertDemo, MasonryLiveDemo, SplitterListDemo, StepsWizardDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { BoxEditorDemo, HeatmapDemo, FieldLinkDemo, PolygonDemo, PolygonViewerDemo,AlertDemo, MasonryLiveDemo, SplitterListDemo, StepsWizardDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -855,7 +855,12 @@ export const entries: Entry[] = [
     demos: [
       { title: '1 · Live', note: 'Hover or Tab through the fields or the boxes. Click a field or a box to keep its link.', plain: true, render: run => <FieldLinkDemo key={run} /> },
       { title: '2 · Linked, static', note: 'linked="vat": the 94.2% field links to its amber box.', plain: true, render: () => <FieldLinkDemo linked="vat" /> }] },
-  planned('heatmap', 'Confidence heatmap', 'AI · OCR', 'Page tint by local confidence for QC triage.'),
+  { id: 'heatmap', name: 'ConfidenceHeatmap', category: 'AI · OCR', status: 'ready', summary: 'QC triage at a glance: the page tinted by local confidence, amber where it needs review, red where it is low, untouched where the reading is sure. The tint multiplies with the paper, so the ink stays readable; the legend names the ranges and counts the boxes in each. Wrap a BoxOverlay for boxes on top: the heat steps back while one is hovered.',
+    importLine: imp('ConfidenceHeatmap') + '\n<ConfidenceHeatmap boxes={lines}><img src={page} alt="Trang 1" /></ConfidenceHeatmap>',
+    demos: [
+      { title: '1 · Page only', note: 'Line scores from the sample invoice; spread 0.03 of the page width.', plain: true, render: () => <HeatmapDemo /> },
+      { title: '2 · With BoxOverlay', note: 'Hover or Tab to a box: the heat steps back for the lens.', plain: true, render: () => <HeatmapDemo withBoxes /> },
+      { title: '3 · Box pinned, static', note: 'pinnedId="r3": heat hidden while the 72.5% line is inspected.', plain: true, render: () => <HeatmapDemo withBoxes pinnedId="r3" /> }] },
   { id: 'box-editor', name: 'BoxEditor', category: 'AI · OCR', status: 'ready', summary: 'Human-in-the-loop QC: select a box, drag it or its corners to fit the text, and correct the text beside the page. The selected box keeps its lens open, so the crop inside the current frame is compared with the current text as both change. Arrow keys move the box, Shift + arrows resize it.',
     importLine: imp('BoxEditor') + '\n<BoxEditor boxes={lines} onChange={setLines} page={<img src={page} alt="Trang 1" />} />',
     demos: [

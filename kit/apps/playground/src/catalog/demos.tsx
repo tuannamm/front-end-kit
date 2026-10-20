@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Alert, Badge, BoxEditor, BoxOverlay, ImageViewer,ConfidenceBadge, FieldLink, SampleInvoice, sampleInvoiceInset, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dgtx/ui-frek';
+import { Alert, Badge, BoxEditor, BoxOverlay, ConfidenceHeatmap, ImageViewer,ConfidenceBadge, FieldLink, SampleInvoice, sampleInvoiceInset, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dgtx/ui-frek';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -502,6 +502,17 @@ export function FieldLinkDemo({ linked }: { linked?: string }) {
         ))}
       </ul>
     </FieldLink>
+  );
+}
+
+/** ConfidenceHeatmap on the sample invoice, alone or around a BoxOverlay. */
+export function HeatmapDemo({ withBoxes, pinnedId }: { withBoxes?: boolean; pinnedId?: string }) {
+  const [lines, setLines] = useState<OcrBox[]>([]);
+  const page = <SampleInvoice onBoxes={setLines} />;
+  return (
+    <div className="w-full max-w-[640px]">
+      <ConfidenceHeatmap boxes={lines}>{withBoxes ? <BoxOverlay boxes={lines} textInset={sampleInvoiceInset} pinnedId={pinnedId}>{page}</BoxOverlay> : page}</ConfidenceHeatmap>
+    </div>
   );
 }
 

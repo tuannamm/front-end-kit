@@ -3,13 +3,15 @@
  *
  * `OcrShowcase` plays an OCR pipeline from engine JSON: raw page → preprocessing → detection → recognition → layout →
  * extraction. `normalizeOcr` turns an `OcrDocument` into 0–1 boxes and 0–100 confidence. `BoxEditor` is the
- * human-in-the-loop step: a reviewer moves and resizes boxes and corrects their text.
+ * human-in-the-loop step: a reviewer moves and resizes boxes and corrects their text. `ConfidenceHeatmap` comes before
+ * it, for triage: the page tinted where confidence is low, so QC sees at a glance where to look.
  *
  * ```tsx
- * import { OcrShowcase, BoxEditor, type OcrDocument } from '@dgtx/ui-frek';
+ * import { OcrShowcase, BoxEditor, ConfidenceHeatmap, type OcrDocument } from '@dgtx/ui-frek';
  *
  * <OcrShowcase data={engineJson} stages={['unwarp', 'binarize', 'detect', 'recognize', 'extract']} />
  * <BoxEditor boxes={lines} onChange={setLines} page={<img src={page} alt="Trang 1" />} />
+ * <ConfidenceHeatmap boxes={lines}><img src={page} alt="Trang 1" /></ConfidenceHeatmap>
  * ```
  *
  * ### BoxEditor
@@ -22,6 +24,15 @@
  * - The side panel edits the text and steps through the boxes (Previous / Next).
  * - Controlled: every change calls `onChange` with the whole list, the edited box replaced by id. A polygon box moves and
  *   scales with its bounding rectangle. Confidence is left as the engine gave it.
+ *
+ * ### ConfidenceHeatmap
+ *
+ * - Each spot of the page takes the lowest score of the boxes within `spread` of it: amber where it needs review, red
+ *   where confidence is low, untouched where it is high or there is no text. The tint multiplies with the page, so the
+ *   ink stays readable.
+ * - The legend names both colours with their ranges and counts the boxes in each, so colour is never the only cue.
+ * - Wrap a BoxOverlay to get the boxes on top: `<ConfidenceHeatmap boxes={lines}><BoxOverlay boxes={lines}>{page}</BoxOverlay></ConfidenceHeatmap>`.
+ *   The heat steps back while a box is hovered or pinned, so the lens and the spotlight read clean.
  *
  * ## Props
  *
@@ -54,6 +65,17 @@
  * | `textInset` | `number` | `2` | Passed to BoxOverlay; lines the text up in the lens |
  * | `className` | `string` |  | Extra classes |
  *
+ * ### ConfidenceHeatmap
+ *
+ * | Prop | Type | Default | Description |
+ * |---|---|---|---|
+ * | `boxes` | `OcrBox[]` | **required** | Scored boxes, 0–1 of the page; boxes without `confidence` add no heat |
+ * | `children` | `ReactNode` | **required** | The page, or a BoxOverlay around it |
+ * | `thresholds` | `Thresholds` | `{ high: 95, low: 80 }` | Confidence levels |
+ * | `spread` | `number` | `0.03` | How far a box's score reaches around it, 0–1 of the page width |
+ * | `legend` | `boolean` | `true` | Colour key with box counts under the page |
+ * | `className` | `string` |  | Extra classes |
+ *
  * ### OcrDocument
  *
  * | Prop | Type | Default | Description |
@@ -74,6 +96,8 @@
  * - `showcase.tsx`: OcrShowcase, `ocrStageLabels`
  * - `box-editor.tsx`: BoxEditor
  * - `box-edit.ts` + `box-edit.check.ts`: `editBox` (move or corner-resize a box in 0–1 units, kept on the page) and its node check
+ * - `confidence-heatmap.tsx`: ConfidenceHeatmap
+ * - `heat-grid.ts` + `heat-grid.check.ts`: `heatGrid` (lowest nearby score per grid cell) and its node check
  * - `types.ts` + `types.check.ts`: `OcrDocument`, `NormalizedOcr`, `normalizeOcr` and its node check
  * - `ocr.css`
  *
@@ -152,7 +176,7 @@ export function BoxEditor({ boxes, onChange, page, selectedId, onSelect, thresho
       <div className="dtx-boxedit__stage" ref={stage}>
         <BoxOverlay boxes={boxes} thresholds={thresholds} textInset={textInset} selectedId={selId} pinnedId={selId} onSelect={b => select(b.id, true)}>{page}</BoxOverlay>
         {sel && (
-          <div ref={frame} className="dtx-boxedit__frame" tabIndex={0} role="group" aria-label={`Khung đang sửa: ${sel.text || sel.id}`} aria-describedby={hint}
+          <div ref={frame} className="dtx-boxedit__frame" tabIndex={0} role="group" aria-label={`Editing box: ${sel.text || sel.id}`} aria-describedby={hint}
             style={{ left: `${sel.x * 100}%`, top: `${sel.y * 100}%`, width: `${sel.w * 100}%`, height: `${sel.h * 100}%` }}
             onPointerDown={grab('move')} onPointerMove={onMove} onPointerUp={drop} onPointerCancel={drop} onKeyDown={onKey}>
             {CORNERS.map(c => <i key={c} className="dtx-boxedit__handle" data-corner={c} onPointerDown={grab(c)} aria-hidden />)}
@@ -163,19 +187,19 @@ export function BoxEditor({ boxes, onChange, page, selectedId, onSelect, thresho
         {sel ? (
           <>
             <div className="dtx-boxedit__nav">
-              <Button variant="secondary" size="sm" icon aria-label="Khung trước" onClick={() => select(boxes[(i - 1 + n) % n].id)}><ChevronLeft aria-hidden /></Button>
-              <span className="dtx-num" aria-label={`Khung ${i + 1} trên ${n}`}>{i + 1} / {n}</span>
-              <Button variant="secondary" size="sm" icon aria-label="Khung sau" onClick={() => select(boxes[(i + 1) % n].id)}><ChevronRight aria-hidden /></Button>
+              <Button variant="secondary" size="sm" icon aria-label="Previous box" onClick={() => select(boxes[(i - 1 + n) % n].id)}><ChevronLeft aria-hidden /></Button>
+              <span className="dtx-num" aria-label={`Box ${i + 1} of ${n}`}>{i + 1} / {n}</span>
+              <Button variant="secondary" size="sm" icon aria-label="Next box" onClick={() => select(boxes[(i + 1) % n].id)}><ChevronRight aria-hidden /></Button>
               {sel.confidence !== undefined && <ConfidenceBadge value={sel.confidence} thresholds={thresholds} showLabel />}
             </div>
-            <Field label="Nội dung" description="Sửa cho đúng từng chữ trên trang.">
+            <Field label="Text" description="Correct it to match the page exactly.">
               <Input value={sel.text ?? ''} onChange={e => update({ ...sel, text: e.target.value })} />
             </Field>
           </>
         ) : (
-          <p className="dtx-boxedit__empty">{n ? 'Chọn một khung trên trang để sửa vị trí và nội dung.' : 'Trang chưa có khung nào.'}</p>
+          <p className="dtx-boxedit__empty">{n ? 'Select a box on the page to fix its position and text.' : 'This page has no boxes yet.'}</p>
         )}
-        <p id={hint} className="dtx-boxedit__hint">Kéo khung để di chuyển, kéo góc để đổi kích thước. Bàn phím: phím mũi tên di chuyển, Shift + mũi tên đổi kích thước.</p>
+        <p id={hint} className="dtx-boxedit__hint">Drag the frame to move it, drag a corner to resize it. Keyboard: arrow keys move, Shift + arrow keys resize.</p>
       </div>
     </div>
   );
