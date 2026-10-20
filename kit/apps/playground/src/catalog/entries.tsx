@@ -13,7 +13,7 @@ import { RealBoxes, RealEnhance, RealShowcase, RealUnwarp } from './real';
 import { demoPair, type DemoStep } from '../demo-pairs';
 import { useFakeUpload } from '../fake-upload';
 import { contractLines } from './contract-lines';
-import { FieldLinkDemo, PolygonDemo, PolygonViewerDemo,AlertDemo, MasonryLiveDemo, SplitterListDemo, StepsWizardDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
+import { BoxEditorDemo, FieldLinkDemo, PolygonDemo, PolygonViewerDemo,AlertDemo, MasonryLiveDemo, SplitterListDemo, StepsWizardDemo, PaginationDemo, SliderThresholdDemo, MenuExportDemo, MenuRowDemo, MenuViewDemo, CommandListDemo, CommandPaletteDemo, DurationBars, EasingCurves, ExitDemo, LoadableDemo, StaggerList, SwatchGrid, ToastDemo, TypeScale, radii, spacing } from './demos';
 
 export type Category = 'Foundations' | 'Core' | 'Layout' | 'Data' | 'Motion' | 'Brand' | 'AI · Shared' | 'AI · Preprocess' | 'AI · OCR' | 'AI · Extraction' | 'AI · Try-on' | 'AI · Enhance' | 'AI · Remove background';
 export const categories: { id: Category; folder: string; blurb: string }[] = [
@@ -856,7 +856,11 @@ export const entries: Entry[] = [
       { title: '1 · Live', note: 'Hover or Tab through the fields or the boxes. Click a field or a box to keep its link.', plain: true, render: run => <FieldLinkDemo key={run} /> },
       { title: '2 · Linked, static', note: 'linked="vat": the 94.2% field links to its amber box.', plain: true, render: () => <FieldLinkDemo linked="vat" /> }] },
   planned('heatmap', 'Confidence heatmap', 'AI · OCR', 'Page tint by local confidence for QC triage.'),
-  planned('box-editor', 'Box editor', 'AI · OCR', 'Drag/resize boxes and correct text for human-in-the-loop QC.'),
+  { id: 'box-editor', name: 'BoxEditor', category: 'AI · OCR', status: 'ready', summary: 'Human-in-the-loop QC: select a box, drag it or its corners to fit the text, and correct the text beside the page. The selected box keeps its lens open, so the crop inside the current frame is compared with the current text as both change. Arrow keys move the box, Shift + arrows resize it.',
+    importLine: imp('BoxEditor') + '\n<BoxEditor boxes={lines} onChange={setLines} page={<img src={page} alt="Trang 1" />} />',
+    demos: [
+      { title: '1 · Live', note: 'Click a box (or Tab to it and press Enter), then drag the frame or a corner, or use the arrow keys.', plain: true, render: () => <BoxEditorDemo /> },
+      { title: '2 · Selected, static', note: 'selectedId="r3": the 72.5% line, with its frame, handles and lens open.', plain: true, render: () => <BoxEditorDemo selected="r3" /> }] },
   { id: 'table-extract', name: 'TableExtraction', category: 'AI · Extraction', status: 'ready', summary: 'A detected table checked cell by cell: the cell grid over the page, coloured by confidence, beside the table rebuilt from the cells (row, col, spans). Cells below the high threshold are tinted and show their score. Hover a cell on either side and a line joins it to its twin (FieldLink); hover a box on the page for the lens.',
     importLine: imp('TableExtraction, type TableCell') + '\n<TableExtraction cells={cells} page={<img src={page} alt="Trang 1" />} caption="Hàng hoá, dịch vụ" />',
     demos: [

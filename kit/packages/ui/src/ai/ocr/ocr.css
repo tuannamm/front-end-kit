@@ -1,4 +1,4 @@
-/* AI OCR: OcrShowcase pipeline player. */
+/* AI OCR: OcrShowcase pipeline player, BoxEditor. */
 /* ---- OcrShowcase (pipeline player) ---- */
 .dtx-showcase { display: grid; border: 1px solid var(--dtx-border); border-radius: var(--dtx-radius-lg); background: var(--dtx-surface); overflow: hidden; }
 .dtx-showcase__head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border-bottom: 1px solid var(--dtx-border); }
@@ -27,3 +27,26 @@
   .dtx-showcase__body { grid-template-columns: 1fr; }
   .dtx-showcase__page { border-right: 0; border-bottom: 1px solid var(--dtx-border); }
 }
+
+
+/* ---- BoxEditor: move/resize a box and correct its text (human-in-the-loop QC) ---- */
+.dtx-boxedit { display: flex; flex-wrap: wrap; align-items: start; gap: 24px 40px; }
+.dtx-boxedit__stage { position: relative; flex: 999 1 320px; min-width: 0; }
+.dtx-boxedit__side { display: grid; gap: 16px; flex: 1 1 240px; min-width: 0; }
+/* the lens only shows here; the boxes under it stay clickable. The frame's handles replace the hover brackets. */
+.dtx-boxedit .dtx-ocr__lens { pointer-events: none; }
+.dtx-boxedit .dtx-ocr__box[data-selected]::after { content: none; }
+/* frame and handles sit on the paper, so they keep paper colours in both themes */
+.dtx-boxedit__frame { position: absolute; z-index: 1; cursor: move; touch-action: none; border: 1.5px solid rgb(37 130 215 / 1); border-radius: 2px; }
+.dtx-boxedit__frame:focus-visible { outline: 2px solid rgb(37 130 215 / 1); outline-offset: 3px; }
+/* 24px hit area around a 10px square */
+.dtx-boxedit__handle { position: absolute; width: 24px; height: 24px; margin: -12px; touch-action: none; }
+.dtx-boxedit__handle::after { content: ""; position: absolute; inset: 7px; border: 1.5px solid rgb(37 130 215 / 1); border-radius: 1px; background: rgb(255 255 255 / 1); }
+.dtx-boxedit__handle[data-corner="nw"] { left: 0; top: 0; cursor: nwse-resize; }
+.dtx-boxedit__handle[data-corner="ne"] { right: 0; top: 0; cursor: nesw-resize; }
+.dtx-boxedit__handle[data-corner="se"] { right: 0; bottom: 0; cursor: nwse-resize; }
+.dtx-boxedit__handle[data-corner="sw"] { left: 0; bottom: 0; cursor: nesw-resize; }
+.dtx-boxedit__nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: var(--dtx-text-sm); }
+.dtx-boxedit__nav .dtx-badge { margin-inline-start: auto; }
+.dtx-boxedit__empty, .dtx-boxedit__hint { margin: 0; font-size: var(--dtx-text-sm); line-height: 1.5; color: var(--dtx-fg-muted); }
+.dtx-boxedit__hint { font-size: var(--dtx-text-xs); }

@@ -1,8 +1,8 @@
 // Interactive demo helpers used by catalog entries. Built only from @dgtx/ui-frek.
-import { useEffect, useId, useState, type CSSProperties, type ReactNode } from 'react';
+import { useCallback, useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { BarChart3, ChevronDown, CircleCheck, Copy, Eye, FileDown, FileSpreadsheet, FileStack, FileText, History, LayoutDashboard, MoreHorizontal, Plus, SlidersHorizontal, Trash2 } from 'lucide-react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Alert, Badge, BoxOverlay, ImageViewer,ConfidenceBadge, FieldLink, SampleInvoice, sampleInvoiceInset, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dgtx/ui-frek';
+import { Alert, Badge, BoxEditor, BoxOverlay, ImageViewer,ConfidenceBadge, FieldLink, SampleInvoice, sampleInvoiceInset, Button, Card, Collapse, CommandButton, CommandList, CommandPalette, Field, Loadable, Masonry, Menu, Splitter, Steps, Pagination, Slider, Reveal, ScanBeam, SkeletonText, toBox, useToast, type CommandItem, type OcrBox } from '@dgtx/ui-frek';
 import { batches } from '../data';
 
 export type Swatch = { name: string; hex: string; token: string; source: 'rule' | 'sampled' | 'kit'; note: string };
@@ -502,5 +502,20 @@ export function FieldLinkDemo({ linked }: { linked?: string }) {
         ))}
       </ul>
     </FieldLink>
+  );
+}
+
+/** BoxEditor on the sample invoice. The page is measured again whenever the lens mounts it, so take the measured lines
+ *  only until the first edit. */
+export function BoxEditorDemo({ selected = null }: { selected?: string | null }) {
+  const [lines, setLines] = useState<OcrBox[]>([]);
+  const [sel, setSel] = useState(selected);
+  const edited = useRef(false);
+  const measured = useCallback((b: OcrBox[]) => { if (!edited.current) setLines(b); }, []);
+  return (
+    <div className="w-full max-w-[960px]">
+      <BoxEditor boxes={lines} onChange={b => { edited.current = true; setLines(b); }} selectedId={sel} onSelect={setSel}
+        textInset={sampleInvoiceInset} page={<SampleInvoice onBoxes={measured} />} />
+    </div>
   );
 }
