@@ -103,7 +103,8 @@
   .dtx-hover-lift:hover { transform: translateY(-3px); box-shadow: var(--dtx-shadow-pop); border-color: var(--dtx-primary); }
 
   /* ---------- table ---------- */
-  .dtx-table-wrap { overflow-x: auto; }
+  /* relative: absolute descendants (.dtx-sr text in a cell) scroll with the table instead of widening the page */
+  .dtx-table-wrap { position: relative; overflow-x: auto; }
   .dtx-table { width: 100%; border-collapse: collapse; font-size: var(--dtx-text-sm); font-variant-numeric: tabular-nums; }
   .dtx-table th { padding: 10px 16px; text-align: left; white-space: nowrap; font-size: var(--dtx-text-xs); font-weight: 500; letter-spacing: .02em; color: var(--dtx-fg-muted); background: var(--dtx-surface-2); border-bottom: 1px solid var(--dtx-border); }
   .dtx-table td { height: 44px; padding: 0 16px; white-space: nowrap; border-bottom: 1px solid var(--dtx-border); }

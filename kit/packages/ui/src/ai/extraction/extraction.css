@@ -40,8 +40,7 @@
 /* ---- table extraction: the cell grid on the page beside the rebuilt table ---- */
 .dtx-tablex { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); align-items: center; gap: 24px 48px; }
 .dtx-tablex > * { min-width: 0; }
-/* contain: the table's width never sizes the layout, so a wide table scrolls in its wrap instead of widening the page */
-.dtx-tablex__side { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; contain: inline-size; }
+.dtx-tablex__side { display: grid; gap: 8px; }
 .dtx-tablex__table { width: 100%; border-collapse: collapse; font-size: var(--dtx-text-sm); font-variant-numeric: tabular-nums; }
 .dtx-tablex__table caption { caption-side: top; padding-bottom: 8px; text-align: start; font-weight: 700; }
 .dtx-tablex__table :is(td, th) { height: 36px; padding: 0 12px; border: 1px solid var(--dtx-border); text-align: start; }
