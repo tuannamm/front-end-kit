@@ -147,7 +147,7 @@
  * - `geometry.ts`: `toBox` (any engine box shape → 0–1 box; a polygon keeps its `points`), `bounds`
  * - `shared.css`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';

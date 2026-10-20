@@ -56,7 +56,7 @@
  *
  * Catalog: `#/catalog/slider`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { Slider as BSlider } from '@base-ui/react/slider';

@@ -86,7 +86,7 @@
  *
  * Catalog: `#/catalog/switch`, `#/catalog/tabs`, `#/catalog/segmented`, `#/catalog/tooltip`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import type { ReactNode } from 'react';

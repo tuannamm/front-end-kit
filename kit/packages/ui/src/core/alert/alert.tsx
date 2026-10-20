@@ -46,7 +46,7 @@
  * - `alert.tsx`: Alert. Uses Button and the shared tone icons from `badge.tsx` (the same ones Toast uses).
  * - `alert.css`: `.dtx-alert*`.
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import type { ComponentProps, ReactNode } from 'react';

@@ -115,7 +115,7 @@
  * - `app-shell.tsx`: AppShell, Sidebar, SidebarWorkspace, SidebarGroup, SidebarItem, SidebarFooter, Topbar, CommandButton
  * - Styles: `.dtx-card*`, `.dtx-shell*`, `.dtx-sidebar*`, `.dtx-topbar`, `.dtx-cmdk*` in `styles.css`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { createContext, useContext, type ComponentProps, type ReactNode } from 'react';

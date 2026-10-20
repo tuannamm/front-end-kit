@@ -48,7 +48,7 @@
  *
  * Catalog: `#/catalog/button`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import type { ComponentProps, ReactNode } from 'react';

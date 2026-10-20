@@ -84,7 +84,7 @@
  *
  * Catalog: `#/catalog/notification`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useId, useRef, useState, type ReactNode } from 'react';

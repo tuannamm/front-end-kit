@@ -94,7 +94,7 @@
  *
  * Catalog: `#/catalog/menu`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import type { ReactElement, ReactNode } from 'react';

@@ -86,7 +86,7 @@
  *
  * Catalog: `#/catalog/select`, `#/catalog/multiselect`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { Fragment, useMemo, type ReactNode } from 'react';

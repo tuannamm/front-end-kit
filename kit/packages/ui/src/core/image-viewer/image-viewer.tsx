@@ -73,7 +73,7 @@
  *
  * Catalog: `#/catalog/image-viewer`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useEffect, useLayoutEffect, useRef, useState, type ComponentProps } from 'react';

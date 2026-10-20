@@ -49,7 +49,7 @@
  * - `types.ts` + `types.check.ts`: `OcrDocument`, `NormalizedOcr`, `normalizeOcr` and its node check
  * - `ocr.css`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useEffect, useMemo, useState, type ReactNode } from 'react';

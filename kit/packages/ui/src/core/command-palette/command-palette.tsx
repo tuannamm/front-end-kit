@@ -73,7 +73,7 @@
  * - `command.ts`: `matchCommand`, `groupCommands`; tested by `command.check.ts`.
  * - `command-palette.css`: `.dtx-cmdp*`.
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useEffect, useId, useMemo, useState, type ReactElement, type ReactNode } from 'react';

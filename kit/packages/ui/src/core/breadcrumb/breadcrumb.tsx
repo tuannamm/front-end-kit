@@ -54,7 +54,7 @@
  * - `trail.ts`: `visibleCrumbs` (which crumbs to show), tested by `trail.check.ts`
  * - `breadcrumb.css`: `.dtx-crumbs*`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';

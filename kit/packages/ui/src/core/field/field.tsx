@@ -74,7 +74,7 @@
  *
  * Catalog: `#/catalog/input`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useState, type ChangeEvent, type ComponentProps, type CSSProperties, type ReactNode } from 'react';

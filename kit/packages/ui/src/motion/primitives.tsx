@@ -64,7 +64,7 @@
  * - `primitives.tsx`: Reveal, Skeleton, SkeletonText, Loadable, CountUp, useReducedMotion
  * - Styles: `.dtx-enter-*`, `.dtx-skeleton*` and the keyframes in `styles.css`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react';

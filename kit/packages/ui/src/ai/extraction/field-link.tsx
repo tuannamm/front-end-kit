@@ -115,7 +115,7 @@
  * - `table-grid.ts`: detected cells → table rows, with spans and holes (`table-grid.check.ts`)
  * - `extraction.css`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type SyntheticEvent } from 'react';

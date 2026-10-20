@@ -100,7 +100,7 @@
  *
  * Catalog: `#/catalog/datepicker`, `#/catalog/daterange`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';

@@ -48,7 +48,7 @@
  *
  * Catalog: `#/catalog/watermark`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';

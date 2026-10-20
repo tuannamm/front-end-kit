@@ -52,7 +52,7 @@
  * - `empty-state.tsx`: EmptyState. Uses `mascotUrl` from `brand/logo.tsx` and the error icon from `badge.tsx`.
  * - `empty-state.css`: `.dtx-empty*`.
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import type { ComponentProps, ReactNode } from 'react';

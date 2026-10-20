@@ -90,7 +90,7 @@
  * - `page-look.tsx`: PageLook (internal)
  * - `preprocess.css`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react';

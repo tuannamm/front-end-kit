@@ -6,7 +6,7 @@
  * ```tsx
  * import { Logo, Display, Lede, TechBackdrop } from '@dgtx/ui-frek';
  *
- * <TechBackdrop><Logo variant="horizontal-white" /><Display>Smart <em>digitisation</em></Display><Lede>…</Lede></TechBackdrop>
+ * <TechBackdrop><Logo variant="horizontal-white" /><Display>Số hoá <em>thông minh</em></Display><Lede>…</Lede></TechBackdrop>
  * ```
  *
  * ## Props
@@ -71,7 +71,7 @@
  * - `theme.tsx`: ThemeToggle, useTheme
  * - Logo files: `../assets/`
  *
- * @generated from README.md in this folder. Edit the README, then run `npm run docs:sync`.
+ 
  */
 
 import { useEffect, useState } from 'react';
